@@ -1,0 +1,2 @@
+[console_scripts]
+petro-agent = petro_agent.cli:main

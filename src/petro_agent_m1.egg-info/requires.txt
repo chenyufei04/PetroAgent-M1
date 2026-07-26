@@ -1,0 +1,7 @@
+matplotlib<4,>=3.8
+numpy<3,>=1.26
+pandas<3,>=2.1
+PyYAML<7,>=6.0
+
+[dev]
+pytest<9,>=8

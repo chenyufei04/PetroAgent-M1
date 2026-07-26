@@ -1,0 +1,22 @@
+case_id: spe9
+domain: reservoir_engineering
+process: black_oil_waterflood
+source_type: opm_flow_export
+model: SPE9
+repository: https://github.com/OPM/opm-data
+domain_packs:
+  - common_reservoir
+required_columns:
+  - time_days
+column_mapping: {}
+units:
+  time_days: day
+  oil_rate_m3_day: m3/day
+  water_rate_m3_day: m3/day
+  water_cut_fraction: fraction
+  cumulative_oil_m3: m3
+  injector_bhp_bar: bar
+metadata:
+  dataset_status: requires_opm_flow_export
+  purpose: 验证核心分析管线能够脱离聚合物专用逻辑。
+

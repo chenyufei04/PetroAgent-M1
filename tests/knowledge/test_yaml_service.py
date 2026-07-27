@@ -35,3 +35,26 @@ def test_knowledge_rule_flags_invalid_water_cut():
     assert len(findings) == 1
     assert not findings[0].passed
     assert findings[0].source_id == "petroleum_engineering_core"
+
+
+def test_rule_engine_records_unresolved_targets_as_skipped():
+    service = YamlKnowledgeService(ROOT / "knowledge_graph")
+    dataset = CanonicalDataset(
+        "test",
+        "reservoir_engineering",
+        "water_flooding",
+        pd.DataFrame({"time_days": [0, 1]}),
+        {"time_days": "day"},
+        SourceInfo("test", "test"),
+    )
+    engine = RuleEngine()
+    findings = engine.evaluate(
+        dataset,
+        service.find_rules(context={"representation": "decimal_fraction"}),
+        service.resolve_dataset(dataset),
+        service.trace_evidence,
+    )
+    assert len(findings) == 2
+    assert engine.last_execution["loaded"] == 7
+    assert engine.last_execution["executed"] == 2
+    assert len(engine.last_execution["skipped"]) == 5

@@ -31,11 +31,18 @@ def write_report(result: AnalysisResult, path: Path) -> Path:
         "",
         "## 3. 数据与物理规则校验",
         "",
-        "| 规则 | 级别 | 状态 | 说明 |",
-        "|---|---|---|---|",
+        "| 规则 | 中英文名称 | 级别 | 状态 | 观测值 | 期望值 | 来源 | 适用条件 |",
+        "|---|---|---|---|---|---|---|---|",
     ]
     for item in result.findings:
-        lines.append(f"| {item.rule_id} | {item.severity} | {'通过' if item.passed else '未通过'} | {item.message} |")
+        source = item.source_name or item.source_id or "内置领域校验"
+        lines.append(
+            f"| {item.rule_id} | {item.message} | {item.severity} | "
+            f"{'通过' if item.passed else '未通过'} | "
+            f"{item.observed if item.observed is not None else '-'} | "
+            f"{item.expected if item.expected is not None else '-'} | "
+            f"{source} | {item.applicability or '-'} |"
+        )
     lines.extend([
         "",
         f"共执行 {len(result.findings)} 条规则，发现 {failures} 条未通过。",
@@ -63,4 +70,3 @@ def write_report(result: AnalysisResult, path: Path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines), encoding="utf-8")
     return path
-

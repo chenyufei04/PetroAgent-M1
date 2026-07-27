@@ -50,6 +50,14 @@ class ValidationFinding:
     passed: bool
     message: str
     observed: Any = None
+    concept_id: str | None = None
+    expected: Any = None
+    actual_unit: str | None = None
+    canonical_unit: str | None = None
+    source_id: str | None = None
+    source_name: str | None = None
+    clause: str | None = None
+    applicability: str | None = None
 
 
 @dataclass
@@ -58,4 +66,3 @@ class AnalysisResult:
     summary: dict[str, Any]
     findings: list[ValidationFinding]
     figures: list[Path] = field(default_factory=list)
-

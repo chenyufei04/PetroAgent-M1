@@ -1,9 +1,12 @@
-schema_version: "0.1"
+schema_version: "0.2"
 domain_graph:
   domain_id: chemical_eor
   name_zh: 化学提高采收率
   name_en: Chemical Enhanced Oil Recovery
 triples:
+  - subject: polymer_flooding
+    relation: IS_A
+    object: chemical_eor_method
   - subject: polymer_flooding
     relation: USES_MATERIAL
     object: polymer_solution
@@ -16,3 +19,262 @@ triples:
   - subject: polymer_flooding
     relation: AFFECTS
     object: injector_bottomhole_pressure
+  - subject: polymer_concentration
+    relation: AFFECTS
+    object: polymer_solution_viscosity
+  - subject: polymer_solution_viscosity
+    relation: AFFECTS
+    object: mobility_ratio
+  - subject: reservoir_temperature
+    relation: AFFECTS
+    object: polymer_stability
+  - subject: brine_salinity
+    relation: AFFECTS
+    object: polymer_solution_viscosity
+  - subject: divalent_ion_concentration
+    relation: AFFECTS
+    object: polymer_stability
+  - subject: shear_rate
+    relation: AFFECTS
+    object: polymer_solution_viscosity
+  - subject: polymer_adsorption
+    relation: AFFECTS
+    object: polymer_transport
+  - subject: residual_resistance_factor
+    relation: DESCRIBES
+    object: permeability_reduction
+  - subject: injection_pressure
+    relation: CONSTRAINS
+    object: polymer_injection_rate
+  - subject: fracture_pressure
+    relation: CONSTRAINS
+    object: injection_pressure
+  - subject: polymer_flooding
+    relation: VERIFIED_BY
+    object: core_flood_test
+  - subject: polymer_flooding
+    relation: VERIFIED_BY
+    object: injectivity_test
+
+rule_catalog:
+  metadata:
+    catalog_id: petroagent-polymer-flooding-rules
+    version: "0.2.0"
+    status: research_demo
+    scope_zh: 聚合物驱候选筛选、实验、设计、模拟、运行与动态评价
+    scope_en: Polymer-flood screening, laboratory, design, simulation, operation, and surveillance
+    disclaimer_zh: 经验阈值仅用于初筛；必须结合聚合物类型、盐水组成、岩性、温度、剪切历史和现场约束校准。
+    disclaimer_en: Empirical thresholds are for screening only and require project-specific calibration.
+
+  rules:
+    - rule_id: PF-SCREEN-001
+      stage: screening
+      name_zh: 油黏度传统筛选上限
+      name_en: Conventional Oil-Viscosity Screening Ceiling
+      inputs: [oil_viscosity_reservoir_cp]
+      logic: oil_viscosity_reservoir_cp < 150
+      unit: cP
+      decision: advisory
+      source_id: taber_1997_screening
+      rationale_zh: 传统筛选上限；高黏油成功案例表明其不能作为绝对淘汰条件。
+    - rule_id: PF-SCREEN-002
+      stage: screening
+      name_zh: 渗透率传统筛选下限
+      name_en: Conventional Permeability Screening Floor
+      inputs: [average_permeability_md]
+      logic: average_permeability_md > 10
+      unit: mD
+      decision: advisory
+      source_id: taber_1997_screening
+    - rule_id: PF-SCREEN-003
+      stage: screening
+      name_zh: 温度传统筛选上限
+      name_en: Conventional Temperature Screening Ceiling
+      inputs: [reservoir_temperature_c]
+      logic: reservoir_temperature_c < 93.33
+      unit: degC
+      decision: advisory
+      source_id: taber_1997_screening
+      rationale_zh: 对传统聚合物的经验边界；耐温聚合物必须由老化实验重新确定。
+    - rule_id: PF-SCREEN-004
+      stage: screening
+      name_zh: 聚合物驱前应具有有效水驱波及基础
+      name_en: Adequate Waterflood Sweep Before Polymer Flooding
+      inputs: [waterflood_areal_sweep_fraction]
+      logic: waterflood_areal_sweep_fraction > 0.5
+      unit: fraction
+      decision: advisory
+      source_id: taber_1997_screening
+    - rule_id: PF-SCREEN-005
+      stage: screening
+      name_zh: 候选筛选不得仅凭单参数否决
+      name_en: No Single-Parameter Candidate Rejection
+      inputs: [screening_results, laboratory_evidence]
+      logic: reject_only_if_multiple_constraints_and_evidence
+      decision: workflow_gate
+      source_id: al_adaskani_2014_screening
+
+    - rule_id: PF-LAB-001
+      stage: laboratory
+      name_zh: 聚合物与配制水及地层水必须配伍
+      name_en: Polymer–Brine Compatibility Required
+      inputs: [polymer_type, makeup_water_chemistry, formation_water_chemistry]
+      logic: no_precipitation_and_acceptable_viscosity_retention
+      decision: project_specific
+      source_id: seright_2017_polymer_amount
+    - rule_id: PF-LAB-002
+      stage: laboratory
+      name_zh: 黏浓关系必须在项目温度和盐水条件下测定
+      name_en: Project-Condition Viscosity–Concentration Curve Required
+      inputs: [polymer_concentration, polymer_solution_viscosity, reservoir_temperature, brine_salinity]
+      logic: measured_curve_available
+      decision: required_evidence
+      source_id: opm_flow_2023_polymer
+    - rule_id: PF-LAB-003
+      stage: laboratory
+      name_zh: 剪切后黏度保留率必须测定
+      name_en: Post-Shear Viscosity Retention Must Be Measured
+      inputs: [viscosity_before_shear, viscosity_after_shear, shear_protocol]
+      logic: viscosity_after_shear / viscosity_before_shear >= project_minimum
+      decision: project_specific
+      source_id: seright_2009_injectivity
+    - rule_id: PF-LAB-004
+      stage: laboratory
+      name_zh: 长期热稳定性必须覆盖预计滞留时间
+      name_en: Thermal Stability Test Must Cover Expected Residence Time
+      inputs: [aging_duration, expected_residence_time, viscosity_retention]
+      logic: aging_duration >= expected_residence_time
+      decision: required_evidence
+      source_id: opm_flow_2023_polymer
+    - rule_id: PF-LAB-005
+      stage: laboratory
+      name_zh: 岩心驱替应测定阻力系数和残余阻力系数
+      name_en: Coreflood RF and RRF Required
+      inputs: [resistance_factor, residual_resistance_factor]
+      logic: both_measured_and_positive
+      decision: required_evidence
+      source_id: seright_2009_injectivity
+    - rule_id: PF-LAB-006
+      stage: laboratory
+      name_zh: 吸附参数必须由目标岩石与目标盐水标定
+      name_en: Project-Rock Polymer Adsorption Calibration Required
+      inputs: [polymer_adsorption, rock_type, brine_chemistry]
+      logic: adsorption_curve_available
+      decision: required_evidence
+      source_id: opm_flow_2023_polymer
+
+    - rule_id: PF-DESIGN-001
+      stage: design
+      name_zh: 目标聚合物黏度应基于流度控制
+      name_en: Target Polymer Viscosity Must Be Mobility-Based
+      inputs: [oil_mobility, water_relative_permeability, polymer_solution_viscosity]
+      logic: polymer_effective_mobility_ratio <= project_target
+      decision: project_specific
+      source_id: seright_2017_polymer_amount
+    - rule_id: PF-DESIGN-002
+      stage: design
+      name_zh: 浓度和段塞尺寸必须联合优化
+      name_en: Concentration and Slug Size Must Be Co-Optimized
+      inputs: [polymer_concentration, slug_size_pv, polymer_mass]
+      logic: compare_mass_equivalent_scenarios
+      decision: optimization
+      source_id: seright_2017_polymer_amount
+    - rule_id: PF-DESIGN-003
+      stage: design
+      name_zh: 聚合物用量必须满足质量守恒
+      name_en: Polymer Mass Balance
+      inputs: [polymer_concentration_kg_m3, injected_volume_m3, polymer_mass_kg]
+      logic: polymer_mass_kg == integral(concentration * injected_volume)
+      decision: hard_constraint
+      source_id: petroleum_engineering_core
+
+    - rule_id: PF-SIM-001
+      stage: simulation
+      name_zh: 聚合物模型必须包含黏浓关系
+      name_en: Polymer Model Requires Viscosity–Concentration Relation
+      inputs: [polymer_viscosity_table]
+      logic: present_and_monotonic_concentration_axis
+      decision: hard_constraint
+      source_id: opm_flow_2023_polymer
+    - rule_id: PF-SIM-002
+      stage: simulation
+      name_zh: 聚合物模型必须处理吸附与滞留
+      name_en: Polymer Model Must Represent Adsorption and Retention
+      inputs: [polymer_adsorption_table, adsorption_model]
+      logic: calibrated_or_explicitly_disabled_with_justification
+      decision: model_integrity
+      source_id: opm_flow_2023_polymer
+    - rule_id: PF-SIM-003
+      stage: simulation
+      name_zh: 必须评估不可进入孔隙体积
+      name_en: Inaccessible Pore Volume Must Be Assessed
+      inputs: [inaccessible_pore_volume_fraction]
+      logic: value_defined_or_sensitivity_documented
+      decision: model_integrity
+      source_id: opm_flow_2023_polymer
+    - rule_id: PF-SIM-004
+      stage: simulation
+      name_zh: 必须评估渗透率降低效应
+      name_en: Permeability-Reduction Effect Must Be Assessed
+      inputs: [residual_resistance_factor, permeability_reduction_model]
+      logic: calibrated_or_sensitivity_documented
+      decision: model_integrity
+      source_id: opm_flow_2023_polymer
+    - rule_id: PF-SIM-005
+      stage: simulation
+      name_zh: 非牛顿效应需要与实验数据一致
+      name_en: Non-Newtonian Model Must Match Rheology Data
+      inputs: [shear_model, rheology_data]
+      logic: model_calibrated_to_measured_data
+      decision: model_integrity
+      source_id: opm_flow_2023_polymer
+
+    - rule_id: PF-OPS-001
+      stage: operation
+      name_zh: 注入压力必须保留破裂压力安全裕度
+      name_en: Injection Pressure Below Fracture Limit With Margin
+      inputs: [injection_pressure, fracture_pressure, safety_margin]
+      logic: injection_pressure <= fracture_pressure - safety_margin
+      decision: hard_constraint
+      source_id: petroleum_engineering_core
+    - rule_id: PF-OPS-002
+      stage: operation
+      name_zh: 聚合物注入能力必须进行基线对比
+      name_en: Polymer Injectivity Requires Water Baseline
+      inputs: [water_injectivity_index, polymer_injectivity_index]
+      logic: compare_under_equivalent_conditions
+      decision: surveillance
+      source_id: seright_2009_injectivity
+    - rule_id: PF-OPS-003
+      stage: operation
+      name_zh: 地面配制浓度与井口注入浓度应闭合
+      name_en: Surface and Wellhead Concentration Reconciliation
+      inputs: [makeup_concentration, wellhead_concentration]
+      logic: relative_difference <= project_tolerance
+      decision: surveillance
+      source_id: petroleum_engineering_core
+
+    - rule_id: PF-PERF-001
+      stage: surveillance
+      name_zh: 增油评价必须设置水驱基线
+      name_en: Incremental Oil Requires a Waterflood Baseline
+      inputs: [actual_oil, baseline_oil]
+      logic: incremental_oil = actual_oil - baseline_oil
+      decision: required_evidence
+      source_id: petroleum_engineering_core
+    - rule_id: PF-PERF-002
+      stage: surveillance
+      name_zh: 经济评价必须报告聚合物利用率
+      name_en: Polymer Utilization Must Be Reported
+      inputs: [polymer_mass_kg, incremental_oil_m3]
+      logic: polymer_utilization = polymer_mass_kg / incremental_oil_m3
+      decision: derived_metric
+      source_id: seright_2017_polymer_amount
+    - rule_id: PF-PERF-003
+      stage: surveillance
+      name_zh: 预测与实测必须按时间序列校验
+      name_en: Forecast Must Be Validated Against Time-Series Observations
+      inputs: [forecast_series, observed_series]
+      logic: report_error_metrics_and_bias
+      decision: required_evidence
+      source_id: petroagent_core

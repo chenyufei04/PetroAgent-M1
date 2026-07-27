@@ -1,0 +1,14 @@
+knowledge_base:
+  id: petroagent-knowledge-foundation
+  name: PetroAgent Knowledge Foundation
+  version: "0.2.0"
+  status: research_demo
+  updated: "2026-07-27"
+  primary_demo_domain: polymer_flooding
+  executable_rule_file: core/rules.yaml
+  domain_rule_catalog: domains/chemical_eor/polymer_flooding.yaml
+  governance:
+    empirical_thresholds_are_advisory: true
+    project_specific_calibration_required: true
+    source_traceability_required: true
+    expert_review_status: pending

@@ -12,3 +12,52 @@ sources:
     authority_level: foundational
     notes_zh: 当前仅包含不依赖特定标准版本的基础约束，不冒充行业标准条款。
     notes_en: Contains foundational constraints only and does not claim to represent a specific industry standard.
+  - source_id: al_adaskani_2014_screening
+    source_type: peer_reviewed_article
+    name_zh: 聚合物驱数据分析与更新筛选准则
+    name_en: Data Analysis and Updated Screening Criteria for Polymer Flooding
+    authority_level: peer_reviewed
+    year: 2014
+    publisher: Society of Petroleum Engineers
+    doi: 10.2118/162170-PA
+    url: https://onepetro.org/REE/article/17/01/15/205378/
+    notes_zh: 用于候选油藏初筛；阈值是经验筛选边界，不是普适物理定律。
+  - source_id: taber_1997_screening
+    source_type: peer_reviewed_article
+    name_zh: 提高采收率筛选准则再研究（第二部分）
+    name_en: EOR Screening Criteria Revisited—Part 2
+    authority_level: peer_reviewed
+    year: 1997
+    publisher: Society of Petroleum Engineers
+    doi: 10.2118/39234-PA
+    url: https://onepetro.org/RE/article/12/03/199/108113/
+    notes_zh: 传统聚合物驱筛选参考，包括渗透率、温度、深度和油黏度等边界。
+  - source_id: seright_2017_polymer_amount
+    source_type: peer_reviewed_article
+    name_zh: 聚合物驱应注入多少聚合物
+    name_en: How Much Polymer Should Be Injected During a Polymer Flood?
+    authority_level: peer_reviewed
+    year: 2017
+    publisher: Society of Petroleum Engineers
+    doi: 10.2118/179543-PA
+    url: https://onepetro.org/SJ/article/22/01/1/206080/
+    notes_zh: 用于聚合物浓度、黏度和段塞尺寸的方案设计知识，不提供单一通用最优值。
+  - source_id: seright_2009_injectivity
+    source_type: peer_reviewed_article
+    name_zh: 提高采收率聚合物的注入能力特征
+    name_en: Injectivity Characteristics of EOR Polymers
+    authority_level: peer_reviewed
+    year: 2009
+    publisher: Society of Petroleum Engineers
+    doi: 10.2118/115142-PA
+    url: https://onepetro.org/REE/article/12/05/783/191971/
+    notes_zh: 支持阻力系数、机械降解、岩心注入能力和径向流条件的评价。
+  - source_id: opm_flow_2023_polymer
+    source_type: software_reference_manual
+    name_zh: OPM Flow 2023.04 聚合物模型参考手册
+    name_en: OPM Flow Reference Manual 2023.04 — Polymer Model
+    authority_level: official_software_documentation
+    year: 2023
+    publisher: Open Porous Media Initiative
+    url: https://opm-project.org/wp-content/uploads/2023/06/OPM_Flow_Reference_Manual_2023-04_Rev-0_Reduced.pdf
+    notes_zh: 支持聚合物黏度、吸附、不可进入孔隙体积、渗透率降低、混合和剪切模型的数模完整性规则。

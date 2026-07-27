@@ -25,4 +25,8 @@ units:
 metadata:
   dataset_status: generated_demo_not_official_opm_output
   description: 用于验证管线的演示 CSV；正式研究须替换为 OPM Flow 导出结果。
-
+knowledge:
+  enabled: true
+  execution_mode: knowledge
+  context:
+    representation: decimal_fraction

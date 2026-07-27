@@ -1,0 +1,14 @@
+schema_version: "0.1"
+sources:
+  - source_id: petroagent_core
+    source_type: software_definition
+    name_zh: PetroAgent 核心数据质量规则
+    name_en: PetroAgent Core Data Quality Rules
+    authority_level: project_internal
+  - source_id: petroleum_engineering_core
+    source_type: engineering_axiom
+    name_zh: 石油工程核心数学与物理约束
+    name_en: Petroleum Engineering Core Mathematical and Physical Constraints
+    authority_level: foundational
+    notes_zh: 当前仅包含不依赖特定标准版本的基础约束，不冒充行业标准条款。
+    notes_en: Contains foundational constraints only and does not claim to represent a specific industry standard.

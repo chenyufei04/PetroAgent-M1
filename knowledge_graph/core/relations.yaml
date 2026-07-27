@@ -1,0 +1,74 @@
+schema_version: "0.1"
+relations:
+  - relation_id: IS_A
+    name_zh: 是一种
+    name_en: Is A
+  - relation_id: BELONGS_TO_DOMAIN
+    name_zh: 属于工程领域
+    name_en: Belongs To Domain
+  - relation_id: PART_OF
+    name_zh: 是其组成部分
+    name_en: Part Of
+    inverse_name_zh: 包含组成部分
+    inverse_name_en: Has Part
+  - relation_id: ACTS_ON
+    name_zh: 作用于
+    name_en: Acts On
+  - relation_id: USES_MATERIAL
+    name_zh: 使用材料
+    name_en: Uses Material
+  - relation_id: USES_EQUIPMENT
+    name_zh: 使用设备
+    name_en: Uses Equipment
+  - relation_id: HAS_PARAMETER
+    name_zh: 具有参数
+    name_en: Has Parameter
+  - relation_id: USES_UNIT
+    name_zh: 使用单位
+    name_en: Uses Unit
+  - relation_id: DESCRIBES
+    name_zh: 描述
+    name_en: Describes
+  - relation_id: INPUT_TO
+    name_zh: 输入至
+    name_en: Input To
+    inverse_name_zh: 接收输入
+    inverse_name_en: Receives Input
+  - relation_id: OUTPUT_OF
+    name_zh: 输出自
+    name_en: Output Of
+  - relation_id: CONSTRAINS
+    name_zh: 约束
+    name_en: Constrains
+  - relation_id: DERIVED_FROM
+    name_zh: 来源于
+    name_en: Derived From
+  - relation_id: SUPPORTED_BY
+    name_zh: 由其支持
+    name_en: Supported By
+  - relation_id: PUBLISHED_BY
+    name_zh: 由其发布
+    name_en: Published By
+  - relation_id: HAS_CLAUSE
+    name_zh: 包含条款
+    name_en: Has Clause
+  - relation_id: REPLACES
+    name_zh: 替代
+    name_en: Replaces
+    inverse_name_zh: 被替代
+    inverse_name_en: Replaced By
+  - relation_id: ADOPTS
+    name_zh: 采用
+    name_en: Adopts
+  - relation_id: APPLIES_TO
+    name_zh: 适用于
+    name_en: Applies To
+  - relation_id: MAPPED_FROM
+    name_zh: 映射自
+    name_en: Mapped From
+  - relation_id: AFFECTS
+    name_zh: 影响
+    name_en: Affects
+  - relation_id: VERIFIED_BY
+    name_zh: 由其验证
+    name_en: Verified By

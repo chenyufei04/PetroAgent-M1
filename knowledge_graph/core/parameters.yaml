@@ -1,0 +1,56 @@
+schema_version: "0.1"
+parameters:
+  - concept_id: simulation_time
+    concept_type: parameter
+    name_zh: 模拟时间
+    name_en: Simulation Time
+    domains: [reservoir_engineering]
+  - concept_id: oil_production_rate
+    concept_type: parameter
+    name_zh: 产油速率
+    name_en: Oil Production Rate
+    aliases_zh: [油率]
+    domains: [reservoir_engineering, production_engineering]
+  - concept_id: water_production_rate
+    concept_type: parameter
+    name_zh: 产水速率
+    name_en: Water Production Rate
+    aliases_zh: [水率]
+    domains: [reservoir_engineering, production_engineering]
+  - concept_id: water_cut
+    concept_type: parameter
+    name_zh: 含水率
+    name_en: Water Cut
+    domains: [reservoir_engineering, production_engineering]
+  - concept_id: cumulative_oil
+    concept_type: parameter
+    name_zh: 累计产油量
+    name_en: Cumulative Oil Production
+    domains: [reservoir_engineering]
+  - concept_id: recovery_factor
+    concept_type: parameter
+    name_zh: 采收率
+    name_en: Recovery Factor
+    domains: [reservoir_engineering]
+  - concept_id: injector_bottomhole_pressure
+    concept_type: parameter
+    name_zh: 注入井井底压力
+    name_en: Injector Bottomhole Pressure
+    aliases_zh: [注入井BHP]
+    domains: [reservoir_engineering]
+  - concept_id: polymer_concentration
+    concept_type: parameter
+    name_zh: 聚合物浓度
+    name_en: Polymer Concentration
+    domains: [chemical_eor]
+  - concept_id: injected_pore_volume
+    concept_type: parameter
+    name_zh: 累计注入孔隙体积倍数
+    name_en: Injected Pore Volume
+    aliases_zh: [注入PV]
+    domains: [reservoir_engineering]
+  - concept_id: cumulative_injected_water
+    concept_type: parameter
+    name_zh: 累计注水量
+    name_en: Cumulative Injected Water
+    domains: [reservoir_engineering]

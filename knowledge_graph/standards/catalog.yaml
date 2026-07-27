@@ -1,0 +1,4 @@
+schema_version: "0.1"
+standards: []
+notes_zh: 第一版仅建立标准目录结构。正式加入标准时必须记录编号、版本、发布机构、条款和适用范围。
+notes_en: Version 0.1 defines the catalog structure only. Future entries must record identifier, version, publisher, clauses, and applicability.

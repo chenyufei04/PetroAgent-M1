@@ -1,0 +1,107 @@
+schema_version: "0.1"
+ontology:
+  ontology_id: PetroleumEngineeringCoreOntology
+  name_zh: 石油工程核心本体
+  name_en: Petroleum Engineering Core Ontology
+
+entities:
+  - concept_id: domain
+    concept_type: upper_entity
+    name_zh: 工程领域
+    name_en: Engineering Domain
+  - concept_id: asset
+    concept_type: upper_entity
+    name_zh: 工程资产
+    name_en: Engineering Asset
+  - concept_id: formation
+    concept_type: upper_entity
+    name_zh: 地层
+    name_en: Formation
+  - concept_id: reservoir
+    concept_type: asset
+    name_zh: 油气藏
+    name_en: Reservoir
+    aliases_zh: [储层]
+  - concept_id: well
+    concept_type: asset
+    name_zh: 井
+    name_en: Well
+  - concept_id: wellbore
+    concept_type: asset
+    name_zh: 井筒
+    name_en: Wellbore
+  - concept_id: material
+    concept_type: upper_entity
+    name_zh: 工程材料
+    name_en: Engineering Material
+  - concept_id: fluid
+    concept_type: material
+    name_zh: 流体
+    name_en: Fluid
+  - concept_id: equipment
+    concept_type: upper_entity
+    name_zh: 设备
+    name_en: Equipment
+  - concept_id: operation
+    concept_type: upper_entity
+    name_zh: 工程作业
+    name_en: Engineering Operation
+  - concept_id: method
+    concept_type: upper_entity
+    name_zh: 工程方法
+    name_en: Engineering Method
+  - concept_id: parameter
+    concept_type: upper_entity
+    name_zh: 工程参数
+    name_en: Engineering Parameter
+  - concept_id: unit
+    concept_type: upper_entity
+    name_zh: 计量单位
+    name_en: Measurement Unit
+  - concept_id: dataset
+    concept_type: upper_entity
+    name_zh: 数据集
+    name_en: Dataset
+  - concept_id: model
+    concept_type: upper_entity
+    name_zh: 工程模型
+    name_en: Engineering Model
+  - concept_id: software
+    concept_type: upper_entity
+    name_zh: 软件工具
+    name_en: Software Tool
+  - concept_id: standard
+    concept_type: upper_entity
+    name_zh: 标准
+    name_en: Standard
+  - concept_id: standard_clause
+    concept_type: upper_entity
+    name_zh: 标准条款
+    name_en: Standard Clause
+  - concept_id: rule
+    concept_type: upper_entity
+    name_zh: 工程规则
+    name_en: Engineering Rule
+  - concept_id: evidence
+    concept_type: upper_entity
+    name_zh: 证据
+    name_en: Evidence
+  - concept_id: organization
+    concept_type: upper_entity
+    name_zh: 组织机构
+    name_en: Organization
+  - concept_id: research_task
+    concept_type: upper_entity
+    name_zh: 科研任务
+    name_en: Research Task
+  - concept_id: polymer_flooding
+    concept_type: method
+    name_zh: 聚合物驱
+    name_en: Polymer Flooding
+    aliases_zh: [聚合物驱油]
+    domains: [reservoir_engineering, chemical_eor]
+  - concept_id: polymer_solution
+    concept_type: fluid
+    name_zh: 聚合物溶液
+    name_en: Polymer Solution
+    domains: [chemical_eor]

@@ -1,0 +1,96 @@
+schema_version: "0.1"
+rules:
+  - rule_id: CORE-DATA-001
+    name_zh: 数据集不能为空
+    name_en: Dataset Must Not Be Empty
+    rule_type: data_quality
+    target_concept: dataset
+    operator: not_empty
+    severity: error
+    source_id: petroagent_core
+    applicability_zh: 所有进入分析管线的数据集
+    applicability_en: All datasets entering the analysis pipeline
+  - rule_id: CORE-TIME-001
+    name_zh: 模拟时间必须单调不减
+    name_en: Simulation Time Must Be Monotonic Non-decreasing
+    rule_type: data_quality
+    target_concept: simulation_time
+    operator: monotonic_non_decreasing
+    expected:
+      tolerance: 0
+    unit: day
+    severity: error
+    source_id: petroagent_core
+  - rule_id: CORE-PROD-001
+    name_zh: 产油速率不得为负
+    name_en: Oil Production Rate Must Be Non-negative
+    rule_type: mathematical_constraint
+    target_concept: oil_production_rate
+    operator: greater_than_or_equal
+    expected: 0
+    unit: m3/day
+    severity: error
+    source_id: petroleum_engineering_core
+  - rule_id: CORE-PROD-002
+    name_zh: 产水速率不得为负
+    name_en: Water Production Rate Must Be Non-negative
+    rule_type: mathematical_constraint
+    target_concept: water_production_rate
+    operator: greater_than_or_equal
+    expected: 0
+    unit: m3/day
+    severity: error
+    source_id: petroleum_engineering_core
+  - rule_id: CORE-PROD-003
+    name_zh: 含水率有效范围
+    name_en: Valid Water Cut Range
+    rule_type: mathematical_constraint
+    target_concept: water_cut
+    operator: between
+    expected:
+      min: 0
+      max: 1
+    unit: fraction
+    severity: error
+    conditions:
+      representation: decimal_fraction
+    source_id: petroleum_engineering_core
+    applicability_zh: 含水率采用0到1的小数表示
+    applicability_en: Water cut represented as a decimal fraction from 0 to 1
+  - rule_id: CORE-RECOVERY-001
+    name_zh: 采收率有效范围
+    name_en: Valid Recovery Factor Range
+    rule_type: mathematical_constraint
+    target_concept: recovery_factor
+    operator: between
+    expected:
+      min: 0
+      max: 1
+    unit: fraction
+    severity: error
+    source_id: petroleum_engineering_core
+  - rule_id: CORE-RECOVERY-002
+    name_zh: 累计采收率必须单调不减
+    name_en: Cumulative Recovery Factor Must Be Monotonic Non-decreasing
+    rule_type: physical_constraint
+    target_concept: recovery_factor
+    operator: monotonic_non_decreasing
+    expected:
+      tolerance: 0.00000001
+    unit: fraction
+    severity: warning
+    source_id: petroleum_engineering_core
+  - rule_id: EOR-POLYMER-001
+    name_zh: 聚合物浓度不得为负
+    name_en: Polymer Concentration Must Be Non-negative
+    rule_type: physical_constraint
+    target_concept: polymer_concentration
+    operator: greater_than_or_equal
+    expected: 0
+    unit: kg/m3
+    severity: error
+    conditions:
+      process: polymer_flooding
+    source_id: petroleum_engineering_core
+    applicability_zh: 聚合物驱注入或产出浓度数据
+    applicability_en: Polymer injection or produced concentration data

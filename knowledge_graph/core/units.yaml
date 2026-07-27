@@ -1,0 +1,37 @@
+schema_version: "0.1"
+units:
+  - unit_id: day
+    name_zh: 天
+    name_en: Day
+    symbol: d
+    dimension: time
+  - unit_id: m3_per_day
+    name_zh: 立方米每天
+    name_en: Cubic Metre per Day
+    symbol: m3/day
+    dimension: volumetric_flow_rate
+  - unit_id: fraction
+    name_zh: 小数比例
+    name_en: Decimal Fraction
+    symbol: "1"
+    dimension: dimensionless
+  - unit_id: cubic_metre
+    name_zh: 立方米
+    name_en: Cubic Metre
+    symbol: m3
+    dimension: volume
+  - unit_id: bar
+    name_zh: 巴
+    name_en: Bar
+    symbol: bar
+    dimension: pressure
+  - unit_id: kilogram_per_cubic_metre
+    name_zh: 千克每立方米
+    name_en: Kilogram per Cubic Metre
+    symbol: kg/m3
+    dimension: mass_concentration
+  - unit_id: pore_volume
+    name_zh: 孔隙体积倍数
+    name_en: Pore Volume
+    symbol: PV
+    dimension: dimensionless

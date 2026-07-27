@@ -1,0 +1,18 @@
+schema_version: "0.1"
+domain_graph:
+  domain_id: chemical_eor
+  name_zh: 化学提高采收率
+  name_en: Chemical Enhanced Oil Recovery
+triples:
+  - subject: polymer_flooding
+    relation: USES_MATERIAL
+    object: polymer_solution
+  - subject: polymer_flooding
+    relation: ACTS_ON
+    object: reservoir
+  - subject: polymer_flooding
+    relation: HAS_PARAMETER
+    object: polymer_concentration
+  - subject: polymer_flooding
+    relation: AFFECTS
+    object: injector_bottomhole_pressure

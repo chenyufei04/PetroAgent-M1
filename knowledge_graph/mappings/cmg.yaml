@@ -1,0 +1,8 @@
+schema_version: "0.1"
+source_system:
+  id: cmg
+  name_zh: 计算机模拟集团油藏模拟器
+  name_en: Computer Modelling Group Reservoir Simulator
+mappings: {}
+notes_zh: CMG字段必须按具体模块、导出格式和单位制确认后补充，当前不做猜测映射。
+notes_en: CMG mappings must be confirmed against the exact simulator, export format, and unit system.

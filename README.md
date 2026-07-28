@@ -3,12 +3,12 @@
 面向石油工程科研的第一阶段智能体内核。项目以 OPM 官方开放案例
 `polymer_simple2D` 为主案例，以 `SPE9` 为跨场景验证案例，先建立一个
 可测试、可追溯、可替换数据源的确定性分析底座，并在同一项目中建设
-`PetroleumEngineeringCoreOntology v0.2`（石油工程核心本体 v0.2）。
-后续再接入 Neo4j、LangGraph、RAG、OPM Flow 自动运行和 CMG。
+`PetroleumEngineeringCoreOntology v0.2`（石油工程核心本体 v0.2），并提供
+YAML 到 Neo4j 的可重复导入与查询适配层。
 
-> 当前版本：`PetroAgent v0.2.0 / Knowledge Foundation v0.2.0`  
+> 当前版本：`PetroAgent v0.3.0 / Knowledge Foundation v0.2.0`  
 > Python：`3.10+`  
-> 当前边界：确定性分析内核＋YAML知识基础层；不包含 LLM、RAG、Neo4j、
+> 当前边界：确定性分析内核＋YAML知识源＋Neo4j存储/查询；不包含 LLM、RAG、
 > Web 前端和自动运行模拟器。
 
 ### v0.2.0 与前一版的区别
@@ -23,9 +23,35 @@
 | Demo 输出 | 显示旧规则总数 | 显示知识库版本及加载、执行、跳过数量 |
 | Neo4j | 无 | 仍未接入；YAML 图谱可在后续版本导入 |
 
-因此，v0.2.0 的交付边界是“聚合物驱 YAML 知识图谱源＋确定性规则执行”，
-不是 Neo4j 图数据库版本。Neo4j 导入、Cypher 查询及 Browser 可视化计划在
-后续版本实现。
+因此，v0.2.0 的交付边界是“聚合物驱 YAML 知识图谱源＋确定性规则执行”。
+v0.3.0 在不改变 YAML 事实来源的前提下，增加 Neo4j 导入、Cypher 查询及
+Browser 可视化支持。
+
+### v0.3.0 Neo4j 接入与中文化
+
+v0.3.0 的主入口仍是 `scripts/run_demo.py`。Neo4j 是 YAML 知识源的派生存储，
+不是第二套需要人工维护的知识库。
+
+本版完成：
+
+- 将93个概念节点、25条规则、6个阶段和7个来源导入 Neo4j；
+- 将17条聚合物驱领域三元组导入 Neo4j；
+- 为 `Concept`、`Domain`、`Rule`、`Stage`、`Source` 节点保存 `name_zh`；
+- 为领域关系及 `HAS_RULE`、`IN_STAGE`、`SUPPORTED_BY`、`USES_INPUT`
+  等结构关系保存 `name_zh`；
+- 终端默认以“中文名 `[稳定ID]`”输出，兼顾阅读和程序核验；
+- 使用 `MERGE` 和唯一约束实现可重复导入，不主动清空数据库。
+
+中文化不会把 `concept_id`、`rule_id` 或 Neo4j 标签/关系类型改成中文。例如：
+
+```text
+聚合物溶液黏度 [polymer_solution_viscosity]
+--影响 [AFFECTS]-->
+流度比 [mobility_ratio]
+```
+
+英文 ID 是跨 YAML、Python、Cypher 和外部数据映射的稳定标识；`name_zh`
+才是终端、报告和图形界面的首选展示名。
 
 ## 1. 项目目标
 
@@ -104,11 +130,13 @@ petro-agent-m1/
 │   └── runs/
 ├── scripts/
 │   ├── fetch_opm_data.py            # 下载官方案例并记录上游修订号
+│   ├── import_neo4j.py               # 幂等导入 YAML 图谱
+│   ├── query_neo4j.py                # 查询并输出 Neo4j 关系
 │   └── run_demo.py
 ├── src/petro_agent/
 │   ├── adapters/                    # CSV、Deck、未来 OPM/CMG/实验数据适配器
 │   ├── core/                        # 与石油工程具体方向无关的协议和管线
-│   ├── knowledge/                   # 知识模型、服务接口、YAML实现、规则执行
+│   ├── knowledge/                   # YAML知识服务、规则执行、Neo4j适配层
 │   ├── domain_packs/
 │   │   ├── common_reservoir/        # 公共油藏规则与计算
 │   │   └── polymer_flooding/        # 聚合物驱专用逻辑
@@ -126,7 +154,7 @@ petro-agent-m1/
 
 - `knowledge_graph/` 保存研究人员可直接审查的知识内容；
 - `src/petro_agent/knowledge/` 保存加载、检索、匹配和执行知识的程序；
-- 将来 Neo4j 只是查询载体，Git 中的 YAML 仍是可追溯的知识源。
+- Neo4j 是查询和关系遍历载体，Git 中的 YAML 仍是可追溯的知识源。
 
 ## 4. 快速开始
 
@@ -174,7 +202,155 @@ outputs/figures/polymer_simple2d_demo_*.png
 `generated_demo_not_official_opm_output`。它不能作为论文实验结果，
 正式分析必须替换成 OPM Flow 实际输出。
 
-## 5. 获取 OPM 官方案例
+## 5. 导入并验证 Neo4j 图谱
+
+项目根目录 `.env` 应包含：
+
+```env
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=你的密码
+NEO4J_DATABASE=petro
+```
+
+先只校验 YAML 和统计导入计划，不连接数据库：
+
+```powershell
+python scripts\import_neo4j.py --dry-run
+```
+
+确认无误后执行幂等导入；重复运行不会重复创建同一节点和关系：
+
+```powershell
+python scripts\import_neo4j.py
+python scripts\query_neo4j.py
+```
+
+也可以让聚合物驱 Demo 直接从 Neo4j 输出关系佐证：
+
+```powershell
+python scripts\run_demo.py --graph-source neo4j
+```
+
+默认 `python scripts\run_demo.py` 仍读取 YAML；这便于比较 YAML 事实来源与
+Neo4j 派生存储是否一致。
+
+### 5.1 已导入旧版数据时的中文升级
+
+如果已经运行过中文化之前的 `v0.3.0` 导入脚本，无需删除数据库。拉取新代码后
+重新执行：
+
+```powershell
+python scripts\import_neo4j.py --dry-run
+python scripts\import_neo4j.py
+```
+
+导入器会通过稳定 ID 命中原节点和关系，并补写 `name_zh`、`name_en` 等属性。
+随后验证：
+
+```powershell
+python scripts\query_neo4j.py
+python scripts\run_demo.py --graph-source neo4j
+```
+
+预期关系输出形式：
+
+```text
+01. 聚合物驱 [polymer_flooding]
+    --是一种 [IS_A]-->
+    化学提高采收率方法 [chemical_eor_method]
+```
+
+### 5.2 中文属性完整性检查
+
+检查所有项目节点是否均有中文名：
+
+```cypher
+MATCH (n)
+WHERE n:Concept OR n:Domain OR n:Rule OR n:Stage OR n:Source
+WITH n,
+     CASE
+       WHEN n:Concept THEN n.concept_id
+       WHEN n:Domain THEN n.domain_id
+       WHEN n:Rule THEN n.rule_id
+       WHEN n:Stage THEN n.stage_id
+       WHEN n:Source THEN n.source_id
+     END AS stable_id
+WHERE n.name_zh IS NULL OR trim(n.name_zh) = ''
+RETURN labels(n) AS labels, stable_id
+ORDER BY labels, stable_id;
+```
+
+正确结果应为：
+
+```text
+no changes, no records
+```
+
+检查所有项目关系是否有中文名：
+
+```cypher
+MATCH ()-[r]->()
+WHERE r.source = 'knowledge_graph YAML'
+   OR type(r) IN ['HAS_RULE', 'IN_STAGE', 'SUPPORTED_BY', 'USES_INPUT']
+WITH r
+WHERE r.name_zh IS NULL OR trim(r.name_zh) = ''
+RETURN type(r) AS relation_id, count(*) AS missing_count;
+```
+
+正确结果同样应为空。
+
+### 5.3 Neo4j Browser 中文展示
+
+Neo4j 内部标签（如 `Concept`）和关系类型（如 `AFFECTS`）继续使用稳定英文标识。
+在图形样式设置中，将节点 caption/标题属性设为 `name_zh`，将关系 caption/标题
+属性设为 `name_zh`，即可优先显示中文。若当前 Browser 版本不支持关系属性作为
+标题，可使用下面的表格查询查看完整中英文对照：
+
+```cypher
+MATCH (a:Concept)-[r]->(b:Concept)
+RETURN a.name_zh AS 起点,
+       coalesce(r.name_zh, type(r)) AS 关系,
+       b.name_zh AS 终点,
+       a.concept_id AS 起点ID,
+       type(r) AS 关系ID,
+       b.concept_id AS 终点ID
+ORDER BY 起点ID, 关系ID, 终点ID;
+```
+
+在 Neo4j Browser 中查看聚合物驱概念子图：
+
+```cypher
+MATCH path=(a:Concept)-[r]->(b:Concept)
+RETURN path
+LIMIT 200;
+```
+
+查看25条规则及其阶段和证据：
+
+```cypher
+MATCH path=(d:Domain)-[:HAS_RULE]->(r:Rule)-[:IN_STAGE|SUPPORTED_BY]->(x)
+RETURN path
+LIMIT 200;
+```
+
+导入器只使用 `MERGE` 和唯一约束，不会清空 `petro` 数据库。如果数据库中已有
+其他项目数据，也不会被脚本删除。YAML 内容更新后重新运行导入脚本即可增量同步；
+当前版本不会自动删除已从 YAML 移除的旧节点。
+
+### 5.4 常用命令总览
+
+| 命令 | 作用 | 是否访问 Neo4j |
+|---|---|---:|
+| `python scripts\validate_knowledge.py` | 校验 YAML 知识文件 | 否 |
+| `python scripts\import_neo4j.py --dry-run` | 生成并检查导入计划 | 否 |
+| `python scripts\import_neo4j.py` | 幂等写入 `petro` | 是 |
+| `python scripts\query_neo4j.py` | 单独查询中文图谱关系 | 是 |
+| `python scripts\run_demo.py` | 执行规则并从 YAML 输出关系 | 否 |
+| `python scripts\run_demo.py --graph-source neo4j` | 执行规则并从 Neo4j 输出关系 | 是 |
+| `python scripts\run_demo.py --graph-source none` | 仅执行规则和生成报告 | 否 |
+
+## 6. 获取 OPM 官方案例
 
 机器需安装 Git，并能够访问 GitHub。
 
@@ -742,19 +918,27 @@ pytest -q
 - 聚合物驱六类受控 Agent 职责图谱；
 - 报告证据追溯。
 
-### M1.3
+### M1.3（当前：Neo4j 图谱接入 v0.3）
+
+- YAML 到 Neo4j 的幂等导入；
+- 概念、领域、规则、阶段、输入参数和证据来源节点；
+- 唯一约束和重复导入保护；
+- Python 查询服务、文本关系佐证和 Browser 可视化；
+- YAML dry-run 校验，Neo4j 继续作为派生查询存储。
+
+### M1.4
 
 - 安装并自动调用 OPM Flow；
 - 直接读取 summary / restart 输出；
 - 建立水驱与聚合物驱成对运行配置；
 - 增加运行清单和完整 provenance。
 
-### M1.4
+### M1.5
 
 - 扩充标准目录、条款和版本关系；
 - 增加知识结构 Schema 校验；
 - 增加 OPM 结果字段与单位的版本化映射；
-- 达到一定规模后导入 Neo4j，并保持 YAML 为知识源。
+- 增加多跳查询与智能体知识检索接口。
 
 ### M2
 
@@ -782,9 +966,9 @@ pytest -q
 - 未接入 LLM，不具备自然语言自主规划；
 - 知识实体、关系和规则仍是 v0.2 研究演示版，并非完备行业知识库；
 - 已登记论文和官方软件手册来源，但尚未导入正式标准全文及可定位条款；
-- 未接入 Neo4j，当前不提供多跳图查询和图形化浏览；
+- Neo4j 已支持导入、基础查询和图形化浏览，但尚未接入分析管线的规则执行；
 - CMG 字段映射尚未在具体导出结果上验证；
-- 未接入数据库或前端。
+- 未接入前端。
 
 这些限制是刻意的：第一阶段先保证计算工具、接口、规则和来源可验证，
 再把智能体能力放在可靠内核外层。

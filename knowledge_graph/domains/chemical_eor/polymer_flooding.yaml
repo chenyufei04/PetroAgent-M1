@@ -3,6 +3,69 @@ domain_graph:
   domain_id: chemical_eor
   name_zh: 化学提高采收率
   name_en: Chemical Enhanced Oil Recovery
+
+# 本领域使用、但不属于核心通用概念表的节点。
+# concept_id 是程序稳定标识；name_zh 是终端、报告和 Neo4j Browser 的默认显示名。
+concepts:
+  - {concept_id: chemical_eor_method, concept_type: method, name_zh: 化学提高采收率方法, name_en: Chemical EOR Method}
+  - {concept_id: polymer_solution_viscosity, concept_type: parameter, name_zh: 聚合物溶液黏度, name_en: Polymer Solution Viscosity}
+  - {concept_id: mobility_ratio, concept_type: parameter, name_zh: 流度比, name_en: Mobility Ratio}
+  - {concept_id: reservoir_temperature, concept_type: parameter, name_zh: 油藏温度, name_en: Reservoir Temperature}
+  - {concept_id: polymer_stability, concept_type: parameter, name_zh: 聚合物稳定性, name_en: Polymer Stability}
+  - {concept_id: brine_salinity, concept_type: parameter, name_zh: 盐水矿化度, name_en: Brine Salinity}
+  - {concept_id: divalent_ion_concentration, concept_type: parameter, name_zh: 二价离子浓度, name_en: Divalent Ion Concentration}
+  - {concept_id: shear_rate, concept_type: parameter, name_zh: 剪切速率, name_en: Shear Rate}
+  - {concept_id: polymer_adsorption, concept_type: parameter, name_zh: 聚合物吸附量, name_en: Polymer Adsorption}
+  - {concept_id: polymer_transport, concept_type: process, name_zh: 聚合物运移, name_en: Polymer Transport}
+  - {concept_id: residual_resistance_factor, concept_type: parameter, name_zh: 残余阻力系数, name_en: Residual Resistance Factor}
+  - {concept_id: permeability_reduction, concept_type: process, name_zh: 渗透率降低, name_en: Permeability Reduction}
+  - {concept_id: injection_pressure, concept_type: parameter, name_zh: 注入压力, name_en: Injection Pressure}
+  - {concept_id: polymer_injection_rate, concept_type: parameter, name_zh: 聚合物注入速率, name_en: Polymer Injection Rate}
+  - {concept_id: fracture_pressure, concept_type: parameter, name_zh: 地层破裂压力, name_en: Formation Fracture Pressure}
+  - {concept_id: core_flood_test, concept_type: experiment, name_zh: 岩心驱替实验, name_en: Core Flood Test}
+  - {concept_id: injectivity_test, concept_type: experiment, name_zh: 注入能力实验, name_en: Injectivity Test}
+  - {concept_id: oil_viscosity_reservoir_cp, concept_type: parameter, name_zh: 油藏条件原油黏度, name_en: Reservoir-Condition Oil Viscosity}
+  - {concept_id: average_permeability_md, concept_type: parameter, name_zh: 平均渗透率, name_en: Average Permeability}
+  - {concept_id: reservoir_temperature_c, concept_type: parameter, name_zh: 油藏温度（摄氏度）, name_en: Reservoir Temperature in Celsius}
+  - {concept_id: waterflood_areal_sweep_fraction, concept_type: parameter, name_zh: 水驱平面波及系数, name_en: Waterflood Areal Sweep Fraction}
+  - {concept_id: screening_results, concept_type: dataset, name_zh: 筛选结果, name_en: Screening Results}
+  - {concept_id: laboratory_evidence, concept_type: evidence, name_zh: 实验证据, name_en: Laboratory Evidence}
+  - {concept_id: polymer_type, concept_type: material, name_zh: 聚合物类型, name_en: Polymer Type}
+  - {concept_id: makeup_water_chemistry, concept_type: parameter, name_zh: 配制水化学组成, name_en: Makeup-Water Chemistry}
+  - {concept_id: formation_water_chemistry, concept_type: parameter, name_zh: 地层水化学组成, name_en: Formation-Water Chemistry}
+  - {concept_id: viscosity_before_shear, concept_type: parameter, name_zh: 剪切前黏度, name_en: Viscosity Before Shear}
+  - {concept_id: viscosity_after_shear, concept_type: parameter, name_zh: 剪切后黏度, name_en: Viscosity After Shear}
+  - {concept_id: shear_protocol, concept_type: experiment, name_zh: 剪切实验方案, name_en: Shear Protocol}
+  - {concept_id: aging_duration, concept_type: parameter, name_zh: 老化实验时长, name_en: Aging Duration}
+  - {concept_id: expected_residence_time, concept_type: parameter, name_zh: 预计滞留时间, name_en: Expected Residence Time}
+  - {concept_id: viscosity_retention, concept_type: parameter, name_zh: 黏度保留率, name_en: Viscosity Retention}
+  - {concept_id: resistance_factor, concept_type: parameter, name_zh: 阻力系数, name_en: Resistance Factor}
+  - {concept_id: rock_type, concept_type: formation, name_zh: 岩石类型, name_en: Rock Type}
+  - {concept_id: brine_chemistry, concept_type: parameter, name_zh: 盐水化学组成, name_en: Brine Chemistry}
+  - {concept_id: oil_mobility, concept_type: parameter, name_zh: 油相流度, name_en: Oil Mobility}
+  - {concept_id: water_relative_permeability, concept_type: parameter, name_zh: 水相相对渗透率, name_en: Water Relative Permeability}
+  - {concept_id: slug_size_pv, concept_type: parameter, name_zh: 聚合物段塞尺寸, name_en: Polymer Slug Size}
+  - {concept_id: polymer_mass, concept_type: parameter, name_zh: 聚合物用量, name_en: Polymer Mass}
+  - {concept_id: polymer_concentration_kg_m3, concept_type: parameter, name_zh: 聚合物质量浓度, name_en: Polymer Mass Concentration}
+  - {concept_id: injected_volume_m3, concept_type: parameter, name_zh: 累计注入体积, name_en: Injected Volume}
+  - {concept_id: polymer_mass_kg, concept_type: parameter, name_zh: 聚合物质量, name_en: Polymer Mass in Kilograms}
+  - {concept_id: polymer_viscosity_table, concept_type: dataset, name_zh: 聚合物黏浓关系表, name_en: Polymer Viscosity Table}
+  - {concept_id: polymer_adsorption_table, concept_type: dataset, name_zh: 聚合物吸附参数表, name_en: Polymer Adsorption Table}
+  - {concept_id: adsorption_model, concept_type: model, name_zh: 吸附模型, name_en: Adsorption Model}
+  - {concept_id: inaccessible_pore_volume_fraction, concept_type: parameter, name_zh: 不可进入孔隙体积分数, name_en: Inaccessible Pore Volume Fraction}
+  - {concept_id: permeability_reduction_model, concept_type: model, name_zh: 渗透率降低模型, name_en: Permeability Reduction Model}
+  - {concept_id: shear_model, concept_type: model, name_zh: 剪切模型, name_en: Shear Model}
+  - {concept_id: rheology_data, concept_type: dataset, name_zh: 流变实验数据, name_en: Rheology Data}
+  - {concept_id: safety_margin, concept_type: parameter, name_zh: 压力安全裕度, name_en: Pressure Safety Margin}
+  - {concept_id: water_injectivity_index, concept_type: parameter, name_zh: 注水能力指数, name_en: Water Injectivity Index}
+  - {concept_id: polymer_injectivity_index, concept_type: parameter, name_zh: 聚合物注入能力指数, name_en: Polymer Injectivity Index}
+  - {concept_id: makeup_concentration, concept_type: parameter, name_zh: 地面配制浓度, name_en: Makeup Concentration}
+  - {concept_id: wellhead_concentration, concept_type: parameter, name_zh: 井口注入浓度, name_en: Wellhead Concentration}
+  - {concept_id: actual_oil, concept_type: parameter, name_zh: 实际产油量, name_en: Actual Oil Production}
+  - {concept_id: baseline_oil, concept_type: parameter, name_zh: 水驱基线产油量, name_en: Baseline Oil Production}
+  - {concept_id: incremental_oil_m3, concept_type: parameter, name_zh: 聚合物增油量, name_en: Incremental Oil}
+  - {concept_id: forecast_series, concept_type: dataset, name_zh: 预测时间序列, name_en: Forecast Time Series}
+  - {concept_id: observed_series, concept_type: dataset, name_zh: 实测时间序列, name_en: Observed Time Series}
 triples:
   - subject: polymer_flooding
     relation: IS_A

@@ -72,3 +72,12 @@ relations:
   - relation_id: VERIFIED_BY
     name_zh: 由其验证
     name_en: Verified By
+  - relation_id: HAS_RULE
+    name_zh: 包含规则
+    name_en: Has Rule
+  - relation_id: IN_STAGE
+    name_zh: 处于阶段
+    name_en: In Stage
+  - relation_id: USES_INPUT
+    name_zh: 使用输入
+    name_en: Uses Input

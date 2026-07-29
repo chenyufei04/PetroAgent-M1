@@ -6,10 +6,15 @@
 `PetroleumEngineeringCoreOntology v0.2`（石油工程核心本体 v0.2），并提供
 YAML 到 Neo4j 的可重复导入与查询适配层。
 
-> 当前版本：`PetroAgent v0.3.0 / Knowledge Foundation v0.2.0`  
+> 当前版本：`PetroAgent v0.4.2 / Knowledge Foundation v0.2.0`  
 > Python：`3.10+`  
-> 当前边界：确定性分析内核＋YAML知识源＋Neo4j存储/查询；不包含 LLM、RAG、
-> Web 前端和自动运行模拟器。
+> 当前边界：确定性分析内核＋YAML知识源＋Neo4j存储/查询＋Web 演示展示；
+> 不包含 LLM、RAG、用户文件上传和自动运行模拟器。
+
+v0.4.2 在保留原始产物下载功能的基础上，增加图表、文档和表格三类在线
+预览；Neo4j“全部图谱”视图同步展示全部实体列表与全部关系列表，并支持
+按名称、ID和类型搜索。输出预览接口采用稳定的结构化响应，便于后续封装为
+LangChain 工具。
 
 ### v0.2.0 与前一版的区别
 
@@ -988,290 +993,268 @@ pytest -q
 
 完成这十步后，再接入 LangGraph。这样 Agent 调用的是已经验证的科研工具，
 而不是临时生成未经检验的计算代码。
+## v0.4.0：Outputs 与 Neo4j Web Demo
 
-## 17. 日后更换数据源的方法
+本版本在原有命令行演示之上增加展示层，不改变 CSV 适配器、确定性规则引擎和
+Neo4j 知识库的职责。页面只调用受控 API，不允许浏览器提交任意 Cypher 或读取
+任意本地路径。
 
-当前项目中的演示 CSV 只用于验证“读取数据 → 标准化 → 规则执行 → 绘图 →
-生成报告”这条管线能够运行，不应把演示文件路径、列名或案例名称继续写死在
-规则引擎中。日后接入 OPM 实际输出、CMG 导出文件、实验数据、数据库或外部
-API 时，应保持分析内核不变，只替换数据源适配层和案例配置。
-
-推荐始终保持以下分层：
+### 新增模块
 
 ```text
-原始数据源
-  CSV / Excel / OPM / CMG / 实验数据 / 数据库 / API
-        ↓
-数据源适配器（读取文件、识别字段、处理格式差异）
-        ↓
-字段与单位映射（转换为稳定英文 concept_id）
-        ↓
-CanonicalDataset（项目统一数据对象）
-        ↓
-校验、指标计算、知识检索、规则执行、绘图和报告
+frontend/                         Vue 3 + Vite 展示页面
+src/petro_agent/api/             FastAPI 接口与结果序列化
+scripts/run_web.py               后端启动入口
+outputs/runs/*_result.json        页面使用的结构化分析结果
 ```
 
-其中：
+第一版支持：
 
-- 原始数据源可以变化；
-- `CanonicalDataset` 的字段语义应尽量保持稳定；
-- 规则和知识图谱应引用稳定的 `concept_id`，不直接依赖某个文件的中文表头；
-- 单位换算必须在适配或标准化阶段完成，不能留给 LLM 猜测；
-- 原始文件应保留，不要用清洗后的结果覆盖原文件；
-- 每次正式运行都应记录数据来源、文件哈希、适配器版本、单位和运行时间。
+- 选择已经配置的演示案例；
+- 调用现有 `analyze_csv()` 执行分析；
+- 展示规则总数、通过数、未通过数和警告数；
+- 查看每条规则的观测值、概念编号和证据来源；
+- 获取本次案例相关的 Neo4j 概念子图；
+- 点击规则后高亮关联概念；
+- 下载 Markdown、JSON、规范化 CSV 和结果图；
+- Neo4j 离线时继续展示分析结果，并明确提示图谱不可用。
 
-### 17.1 替换为另一份 CSV 或 Excel
+### 启动后端
 
-如果新文件表达的仍是同一类时序结果，优先新增案例配置，而不是修改通用规则。
-建议在 `config/cases/` 中增加一个配置文件，例如：
+```powershell
+python -m pip install -r requirements.txt
+python scripts\run_web.py
+```
+
+API 文档：
 
 ```text
-config/cases/my_polymer_case.yaml
+http://127.0.0.1:8000/docs
 ```
 
-配置至少应描述：
+### 启动前端
 
-```yaml
-case_id: my_polymer_case
-domain_pack: polymer_flooding
-source_type: excel
-source_file: data/raw/my_polymer_case.xlsx
-sheet_name: Summary
+要求 Node.js 20.19+ 或 22.12+：
 
-column_mapping:
-  日期: time
-  日产油量: oil_rate
-  日产水量: water_rate
-  注入井底压力: injection_bhp
-  聚合物浓度: polymer_concentration
-
-units:
-  time: day
-  oil_rate: m3/day
-  water_rate: m3/day
-  injection_bhp: MPa
-  polymer_concentration: mg/L
+```powershell
+cd frontend
+npm install
+npm run dev
 ```
 
-上例左侧是上传文件中的真实列名，右侧是项目内部的标准字段。实际配置项应以
-项目当前的 case schema 为准，不要仅复制示例后跳过校验。
-
-如果现有 CSV 适配器已经能够读取该格式，只需：
-
-1. 将原始文件放入 `data/raw/`；
-2. 新建案例配置并填写字段、单位和领域包；
-3. 运行字段完整性与单位检查；
-4. 使用新 `case_id` 调用现有管线；
-5. 检查 `outputs/runs/` 中的标准化数据，再查看报告。
-
-Excel 数据需要新增或完善 `ExcelAdapter`，负责选择工作表、处理空表头、日期
-格式、合并单元格和数值类型，最终仍然返回 `CanonicalDataset`。不要在
-`pipeline.py` 或规则文件中直接使用 `pandas.read_excel()`。
-
-### 17.2 替换为 OPM 或 CMG 数据
-
-模拟器数据不宜直接传给规则引擎。应分别实现适配器，例如：
+页面地址：
 
 ```text
-src/petro_agent/adapters/opm_adapter.py
-src/petro_agent/adapters/cmg_adapter.py
+http://127.0.0.1:5173
 ```
 
-适配器负责：
+生产构建：
 
-- 读取模拟器导出的 summary、CSV 或其他受支持结果；
-- 将井名、时间、压力、流量、累计量和化学剂参数映射为标准字段；
-- 统一单位；
-- 区分油田级、井级、网格级数据粒度；
-- 保存模拟器名称、版本、案例名称和运行标识；
-- 对缺失字段给出明确错误，而不是静默填零。
+```powershell
+npm run build
+cd ..
+python scripts\run_web.py
+```
 
-推荐先让 OPM 或 CMG 导出为稳定 CSV，再接入本项目；待字段映射经过验证后，
-再考虑直接读取二进制结果。CMG 为商业软件，项目只保存适配代码和字段映射，
-不应提交许可证、安装文件或受限制的原始案例。
+当 `frontend/dist` 存在时，FastAPI 会同时托管构建后的页面，可直接访问
+`http://127.0.0.1:8000`。
 
-### 17.3 替换为数据库或外部 API
+### 主要 API
 
-数据库和 API 也应通过独立适配器转换为 `CanonicalDataset`：
+| 方法 | 地址 | 用途 |
+|---|---|---|
+| GET | `/api/health` | 服务状态 |
+| GET | `/api/cases` | 已配置案例列表 |
+| POST | `/api/analysis/run` | 执行现有分析管线 |
+| POST | `/api/graph/subgraph` | 获取受控的案例相关子图 |
+| GET | `/api/outputs/{category}/{filename}` | 下载允许目录中的输出 |
+
+当前版本只展示仓库内已有演示案例，不接收用户文件。CSV、Excel 或 YAML 上传、
+字段映射和任务隔离继续放在后续上传版本中实现。
+
+## 16. 后续替换与扩展时的必要操作
+
+后续无论替换案例数据、规则、知识图谱、输出文件，还是接入 LangChain，都不要
+只替换单个文件。当前页面、分析管线、YAML 知识源和 Neo4j 之间依赖稳定 ID、
+字段名称及输出契约，建议按下面的顺序完成修改和验证。
+
+### 16.1 替换或新增案例数据
+
+1. 将原始数据放入 `data/raw/`，处理后的标准数据放入 `data/processed/`；
+   `data/demo/` 只保留演示数据。
+2. 在 `config/cases/` 新增案例 YAML，不要直接覆盖已有案例配置。
+3. 为案例设置唯一且稳定的 `case_id`，并填写数据来源、单位、领域包和字段映射。
+4. 将外部字段映射为 `CanonicalDataset` 使用的标准字段；不得只在前端修改列名。
+5. 检查时间、流量、压力、浓度和采收率等字段的单位，必要时在适配器层统一换算。
+6. 若新增文件格式，在 `src/petro_agent/adapters/` 增加适配器，并保持管线输出对象
+   不变。
+7. 在案例列表接口中确认新案例可见，再运行 CLI 和 Web 两条链路。
+
+至少验证：
+
+```powershell
+python scripts\run_demo.py
+pytest
+```
+
+正式科研数据还应保存数据来源、下载日期、上游版本或提交哈希、处理脚本及参数，
+避免最终报告无法复现。
+
+### 16.2 替换或新增规则
+
+1. 在 `knowledge_graph/` 中维护规则事实，不要把新规则直接写死在前端或 API。
+2. 每条规则使用唯一的 `rule_id`，并补齐中文名、输入参数、判断条件、期望值、
+   风险等级、建议、适用阶段和来源。
+3. `input_keys` 必须与标准数据字段或已注册指标一致；修改字段名时同步检查规则。
+4. 新增条件运算符或计算方式时，应扩展规则执行器并增加单元测试。
+5. 修改 YAML 后先校验，再重新导入 Neo4j：
+
+```powershell
+python scripts\validate_knowledge.py
+python scripts\import_neo4j.py --dry-run
+python scripts\import_neo4j.py
+```
+
+6. 对比 `knowledge`、`legacy` 或 `hybrid` 模式下的规则数量、执行数、跳过数和结果，
+   防止规则加载成功但因输入字段缺失而未执行。
+
+### 16.3 替换或扩展知识图谱
+
+1. Git 中的 YAML 仍是事实来源，Neo4j 是派生查询存储；不要只在 Neo4j Browser
+   中手工创建长期节点。
+2. 新实体和关系必须使用稳定英文 ID，中文名用于展示，避免将中文名称作为跨系统
+   主键。
+3. 若增加新的节点标签或关系类型，需要同步检查：
+   - `src/petro_agent/knowledge/neo4j/importer.py`
+   - `src/petro_agent/knowledge/neo4j/query_service.py`
+   - `frontend/src/components/KnowledgeGraph.vue`
+   - `frontend/src/components/GraphInventory.vue`
+4. 若增加新的图谱查询按钮，应在后端增加预定义只读查询；前端不要提交任意 Cypher。
+5. 重新导入后，分别验证全部实体、全部关系、孤立实体、中文名和关系方向。
+
+推荐执行：
+
+```powershell
+python scripts\import_neo4j.py --dry-run
+python scripts\import_neo4j.py
+python scripts\query_neo4j.py
+python scripts\run_demo.py --graph-source neo4j
+```
+
+如果修改了节点或关系的稳定 ID，`MERGE` 不会自动删除旧 ID 对应的数据。此类迁移
+必须先编写迁移脚本或明确清理目标，备份数据库后再执行，不要直接清空整个库。
+
+### 16.4 替换或增加输出产物
+
+当前展示层按以下类型处理：
+
+| 类型 | 常见格式 | 当前展示方式 |
+|---|---|---|
+| 图表 | PNG | 图片预览＋原文件下载 |
+| 文档 | Markdown、JSON | 在线内容预览＋原文件下载 |
+| 表格 | CSV | 表头和数据行预览＋原文件下载 |
+
+新增产物时需要同时完成：
+
+1. 在分析管线中生成文件，并将文件记录写入结构化分析结果。
+2. 在 `src/petro_agent/api/serializers.py` 中返回稳定的产物类型、名称、预览地址和
+   下载地址。
+3. 在 API 的允许目录和允许后缀中登记，继续阻止 `..`、绝对路径和跨目录读取。
+4. 在 `frontend/src/components/OutputViewer.vue` 中补充对应渲染器。
+5. 保留“下载原文件”，在线预览不能替代原始科研产物。
+6. 大文件只返回分页、摘要或截断预览，不要把完整数据一次性传到浏览器。
+
+如果后续支持 PDF、Excel 或交互式 HTML，应分别增加受控预览逻辑，不要让前端直接
+执行上传文件中的脚本。
+
+### 16.5 接入 LangChain 前必须保持的工具契约
+
+LangChain 应调用现有确定性能力，而不是绕过管线直接读取任意本地文件或执行任意
+Cypher。建议至少封装以下只读或受控工具：
+
+| 工具 | 输入 | 结构化输出 |
+|---|---|---|
+| `list_cases` | 无 | 案例 ID、名称和领域 |
+| `run_analysis` | `case_id`、允许的运行参数 | 摘要、规则结果、产物清单 |
+| `query_graph_view` | 预定义视图名 | 节点、关系和图谱状态 |
+| `query_concept_subgraph` | 概念 ID、受限深度 | 相关节点、关系和知识路径 |
+| `preview_output` | 受控分类和文件名 | 图表、文档或表格预览数据 |
+
+接入时还需注意：
+
+- 工具返回 JSON，不解析终端日志；
+- LLM 负责选择工具和解释结果，不负责替代数值计算与规则判断；
+- 写操作、长时间任务和高成本模拟需要人工确认；
+- 保存工具输入、输出、模型版本、提示词版本、时间和异常信息；
+- 对工具设置超时、重试上限、输入校验和最大返回量；
+- LangChain 接入后仍保留不依赖 LLM 的 CLI、API 和测试入口。
+
+### 16.6 增加文件上传与多任务时
+
+后续支持 CSV、Excel 或 YAML 上传时，必须增加：
+
+1. 文件大小、扩展名、MIME 类型和文件名校验；
+2. 每次运行独立的 `run_id`，输入和输出按任务隔离；
+3. 上传字段到标准字段的映射确认页，并显示单位换算结果；
+4. 缺失字段、重复时间、非法数值和空数据检查；
+5. 任务状态、错误信息、创建时间和结果保留期限；
+6. 文件访问权限及删除策略；
+7. 后台任务或队列，避免在 HTTP 请求中同步执行长时间模拟；
+8. 禁止上传内容控制服务器路径、Python 模块或 Cypher 语句。
+
+推荐的任务目录结构：
 
 ```text
-Database/API
-    ↓
-查询或请求服务
-    ↓
-DataFrame / 领域数据对象
-    ↓
-CanonicalDataset
+outputs/
+└── runs/
+    └── {run_id}/
+        ├── input/
+        ├── normalized/
+        ├── figures/
+        ├── report/
+        ├── result.json
+        └── metadata.json
 ```
 
-数据库连接串、用户名、密码和 API Key 只能通过 `.env` 或部署环境注入，不能
-写入 README、案例 YAML 或提交到 Git。查询应固定字段和时间范围，并在运行
-记录中保存数据快照标识，避免同一个案例因上游数据变化而无法复现。
+### 16.7 前后端配置与部署
 
-### 17.4 新数据源接入检查清单
+- 开发环境由 Vite 代理 `/api` 到 FastAPI；修改端口时同步检查
+  `frontend/vite.config.js`。
+- 生产环境先执行 `npm run build`，再确认 FastAPI 托管的是最新
+  `frontend/dist`。
+- Neo4j 密码等敏感配置只放在 `.env` 或部署环境变量中，不提交 Git。
+- 若前后端分开部署，需要配置允许的 CORS 来源，不能长期使用任意来源。
+- 修改 API 路径或响应字段时，应同步修改 `frontend/src/api.js`、相关组件和接口测试。
+- 浏览器仍显示旧页面时，先确认后端使用了新 `dist`，再执行强制刷新。
 
-每增加一种数据源，至少完成以下检查：
+### 16.8 每次替换后的最低验收清单
 
-- [ ] 原始文件或查询结果有明确来源；
-- [ ] 数据源有独立适配器或已有适配器可复用；
-- [ ] 原始字段全部映射为稳定标准字段；
-- [ ] 单位已声明并转换；
-- [ ] 时间顺序、空值、重复记录和数值类型已校验；
-- [ ] 必需字段缺失时会阻止分析；
-- [ ] 标准化结果可以保存并复查；
-- [ ] 现有规则不需要感知原始文件格式；
-- [ ] 报告记录数据源、适配器和运行信息；
-- [ ] 为新适配器增加单元测试和至少一个端到端测试。
+提交代码前至少确认：
 
-## 18. 从命令行演示升级为数据上传页面
+- [ ] 知识 YAML 校验通过；
+- [ ] Neo4j dry-run 统计符合预期；
+- [ ] 重复导入不会产生重复节点或关系；
+- [ ] 原 Demo 和新增案例均能运行；
+- [ ] 规则加载数、执行数、跳过数和结果合理；
+- [ ] 图表、文档、表格均可预览并下载；
+- [ ] 全部实体与关系列表能显示，搜索可用；
+- [ ] Neo4j 离线时分析和输出页面仍可使用；
+- [ ] `pytest` 全部通过；
+- [ ] `npm run build` 通过；
+- [ ] `.env`、原始大数据、数据库文件、`.venv`、`node_modules` 和临时输出未误提交；
+- [ ] README、版本号和变更记录已同步更新。
 
-后续页面的目标不是让前端直接执行分析代码，而是增加一个受控入口：
+建议验证命令：
 
-```text
-浏览器上传文件并填写案例信息
-        ↓
-FastAPI 接收文件、校验类型和大小
-        ↓
-任务服务保存原始文件并创建 run_id
-        ↓
-适配器转换为 CanonicalDataset
-        ↓
-现有分析管线执行
-        ↓
-页面查询状态并展示图表、规则结果和报告
+```powershell
+python scripts\validate_knowledge.py
+python scripts\import_neo4j.py --dry-run
+pytest
+python scripts\run_demo.py
+cd frontend
+npm run build
 ```
 
-这样改造后，`scripts/run_demo.py` 仍可保留为开发和回归测试入口；Web 页面与
-命令行调用同一个应用服务和分析管线，不能在 FastAPI 路由中复制一套规则逻辑。
-
-### 18.1 推荐新增目录
-
-```text
-src/petro_agent/
-├── api/
-│   ├── main.py                 # FastAPI 应用入口
-│   ├── routes/
-│   │   ├── uploads.py          # 上传与预检查
-│   │   ├── runs.py             # 创建任务、查询状态
-│   │   └── reports.py          # 获取结果和报告
-│   └── schemas/                # 请求、响应模型
-├── application/
-│   └── analysis_service.py     # CLI 和 API 共用的应用服务
-├── adapters/                   # CSV、Excel、OPM、CMG等适配器
-└── pipeline.py                 # 继续保存确定性分析流程
-
-frontend/
-└── src/
-    ├── views/UploadCase.vue
-    ├── views/RunResult.vue
-    └── api/analysis.js
-```
-
-前端技术可以使用 Vue 3；后端使用 FastAPI。页面第一版不必实现复杂工作流，
-只需要完成上传、字段确认、执行和结果展示。
-
-### 18.2 建议的最小接口
-
-```http
-POST /api/uploads
-POST /api/runs
-GET  /api/runs/{run_id}
-GET  /api/runs/{run_id}/report
-GET  /api/runs/{run_id}/figures
-```
-
-推荐职责如下：
-
-| 接口 | 职责 |
-|---|---|
-| `POST /api/uploads` | 接收文件，返回 `upload_id`、识别到的列名、工作表和预检结果 |
-| `POST /api/runs` | 提交 `upload_id`、案例类型、字段映射、单位和领域包，创建分析任务 |
-| `GET /api/runs/{run_id}` | 返回排队、运行、成功或失败状态及可读错误 |
-| `GET /api/runs/{run_id}/report` | 返回 Markdown/HTML 报告和规则执行摘要 |
-| `GET /api/runs/{run_id}/figures` | 返回本次运行生成的图表清单 |
-
-`POST /api/runs` 的请求可以逐步设计为：
-
-```json
-{
-  "upload_id": "upload_20260727_xxx",
-  "case_id": "user_polymer_case",
-  "source_type": "excel",
-  "sheet_name": "Summary",
-  "domain_pack": "polymer_flooding",
-  "column_mapping": {
-    "日期": "time",
-    "日产油量": "oil_rate",
-    "日产水量": "water_rate"
-  },
-  "units": {
-    "time": "day",
-    "oil_rate": "m3/day",
-    "water_rate": "m3/day"
-  }
-}
-```
-
-### 18.3 页面第一版建议流程
-
-页面可以分为四步：
-
-1. **上传数据**：选择 CSV 或 Excel，并选择工作表；
-2. **确认字段**：系统自动建议字段映射，用户确认标准字段和单位；
-3. **运行分析**：选择案例类型与领域包，提交后显示任务状态；
-4. **查看结果**：展示数据质量检查、关键指标、触发规则、知识路径、图表和报告。
-
-自动字段匹配只能作为建议。遇到无法识别的列名、单位不明确或必需字段缺失时，
-页面必须要求用户确认，不能让 LLM 或程序静默猜测。
-
-### 18.4 上传文件的安全与可复现要求
-
-正式实现时至少加入：
-
-- 文件扩展名和 MIME 类型白名单；
-- 单文件大小、行数和工作表数量限制；
-- 随机生成服务器文件名，禁止直接使用用户路径；
-- 防止路径穿越和同名覆盖；
-- 不执行上传文件中的宏、脚本或公式；
-- Excel 优先读取公式结果或按安全策略拒绝复杂工作簿；
-- 上传目录与公开静态目录分离；
-- 失败任务保留可读错误，日志中不记录密码或敏感数据；
-- 使用 `upload_id` 和 `run_id` 关联文件、配置、结果与报告；
-- 设置原始数据和运行结果的保留、下载与删除策略。
-
-开发演示阶段可以同步执行小文件；当 OPM/CMG 结果较大或分析时间较长时，
-应改成后台任务队列，API 立即返回 `run_id`，由页面轮询或通过 WebSocket
-获取状态。
-
-### 18.5 Neo4j 在上传流程中的位置
-
-用户上传的是案例数据，不是直接上传到 Neo4j。推荐职责边界为：
-
-```text
-案例数据 → CanonicalDataset → 指标计算与规则执行
-                               ↑
-YAML知识源 → Neo4j → 相关概念、规则、路径和证据检索
-```
-
-案例中的数值结果默认保存在运行数据和报告中；Neo4j 继续保存相对稳定的领域
-概念、规则、关系和证据。只有在明确设计“案例节点/实验节点”及其生命周期后，
-才将案例摘要写入图谱，避免每次上传都把大量时序数据写成节点。
-
-### 18.6 推荐实施顺序
-
-建议分四个小版本推进：
-
-| 版本 | 目标 |
-|---|---|
-| `v0.3.x` | 将 `run_demo.py` 中的数据路径和案例选择彻底配置化 |
-| `v0.4.0` | 增加 `AnalysisService`，让 CLI 和未来 API 共用同一分析入口 |
-| `v0.5.0` | 增加 FastAPI 上传、字段预检、任务状态和报告接口 |
-| `v0.5.x` | 增加 Vue 页面、异步任务、运行历史和结果下载 |
-
-在开始开发页面前，至少应先完成两项工作：
-
-1. 任意一份符合映射配置的 CSV 能通过命令行运行，而不是只识别演示文件；
-2. `AnalysisService` 接收“文件/数据源引用＋案例配置”，并返回结构化运行结果。
-
-满足这两个条件后，页面只是给稳定能力增加交互入口，而不会迫使项目重新编写
-分析核心。
+替换完成后建议先创建功能分支并提交 Pull Request，不要直接覆盖稳定版本。版本升级
+时同时记录数据版本、知识库版本、Neo4j 导入版本、API 版本和前端版本，保证历史
+实验结果能够回溯。

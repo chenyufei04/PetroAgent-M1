@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import asdict
+import json
 from pathlib import Path
 
 from petro_agent.adapters.csv_adapter import CsvAdapter
@@ -101,7 +103,7 @@ def analyze_csv(source: Path, config_path: Path, output_root: Path) -> AnalysisR
             ]
         findings.extend(knowledge_findings)
         execution.update({
-            "knowledge_version": "0.1",
+            "knowledge_version": knowledge_service.version,
             "knowledge_loaded": engine.last_execution["loaded"],
             "knowledge_executed": engine.last_execution["executed"],
             "knowledge_skipped": engine.last_execution["skipped"],
@@ -111,4 +113,19 @@ def analyze_csv(source: Path, config_path: Path, output_root: Path) -> AnalysisR
     result = AnalysisResult(dataset, summarize(dataset.frame), findings, figures)
     write_report(result, output_root / "reports" / f"{dataset.case_id}.md")
     dataset.write_csv(output_root / "runs" / f"{dataset.case_id}_canonical.csv")
+    result_path = output_root / "runs" / f"{dataset.case_id}_result.json"
+    result_path.write_text(
+        json.dumps(
+            {
+                "case": dataset.to_metadata(),
+                "summary": result.summary,
+                "findings": [asdict(item) for item in result.findings],
+                "figures": [item.name for item in result.figures],
+            },
+            ensure_ascii=False,
+            indent=2,
+            default=str,
+        ),
+        encoding="utf-8",
+    )
     return result

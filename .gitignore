@@ -16,4 +16,5 @@ outputs/reports/*
 !outputs/reports/.gitkeep
 outputs/runs/*
 !outputs/runs/.gitkeep
+frontend/node_modules
 

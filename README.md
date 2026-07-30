@@ -19,6 +19,159 @@ LangChain 工具。
 v0.5.0 增加 CSV/XLSX 文件导入、Sheet 读取、数据预览和必需字段准入检查；
 页面及分析接口不指定导入数据时，仍调用原有演示案例。
 
+## 版本迭代记录
+
+项目版本记录的是已经落地并经过基本验证的能力，不把规划中的功能提前计入版本。
+PetroAgent 程序版本与 Knowledge Foundation 知识库版本分别管理：前者表示程序、
+接口和页面能力，后者表示知识实体、关系、规则与来源内容的版本。
+
+### 版本总览
+
+| 版本 | 阶段定位 | 本版核心变化 | 尚未包含 |
+|---|---|---|---|
+| `v0.1.0` | 确定性分析内核 | 建立标准数据对象、CSV 适配、指标计算、基础物理校验、绘图、报告和命令行 Demo | YAML 知识规则、Neo4j、Web 页面 |
+| `v0.2.0` | 知识基础层接入 | 将8条基础规则接入 YAML 执行管线，形成25条聚合物驱领域规则目录和17条领域关系 | Neo4j 存储与查询 |
+| `v0.3.0` | Neo4j 图谱接入 | 增加 YAML 到 Neo4j 的幂等导入、受控查询、中英文名称和 Browser 展示支持 | Web 工作台 |
+| `v0.4.0` | Web 演示平台 | 增加 FastAPI、Vue 3、规则结果展示、案例相关子图和输出文件下载 | 用户文件导入 |
+| `v0.4.1` | Neo4j 查询工作台 | 增加预定义图谱视图和页面查询切换，扩展图谱浏览能力 | 任意 Cypher、完整图谱清单 |
+| `v0.4.2` | 输出预览与图谱清单 | 增加图表/文档/表格在线预览，以及全部实体、全部关系和图谱搜索 | 用户文件导入、字段映射 |
+| `v0.5.0` | 文件导入读取 | 增加 CSV/XLSX 上传、Sheet 读取、数据预览、必需字段准入检查和导入数据分析 | 自动字段映射、单位换算和自动清洗 |
+
+### v0.1.0：确定性分析内核
+
+第一版用于验证石油工程科研智能体最底层的确定性分析链路，聚合物驱只是首个
+演示领域，并不限制后续研究方向。
+
+已完成：
+
+- 建立统一科研数据对象 `CanonicalDataset`；
+- 建立 CSV 字段映射、必需字段检查和案例 YAML 配置；
+- 支持 Eclipse/OPM Deck 的 `INCLUDE` 递归扫描与关键词概览；
+- 计算含水率、累计产油量、注入 PV 等公共指标；
+- 识别聚合物注入阶段并检查聚合物浓度非负；
+- 执行时间、流量、含水率和采收率等基础确定性校验；
+- 生成规范化 CSV、PNG 曲线和 Markdown 报告；
+- 提供 CLI、演示数据、单元测试和端到端测试；
+- 提供 OPM `polymer_simple2D` 与 `SPE9` 案例获取脚本。
+
+本版边界：规则主要由 Python 实现，不包含知识图谱、Neo4j、Web 页面、LLM、
+RAG 和模拟器自动运行。
+
+### v0.2.0：YAML 知识基础层
+
+本版将“程序中的判断逻辑”与“可审查的领域知识”分离，形成 Knowledge
+Foundation 的初始版本。
+
+已完成：
+
+- 将8条基础规则从硬编码方式迁移并接入 YAML 规则执行管线；
+- 建立25条覆盖筛选、实验、设计、模拟、运行和评价阶段的聚合物驱规则目录；
+- 建立17条聚合物驱实体—参数—约束关系；
+- 支持 `knowledge`、`legacy`、`hybrid` 三种执行模式；
+- 记录规则来源、适用条件、证据等级和跳过原因；
+- Demo 输出知识库版本，以及规则加载、执行和跳过数量；
+- 缺少目标字段时明确记为“跳过”，不再把未执行误认为通过。
+
+本版边界：YAML 是知识事实来源，尚未接入 Neo4j；25条领域决策规则也不等于
+25条都能在当前演示 CSV 上直接执行。
+
+### v0.3.0：Neo4j 接入与中文化
+
+本版将 YAML 知识源同步到 Neo4j，用于关系遍历、查询和可视化；YAML 仍是 Git
+中唯一需要人工维护的知识事实来源。
+
+已完成：
+
+- 将93个概念、25条规则、6个阶段、7个来源和17条领域关系导入 Neo4j；
+- 使用唯一约束和 `MERGE` 实现幂等导入，不主动清空数据库；
+- 增加 Neo4j 干运行、正式导入和查询脚本；
+- 节点和关系同时保存中文名、英文名与稳定英文 ID；
+- 终端优先显示“中文名 `[稳定ID]`”；
+- 支持从 YAML 或 Neo4j 获取聚合物驱关系佐证；
+- Neo4j 不可用时，确定性分析仍可使用 YAML 模式运行。
+
+本版边界：主要入口仍是命令行，没有 Web 工作台；Neo4j 是 YAML 的派生查询层，
+不是第二套独立知识库。
+
+### v0.4.0：FastAPI 与 Vue Web Demo
+
+本版在既有分析管线和 Neo4j 查询能力之上增加演示级 Web 展示层。
+
+已完成：
+
+- 增加 FastAPI 后端和 Vue 3 + Vite 前端；
+- 页面选择已经配置的演示案例并调用原 `analyze_csv()` 管线；
+- 展示规则总数、通过数、未通过数、警告数及逐条规则证据；
+- 展示本次案例相关的 Neo4j 概念子图；
+- 点击规则结果时高亮关联概念；
+- 下载 Markdown、JSON、规范化 CSV 和 PNG 图表；
+- 限制输出目录与文件访问范围；
+- 图谱接口不接收前端任意 Cypher；
+- Neo4j 离线时保留分析结果并明确提示图谱不可用。
+
+本版边界：只使用仓库内演示案例，不支持用户上传文件，也没有字段映射和任务
+隔离。
+
+### v0.4.1：Neo4j 查询工作台
+
+本版把单一“案例相关子图”扩展为可切换的受控图谱查询工作台。
+
+已完成：
+
+- 增加“全部图谱、概念关系、规则概念、规则证据、阶段规则”等预定义视图；
+- 增加 `/api/graph/view` 受控查询接口；
+- 前端可切换查询视图并刷新图谱；
+- 保留规则结果与关联概念高亮；
+- 所有视图由后端预定义，浏览器仍不能提交任意 Cypher。
+
+本版边界：重点是图谱查询交互，尚未形成全部实体/关系的表格清单，也没有统一
+输出预览器。
+
+### v0.4.2：输出在线预览与图谱清单
+
+本版完善分析产物阅读和完整图谱核验能力，同时保留原文件下载。
+
+已完成：
+
+- 将输出产物统一分为图表、文档和表格；
+- 支持 PNG 页面预览；
+- 支持 Markdown 在线预览；
+- 支持 JSON 结构化预览；
+- 支持 CSV 表格预览；
+- 增加 `/api/outputs/preview/{category}/{filename}` 受控预览接口；
+- “全部图谱”视图增加全部实体和全部关系列表；
+- 支持按名称、稳定 ID 和类型搜索图谱内容；
+- 输出预览采用稳定结构化响应，为后续 LangChain Tool 预留接口边界。
+
+本版边界：仍只能运行演示案例，不接收用户文件；预览只读取允许的输出目录，
+不会执行输出文件中的脚本或任意代码。
+
+### v0.5.0：CSV/XLSX 文件导入与读取
+
+本版首次允许用户从 Web 页面导入外部表格，同时保持演示案例为默认数据源。
+
+已完成：
+
+- 支持上传 `.csv` 和 `.xlsx`；
+- Excel 可指定 Sheet，不指定时读取第一个 Sheet；
+- 返回文件名、Sheet、行列数、列名和前20行预览；
+- 根据所选案例检查必需字段；
+- 字段完整时允许接入现有规则分析管线；
+- 字段缺失时允许预览，但阻止误执行；
+- 分析接口支持可选 `dataset_id`；
+- 不传 `dataset_id` 时继续运行 `polymer_simple2d_demo`；
+- 导入数据使用独立标识，避免覆盖默认演示案例产物；
+- 上传文件目录默认不提交 Git；
+- README 增加导入数据约束和后续受控清洗策略。
+
+本版已对 CSV 和 XLSX 的“读取—内部标准 CSV—规则执行—产物生成”链路进行
+实际回归：11行演示结构数据成功执行8条知识规则，并生成 Markdown、CSV、JSON
+和5张 PNG 图表；前端生产构建通过。
+
+本版边界：只解决同结构数据的导入、预览与分析准入，不会自动理解任意字段，
+也不会静默进行字段映射、单位换算、缺失值填补、异常值修正或数据清洗。正式科研
+数据仍需遵守本文“导入数据约束”。
+
 ### v0.2.0 与前一版的区别
 
 | 能力 | 前一版（M1.1 / v0.1.x） | v0.2.0 |
@@ -119,44 +272,84 @@ OPM Deck / OPM 导出 CSV
 
 ```text
 petro-agent-m1/
-├── knowledge_graph/                  # 可审查、可版本管理的知识源
-│   ├── core/                         # 上层实体、关系、参数、单位、规则
-│   ├── domains/chemical_eor/         # 首个聚合物驱验证子图谱
-│   ├── mappings/                     # 标准字段、OPM、未来CMG映射
-│   ├── provenance/                   # 来源与证据
-│   └── standards/                    # 标准目录骨架
-├── config/cases/                    # 每个案例的字段、单位和领域包配置
-│   ├── polymer_simple2d.yaml
-│   └── spe9.yaml
+├── config/
+│   └── cases/                        # 案例字段、单位和领域包配置
+│       ├── polymer_simple2d.yaml
+│       └── spe9.yaml
 ├── data/
-│   ├── raw/                         # OPM 原始案例，默认不提交 Git
-│   ├── processed/                   # 标准化结果，默认不提交 Git
-│   └── demo/                        # 仅用于管线测试的明确标注演示数据
-├── outputs/
-│   ├── figures/
-│   ├── reports/
-│   └── runs/
+│   ├── demo/                         # 默认演示数据
+│   │   └── polymer_simple2d_demo.csv
+│   ├── raw/                          # OPM 原始案例，默认不提交 Git
+│   ├── processed/                    # 标准化结果，默认不提交 Git
+│   └── uploads/                      # Web 导入文件，首次上传时自动创建
+├── frontend/                         # Vue 3 + Vite Web 前端
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── GraphInventory.vue   # 全部实体与关系列表
+│   │   │   ├── KnowledgeGraph.vue   # Neo4j 图谱展示
+│   │   │   └── OutputViewer.vue     # 图表、文档、表格在线预览
+│   │   ├── App.vue                  # 页面入口与数据导入工作流
+│   │   ├── api.js                   # 后端接口封装
+│   │   ├── main.js
+│   │   └── style.css
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   └── vite.config.js
+├── knowledge_graph/                  # 可审查、可版本管理的 YAML 知识源
+│   ├── core/                         # 上层实体、关系、参数、单位和规则
+│   ├── domains/
+│   │   └── chemical_eor/             # 聚合物驱验证子图谱
+│   ├── mappings/                     # 标准字段、OPM 和 CMG 映射
+│   ├── provenance/                   # 来源与证据
+│   ├── standards/                    # 标准目录
+│   └── manifest.yaml                 # 知识库清单与版本
+├── outputs/                          # 分析运行时产物
+│   ├── figures/                      # PNG 图表
+│   ├── reports/                      # Markdown 报告
+│   └── runs/                         # 标准 CSV 与 JSON 结果
 ├── scripts/
-│   ├── fetch_opm_data.py            # 下载官方案例并记录上游修订号
+│   ├── fetch_opm_data.py             # 下载官方案例并记录上游修订号
 │   ├── import_neo4j.py               # 幂等导入 YAML 图谱
 │   ├── query_neo4j.py                # 查询并输出 Neo4j 关系
-│   └── run_demo.py
+│   ├── run_demo.py                   # 运行默认命令行演示案例
+│   ├── run_web.py                    # 启动 FastAPI Web 服务
+│   └── validate_knowledge.py         # 校验知识源结构与引用
 ├── src/petro_agent/
-│   ├── adapters/                    # CSV、Deck、未来 OPM/CMG/实验数据适配器
-│   ├── core/                        # 与石油工程具体方向无关的协议和管线
-│   ├── knowledge/                   # YAML知识服务、规则执行、Neo4j适配层
+│   ├── adapters/                     # CSV、Deck 和 OPM 数据适配器
+│   ├── api/                          # FastAPI 接口与序列化模型
+│   ├── core/                         # 通用协议、配置、模型和指标计算
 │   ├── domain_packs/
-│   │   ├── common_reservoir/        # 公共油藏规则与计算
-│   │   └── polymer_flooding/        # 聚合物驱专用逻辑
-│   ├── reporting/                   # 图表与报告
-│   ├── validators/                  # 确定性校验
-│   ├── cli.py
-│   └── pipeline.py
+│   │   ├── common_reservoir/         # 公共油藏规则与计算
+│   │   └── polymer_flooding/         # 聚合物驱专用逻辑
+│   ├── knowledge/                    # YAML 服务、规则引擎和 Neo4j 适配层
+│   │   └── neo4j/
+│   ├── reporting/                    # PNG 图表与 Markdown 报告
+│   ├── validators/                   # 确定性数据与物理校验
+│   ├── cli.py                        # 命令行入口
+│   └── pipeline.py                   # 分析主编排管线
 ├── tests/
+│   ├── knowledge/                    # YAML 与 Neo4j 相关测试
+│   ├── test_dataset_upload.py        # CSV/XLSX 导入与默认案例测试
+│   ├── test_api_serializers.py       # Web 响应序列化测试
+│   └── ...                           # 指标、管线、Deck 和校验测试
 ├── .env.example
+├── .gitignore
+├── EXECUTION_RULES_UPDATE.md
 ├── pyproject.toml
+├── requirements.txt
 └── README.md
 ```
+
+说明：
+
+- `data/uploads/`、`outputs/figures/`、`outputs/reports/` 和
+  `outputs/runs/` 属于运行时目录；首次上传或执行分析时会自动创建，
+  实际数据与产物默认不提交 Git。
+- `frontend/dist/` 是执行 `npm run build` 后生成的前端构建产物，
+  不属于需要手工维护的源码结构。
+- `src/petro_agent_m1.egg-info/`、`.pytest_cache/` 和 `.venv/` 等目录由
+  安装、测试或本地环境自动产生，因此未列入项目核心结构。
 
 `knowledge_graph/` 和 `src/petro_agent/knowledge/` 必须分开：
 

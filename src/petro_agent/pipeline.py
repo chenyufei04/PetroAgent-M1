@@ -34,8 +34,15 @@ MIGRATED_LEGACY_RULES = {
 }
 
 
-def analyze_csv(source: Path, config_path: Path, output_root: Path) -> AnalysisResult:
+def analyze_csv(
+    source: Path,
+    config_path: Path,
+    output_root: Path,
+    case_id_override: str | None = None,
+) -> AnalysisResult:
     config = load_yaml(config_path)
+    if case_id_override:
+        config["case_id"] = case_id_override
     dataset = CsvAdapter().load(source, config)
     knowledge_config = config.get("knowledge", {})
     knowledge_enabled = knowledge_config.get("enabled", True)

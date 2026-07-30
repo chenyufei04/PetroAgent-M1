@@ -13,10 +13,25 @@ async function request(path, options = {}) {
 }
 
 export const getCases = () => request("/api/cases");
-export const runAnalysis = (caseId) =>
+export const uploadDataset = async (file, caseId, sheetName = "") => {
+  const form = new FormData();
+  form.append("file", file);
+  form.append("case_id", caseId);
+  if (sheetName) form.append("sheet_name", sheetName);
+  const response = await fetch(`${API_BASE}/api/datasets/upload`, {
+    method: "POST",
+    body: form,
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error(body.detail || `上传失败：${response.status}`);
+  }
+  return response.json();
+};
+export const runAnalysis = (caseId, datasetId = null) =>
   request("/api/analysis/run", {
     method: "POST",
-    body: JSON.stringify({ case_id: caseId }),
+    body: JSON.stringify({ case_id: caseId, dataset_id: datasetId }),
   });
 export const getSubgraph = (conceptIds) =>
   request("/api/graph/subgraph", {

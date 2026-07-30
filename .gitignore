@@ -5,11 +5,12 @@ __pycache__/
 .coverage
 .DS_Store
 .env
-test_demo.py
 data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
+data/uploads/*
+!data/uploads/.gitkeep
 outputs/figures/*
 !outputs/figures/.gitkeep
 outputs/reports/*

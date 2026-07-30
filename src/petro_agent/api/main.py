@@ -3,13 +3,16 @@ from __future__ import annotations
 from pathlib import Path
 import csv
 import json
+import re
+from uuid import uuid4
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 import yaml
+import pandas as pd
 
 from petro_agent.knowledge.neo4j.client import Neo4jClient, Neo4jSettings
 from petro_agent.knowledge.neo4j.query_service import Neo4jQueryService
@@ -21,10 +24,11 @@ from .serializers import serialize_result
 ROOT = Path(__file__).resolve().parents[3]
 CONFIG_ROOT = ROOT / "config" / "cases"
 DATA_ROOT = ROOT / "data" / "demo"
+UPLOAD_ROOT = ROOT / "data" / "uploads"
 OUTPUT_ROOT = ROOT / "outputs"
 FRONTEND_DIST = ROOT / "frontend" / "dist"
 
-app = FastAPI(title="PetroAgent Web Demo API", version="0.4.2")
+app = FastAPI(title="PetroAgent Web Demo API", version="0.5.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -36,6 +40,7 @@ app.add_middleware(
 
 class AnalysisRequest(BaseModel):
     case_id: str = "polymer_simple2d"
+    dataset_id: str | None = None
 
 
 class GraphRequest(BaseModel):
@@ -55,6 +60,36 @@ def _case_config(case_id: str) -> Path:
     if path.parent != CONFIG_ROOT.resolve() or not path.is_file():
         raise HTTPException(404, "案例不存在")
     return path
+
+
+def _dataset_dir(dataset_id: str) -> Path:
+    if not re.fullmatch(r"ds_[0-9a-f]{12}", dataset_id):
+        raise HTTPException(400, "非法数据集编号")
+    target = (UPLOAD_ROOT / dataset_id).resolve()
+    if target.parent != UPLOAD_ROOT.resolve() or not target.is_dir():
+        raise HTTPException(404, "导入数据集不存在")
+    return target
+
+
+def _read_uploaded_frame(path: Path, sheet_name: str | None = None) -> tuple[pd.DataFrame, str | None]:
+    suffix = path.suffix.lower()
+    if suffix == ".csv":
+        try:
+            return pd.read_csv(path, encoding="utf-8-sig"), None
+        except UnicodeDecodeError:
+            return pd.read_csv(path, encoding="gb18030"), None
+    if suffix == ".xlsx":
+        book = pd.ExcelFile(path)
+        selected = sheet_name or book.sheet_names[0]
+        if selected not in book.sheet_names:
+            raise ValueError(f"Sheet 不存在：{selected}")
+        return pd.read_excel(book, sheet_name=selected), selected
+    raise ValueError("仅支持 CSV 和 XLSX 文件")
+
+
+def _dataset_payload(dataset_id: str) -> dict:
+    directory = _dataset_dir(dataset_id)
+    return json.loads((directory / "metadata.json").read_text(encoding="utf-8"))
 
 
 @app.get("/api/health")
@@ -80,15 +115,95 @@ def list_cases() -> list[dict]:
     return cases
 
 
+@app.post("/api/datasets/upload")
+async def upload_dataset(
+    file: UploadFile = File(...),
+    case_id: str = Form("polymer_simple2d"),
+    sheet_name: str | None = Form(None),
+) -> dict:
+    """Import one CSV/XLSX file and prepare a bounded preview for later analysis."""
+    config_path = _case_config(case_id)
+    suffix = Path(file.filename or "").suffix.lower()
+    if suffix not in {".csv", ".xlsx"}:
+        raise HTTPException(415, "仅支持 CSV 和 XLSX 文件")
+    content = await file.read()
+    max_bytes = 20 * 1024 * 1024
+    if not content:
+        raise HTTPException(400, "上传文件为空")
+    if len(content) > max_bytes:
+        raise HTTPException(413, "文件不能超过 20 MB")
+
+    dataset_id = f"ds_{uuid4().hex[:12]}"
+    directory = UPLOAD_ROOT / dataset_id
+    directory.mkdir(parents=True, exist_ok=False)
+    original = directory / f"original{suffix}"
+    original.write_bytes(content)
+    try:
+        frame, selected_sheet = _read_uploaded_frame(original, sheet_name)
+        if frame.empty:
+            raise ValueError("文件中没有可读取的数据行")
+        frame.columns = [str(column).strip() for column in frame.columns]
+        canonical = directory / "data.csv"
+        frame.to_csv(canonical, index=False, encoding="utf-8-sig")
+        config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+        required = config.get("required_columns", ["time_days"])
+        mapping = config.get("column_mapping", {})
+        mapped_columns = [mapping.get(column, column) for column in frame.columns]
+        missing = [column for column in required if column not in mapped_columns]
+        preview_rows = frame.head(20).where(pd.notna(frame), None).to_dict("records")
+        preview_rows = json.loads(json.dumps(preview_rows, ensure_ascii=False, default=str))
+        metadata = {
+            "dataset_id": dataset_id,
+            "filename": Path(file.filename or f"dataset{suffix}").name,
+            "file_type": suffix.lstrip("."),
+            "case_id": case_id,
+            "sheet_name": selected_sheet,
+            "columns": list(frame.columns),
+            "row_count": len(frame),
+            "missing_required_columns": missing,
+            "ready_for_analysis": not missing,
+            "preview_rows": preview_rows,
+        }
+        (directory / "metadata.json").write_text(
+            json.dumps(metadata, ensure_ascii=False, indent=2, default=str),
+            encoding="utf-8",
+        )
+        return metadata
+    except Exception as exc:
+        for child in directory.iterdir():
+            child.unlink()
+        directory.rmdir()
+        raise HTTPException(422, f"文件读取失败：{exc}") from exc
+
+
+@app.get("/api/datasets/{dataset_id}")
+def get_dataset(dataset_id: str) -> dict:
+    return _dataset_payload(dataset_id)
+
+
 @app.post("/api/analysis/run")
 def run_analysis(payload: AnalysisRequest) -> dict:
     config = _case_config(payload.case_id)
-    source = DATA_ROOT / f"{payload.case_id}_demo.csv"
-    if payload.case_id == "polymer_simple2d":
-        source = DATA_ROOT / "polymer_simple2d_demo.csv"
-    if not source.is_file():
-        raise HTTPException(409, "该案例尚未配置演示数据文件")
-    result = analyze_csv(source, config, OUTPUT_ROOT)
+    case_id_override = None
+    if payload.dataset_id:
+        metadata = _dataset_payload(payload.dataset_id)
+        if metadata["case_id"] != payload.case_id:
+            raise HTTPException(409, "数据集与所选案例不匹配")
+        if not metadata["ready_for_analysis"]:
+            missing = ", ".join(metadata["missing_required_columns"])
+            raise HTTPException(422, f"导入文件缺少必需字段：{missing}")
+        source = _dataset_dir(payload.dataset_id) / "data.csv"
+        case_id_override = f"{payload.case_id}_{payload.dataset_id}"
+    else:
+        source = DATA_ROOT / f"{payload.case_id}_demo.csv"
+        if payload.case_id == "polymer_simple2d":
+            source = DATA_ROOT / "polymer_simple2d_demo.csv"
+        if not source.is_file():
+            raise HTTPException(409, "该案例尚未配置演示数据文件")
+    try:
+        result = analyze_csv(source, config, OUTPUT_ROOT, case_id_override)
+    except (ValueError, KeyError) as exc:
+        raise HTTPException(422, f"数据无法执行当前案例规则：{exc}") from exc
     return serialize_result(result, OUTPUT_ROOT)
 
 

@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { getCases, getGraphView, getSubgraph, runAnalysis } from "./api";
+import { getCases, getGraphView, getSubgraph, runAnalysis, uploadDataset } from "./api";
 import KnowledgeGraph from "./components/KnowledgeGraph.vue";
 import GraphInventory from "./components/GraphInventory.vue";
 import OutputViewer from "./components/OutputViewer.vue";
@@ -14,6 +14,10 @@ const error = ref("");
 const selectedConcept = ref("");
 const graphLoading = ref(false);
 const graphView = ref("all");
+const inputMode = ref("demo");
+const importedDataset = ref(null);
+const uploadLoading = ref(false);
+const sheetName = ref("");
 
 const graphViews = [
   { id: "all", label: "全部图谱" },
@@ -38,12 +42,32 @@ async function run() {
   error.value = "";
   selectedConcept.value = "";
   try {
-    result.value = await runAnalysis(selectedCase.value);
+    const datasetId = inputMode.value === "upload" ? importedDataset.value?.dataset_id : null;
+    if (inputMode.value === "upload" && !datasetId) {
+      throw new Error("请先导入 CSV 或 XLSX 文件");
+    }
+    result.value = await runAnalysis(selectedCase.value, datasetId);
     graph.value = await getSubgraph(result.value.concept_ids);
   } catch (err) {
     error.value = err.message;
   } finally {
     loading.value = false;
+  }
+}
+
+async function importFile(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  uploadLoading.value = true;
+  error.value = "";
+  try {
+    importedDataset.value = await uploadDataset(file, selectedCase.value, sheetName.value);
+  } catch (err) {
+    importedDataset.value = null;
+    error.value = err.message;
+  } finally {
+    uploadLoading.value = false;
+    event.target.value = "";
   }
 }
 
@@ -99,6 +123,43 @@ onMounted(async () => {
             {{ item.case_name }}{{ item.runnable ? "" : "（缺少数据）" }}
           </option>
         </select>
+        <div class="input-mode">
+          <label :class="{ active: inputMode === 'demo' }">
+            <input v-model="inputMode" type="radio" value="demo" />
+            演示案例（默认）
+          </label>
+          <label :class="{ active: inputMode === 'upload' }">
+            <input v-model="inputMode" type="radio" value="upload" />
+            导入文件
+          </label>
+        </div>
+        <div v-if="inputMode === 'upload'" class="upload-box">
+          <label for="sheet-name">Excel Sheet（不填读取第一个）</label>
+          <input id="sheet-name" v-model="sheetName" type="text" placeholder="例如 Sheet1" />
+          <label class="file-picker">
+            {{ uploadLoading ? "读取中…" : "选择 CSV / XLSX" }}
+            <input type="file" accept=".csv,.xlsx" :disabled="uploadLoading" @change="importFile" />
+          </label>
+          <div v-if="importedDataset" class="dataset-preview">
+            <strong>{{ importedDataset.filename }}</strong>
+            <span>{{ importedDataset.row_count }} 行 · {{ importedDataset.columns.length }} 列</span>
+            <span v-if="importedDataset.sheet_name">Sheet：{{ importedDataset.sheet_name }}</span>
+            <p v-if="importedDataset.ready_for_analysis" class="ready">必需字段检查通过，可运行分析。</p>
+            <p v-else class="not-ready">
+              缺少字段：{{ importedDataset.missing_required_columns.join("、") }}
+            </p>
+            <div class="import-table">
+              <table>
+                <thead><tr><th v-for="column in importedDataset.columns" :key="column">{{ column }}</th></tr></thead>
+                <tbody>
+                  <tr v-for="(row, index) in importedDataset.preview_rows" :key="index">
+                    <td v-for="column in importedDataset.columns" :key="column">{{ row[column] ?? "" }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
         <button :disabled="loading || !selectedCase" @click="run">
           {{ loading ? "分析运行中…" : "运行分析" }}
         </button>

@@ -6,7 +6,7 @@
 }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 1180px; }
-button, select { font: inherit; }
+button, select, input { font: inherit; }
 main { max-width: 1680px; margin: 0 auto; padding: 30px 36px 48px; }
 header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 26px; }
 h1 { margin: 5px 0 7px; font-family: Georgia, "Noto Serif SC", serif; font-size: 34px; font-weight: 600; }
@@ -23,6 +23,22 @@ h2 { margin: 3px 0 18px; font-size: 17px; }
 .case-panel select { width: 100%; padding: 10px; border: 1px solid #cbd8d3; border-radius: 7px; background: #fff; color: #173b3a; }
 .case-panel button { width: 100%; margin-top: 12px; padding: 11px; border: 0; border-radius: 7px; color: #fff; background: #0f766e; cursor: pointer; }
 .case-panel button:disabled { opacity: .55; cursor: wait; }
+.input-mode { display: grid; gap: 7px; margin-top: 14px; }
+.input-mode label { display: flex; align-items: center; gap: 7px; margin: 0; padding: 8px 9px; border: 1px solid #d5dfda; border-radius: 7px; background: #fff; cursor: pointer; }
+.input-mode label.active { border-color: #0f766e; background: #ecfdf5; color: #0f766e; }
+.upload-box { display: grid; gap: 8px; margin-top: 12px; padding: 11px; border: 1px dashed #b9cbc4; border-radius: 8px; background: #f8fbf9; }
+.upload-box label { margin: 0; }
+.upload-box > input { width: 100%; padding: 8px; border: 1px solid #cbd8d3; border-radius: 6px; }
+.file-picker { display: block; padding: 9px; border-radius: 6px; color: #fff !important; background: #436d68; text-align: center; cursor: pointer; }
+.file-picker input { display: none; }
+.dataset-preview { display: grid; gap: 5px; min-width: 0; font-size: 11px; }
+.dataset-preview > span { color: #72827e; }
+.dataset-preview p { margin: 3px 0; padding: 7px; border-radius: 5px; }
+.dataset-preview .ready { color: #08775f; background: #e9f8f3; }
+.dataset-preview .not-ready { color: #a63b21; background: #fff0eb; }
+.import-table { max-height: 190px; overflow: auto; border: 1px solid #e1e8e5; border-radius: 6px; background: #fff; }
+.import-table table { min-width: max-content; }
+.import-table th, .import-table td { max-width: 150px; overflow: hidden; padding: 6px 7px; text-overflow: ellipsis; }
 .case-meta { margin-top: 22px; border-top: 1px solid #e4ebe7; }
 .case-meta div { display: flex; justify-content: space-between; gap: 10px; padding: 10px 0; border-bottom: 1px solid #edf1ef; font-size: 12px; }
 .case-meta span { color: #7a8986; }

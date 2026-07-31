@@ -1,0 +1,18 @@
+{
+  "case_id": "polymer_sensitivity_v1-0006-b9353855",
+  "parameters": {
+    "polymer_concentration": 1.0,
+    "injection_rate": 200
+  },
+  "status": "failed",
+  "derived_deck": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0006-b9353855/2D_THREEPHASE_POLY_HETER.DATA",
+  "error": "无法转换为 WSL 路径：/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0006-b9353855/2D_THREEPHASE_POLY_HETER.DATA",
+  "dataset_row": {
+    "case_id": "polymer_sensitivity_v1-0006-b9353855",
+    "parameter_polymer_concentration": 1.0,
+    "parameter_injection_rate": 200,
+    "status": "failed",
+    "error": "无法转换为 WSL 路径：/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0006-b9353855/2D_THREEPHASE_POLY_HETER.DATA"
+  },
+  "finished_at": "2026-07-31T08:55:03.439558+00:00"
+}

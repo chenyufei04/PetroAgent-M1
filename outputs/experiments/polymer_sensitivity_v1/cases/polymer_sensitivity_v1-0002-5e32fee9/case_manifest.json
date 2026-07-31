@@ -1,0 +1,30 @@
+{
+  "case_id": "polymer_sensitivity_v1-0002-5e32fee9",
+  "parameters": {
+    "polymer_concentration": 0.5,
+    "injection_rate": 150
+  },
+  "status": "failed",
+  "derived_deck": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0002-5e32fee9/2D_THREEPHASE_POLY_HETER.DATA",
+  "flow": {
+    "command": [
+      "flow",
+      "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0002-5e32fee9/2D_THREEPHASE_POLY_HETER.DATA",
+      "--output-dir=/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0002-5e32fee9/flow",
+      "--enable-esmry=true"
+    ],
+    "return_code": 0,
+    "stdout_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0002-5e32fee9/flow/flow.stdout.log",
+    "stderr_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0002-5e32fee9/flow/flow.stderr.log",
+    "manifest_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0002-5e32fee9/flow/run_manifest.json"
+  },
+  "error": "ESMRY 读取当前要求 OPM_EXECUTION_MODE=wsl",
+  "dataset_row": {
+    "case_id": "polymer_sensitivity_v1-0002-5e32fee9",
+    "parameter_polymer_concentration": 0.5,
+    "parameter_injection_rate": 150,
+    "status": "failed",
+    "error": "ESMRY 读取当前要求 OPM_EXECUTION_MODE=wsl"
+  },
+  "finished_at": "2026-07-31T09:16:59.321954+00:00"
+}

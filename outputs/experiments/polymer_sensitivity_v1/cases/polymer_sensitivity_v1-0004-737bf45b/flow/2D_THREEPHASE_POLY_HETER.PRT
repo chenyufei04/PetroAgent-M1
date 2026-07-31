@@ -1,0 +1,3834 @@
+
+
+
+ ########  #          ######   #           #
+ #         #         #      #   #         # 
+ #####     #         #      #    #   #   #  
+ #         #         #      #     # # # #   
+ #         #######    ######       #   #    
+
+Flow is a simulator for fully implicit three-phase black-oil flow, and is part of OPM.
+For more information visit: https://opm-project.org 
+
+Flow Version     =  2026.04 (Ubuntu 24.04.4 LTS: 2026.04-1~noble)
+Machine name     =  MUSE-20190629UU (Number of logical cores: 16, Memory size: 32049.63 MB) 
+Operating system =  Linux x86_64 (Kernel: 6.18.33.2-microsoft-standard-WSL2, #1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026 )
+Build time       =  
+Simulation started on 31-07-2026 at 17:21:09 hrs
+Using 1 MPI processes with 2 OMP threads on each 
+Parameters used by Flow:
+# [known parameters which were specified at run-time]
+EclDeckFileName="/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA" # default: ""
+OutputDir="/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0004-737bf45b/flow" # default: ""
+EnableEsmry="true" # default: "1"
+# [parameters which were specified at compile-time]
+AcceleratorMode="none"
+ActionParsingStrictness="normal"
+AddCorners="0"
+AllowDistributedWells="0"
+AllowSplittingInactiveWells="1"
+AlternativeWellRateInit="1"
+CheckGroupConstraintsInnerWellIterations="1"
+CheckSatfuncConsistency="1"
+ConserveInnerEnergyThermal="0"
+ContinueOnConvergenceError="0"
+ConvergenceMonitoring="0"
+ConvergenceMonitoringCutOff="6"
+ConvergenceMonitoringDecayFactor="0.75"
+CprReuseInterval="30"
+CprReuseSetup="4"
+CprWeightsThreadParallel="0"
+DbhpMaxRel="1"
+DebugEmitCellPartition="0"
+DebugVerbosityLevel="1"
+DpMaxRel="0.3"
+DsMax="0.2"
+DwellFractionMax="0.2"
+EclOutputDoublePrecision="0"
+EclOutputInterval="-1"
+EdgeConformal="0"
+EdgeWeightsMethod="transmissibility"
+EnableAdaptiveTimeStepping="1"
+EnableAsyncEclOutput="1"
+EnableAsyncVtkOutput="1"
+EnableDriftCompensation="0"
+EnableDriftCompensationTemp="1"
+EnableDryRun="auto"
+EnableEclOutput="1"
+EnableGravity="1"
+EnableGridAdaptation="0"
+EnableIntensiveQuantityCache="1"
+EnableLoggingFalloutWarning="0"
+EnableOpmRstFile="0"
+EnableStorageCache="1"
+EnableTerminalOutput="1"
+EnableThermodynamicHints="0"
+EnableTuning="0"
+EnableVtkOutput="0"
+EnableWellOperabilityCheck="1"
+EnableWellOperabilityCheckIter="0"
+EnableWriteAllSolutions="0"
+EndTime="1e+100"
+ExplicitRockCompaction="0"
+ExternalPartition=""
+ForceDisableFluidInPlaceOutput="0"
+ForceDisableResvFluidInPlaceOutput="0"
+FullTimeStepInitially="0"
+GpuAwareMpi="0"
+GpuDeviceId="0"
+HybridNewtonConfigFile="hybridNewtonConfig.json"
+IgnoreKeywords=""
+IluFillinLevel="0"
+IluRedblack="0"
+IluRelaxation="0.9"
+IluReorderSpheres="0"
+ImbalanceTol="1.1"
+InitialTimeStepInDays="1"
+InitialTimeStepSize="86400"
+InjMultDampMult="0.9"
+InjMultMinDampFactor="0.05"
+InjMultOscThreshold="0.1"
+InputSkipMode="100"
+LinearSolver="cprw"
+LinearSolverAccelerator="cpu"
+LinearSolverIgnoreConvergenceFailure="0"
+LinearSolverMaxIter="200"
+LinearSolverPrintJsonDefinition="1"
+LinearSolverReduction="0.01"
+LinearSolverRestart="40"
+LinearSolverVerbosity="0"
+LoadFile=""
+LoadStep="-1"
+LocalDomainsOrderingMeasure="maxpressure"
+LocalDomainsPartitionWellNeighborLevels="1"
+LocalDomainsPartitioningImbalance="1.03"
+LocalDomainsPartitioningMethod="zoltan"
+LocalSolveApproach="gauss-seidel"
+LocalToleranceScalingCnv="0.1"
+LocalToleranceScalingMb="1"
+LocalWellSolveControlSwitching="1"
+MatrixAddWellContributions="0"
+MaxInnerIterMsWells="100"
+MaxInnerIterWells="50"
+MaxLocalSolveIterations="20"
+MaxNewtonIterationsWithInnerWellIterations="99"
+MaxPressureChangeMsWells="1e+06"
+MaxResidualAllowed="1e+07"
+MaxSinglePrecisionDays="20"
+MaxTemperatureChange="5"
+MaxTimeStepDivisions="10"
+MaxTimeStepSize="inf"
+MaxWellStatusSwitchForWells="99"
+MaxWellStatusSwitchInInnerIterWells="99"
+MaxWelleqIter="30"
+MaximumNumberOfGroupSwitches="3"
+MaximumNumberOfWellSwitches="3"
+MaximumWaterSaturation="1"
+MetisParams="default"
+MiluVariant="ilu"
+MinStrictCnvIter="-1"
+MinStrictMbIter="-1"
+MinTimeStepBasedOnNewtonIterations="0"
+MinTimeStepBeforeShuttingProblematicWellsInDays="0.01"
+MinTimeStepSize="0"
+NetworkMaxOuterIterations="3"
+NetworkMaxPressureUpdateInBars="5"
+NetworkMaxStrictOuterIterations="10"
+NetworkMaxSubIterations="100"
+NetworkPressureUpdateDampingFactor="0.1"
+NewtonMaxError="1e+100"
+NewtonMaxIterations="20"
+NewtonMaxRelax="0.5"
+NewtonMinIterations="2"
+NewtonRelaxationType="dampen"
+NewtonTargetIterations="10"
+NewtonTolerance="0.01"
+NewtonVerbose="1"
+NewtonWriteConvergence="0"
+NlddLocalLinearSolver="ilu0"
+NlddLocalLinearSolverMaxIter="200"
+NlddLocalLinearSolverReduction="0.01"
+NlddNumInitialNewtonIter="1"
+NlddRelativeMobilityChangeTol="0.1"
+NonlinearSolver="newton"
+NumLocalDomains="0"
+NumOverlap="1"
+NumPressurePointsEquil="2000"
+NumSatfuncConsistencySamplePoints="5"
+NupcolGroupRateTolerance="0.001"
+OpenclIluParallel="1"
+OpenclPlatformId="0"
+OutputExtraConvergenceInfo="none"
+OutputInterval="1"
+OutputMode="all"
+OwnerCellsFirst="1"
+ParameterFile=""
+ParsingStrictness="normal"
+PartitionMethod="zoltanwell"
+PreSolveNetwork="1"
+PredeterminedTimeStepsFile=""
+PressureMax="1e+99"
+PressureMin="-1e+99"
+PressureScale="1"
+PriVarOscilationThreshold="1e-05"
+PrintParameters="2"
+ProjectSaturations="0"
+RegularizationFactorWells="100"
+RelaxedLinearSolverReduction="0.01"
+RelaxedMaxPvFraction="0.03"
+RelaxedPressureTolMsw="10000"
+RelaxedWellFlowTol="0.001"
+RestartTime="-1e+35"
+RestartWritingInterval="16777215"
+SaveFile=""
+SaveStep=""
+ScaleLinearSystem="0"
+SchedRestart="0"
+SerialPartitioning="0"
+ShutUnsolvableWells="1"
+Slave="0"
+SolveWelleqInitially="1"
+SolverContinueOnConvergenceFailure="0"
+SolverGrowthFactor="2"
+SolverMaxGrowth="3"
+SolverMaxRestarts="10"
+SolverMaxTimeStepInDays="365"
+SolverMinTimeStep="1e-12"
+SolverRestartFactor="0.33"
+SolverVerbosity="1"
+StrictInnerIterWells="40"
+StrictOuterIterWells="6"
+TemperatureMax="1e+09"
+TemperatureMin="0"
+ThreadsPerProcess="2"
+TimeStepAfterEventInDays="-1"
+TimeStepControl="pid+newtoniteration"
+TimeStepControlDecayDampingFactor="1"
+TimeStepControlDecayRate="0.75"
+TimeStepControlFileName="timesteps"
+TimeStepControlGrowthDampingFactor="3.2"
+TimeStepControlGrowthRate="1.25"
+TimeStepControlMaxReductionTimeStep="0.1"
+TimeStepControlParameters="0.125;0.25;0.125;0.75;0.25"
+TimeStepControlRejectCompletedStep="0"
+TimeStepControlSafetyFactor="0.8"
+TimeStepControlTargetIterations="30"
+TimeStepControlTargetNewtonIterations="8"
+TimeStepControlTolerance="0.1"
+TimeStepControlToleranceTestVersion="standard"
+TimeStepVerbosity="1"
+ToleranceCnv="0.01"
+ToleranceCnvEnergy="0.4182"
+ToleranceCnvEnergyRelaxed="41.82"
+ToleranceCnvRelaxed="1"
+ToleranceEnergyBalance="4.182e-06"
+ToleranceEnergyBalanceRelaxed="4.182e-05"
+ToleranceMaxDp="0"
+ToleranceMaxDrs="0"
+ToleranceMaxDrv="0"
+ToleranceMaxDs="0"
+ToleranceMb="1e-07"
+ToleranceMbRelaxed="1e-06"
+TolerancePressureMsWells="1000"
+ToleranceWellControl="1e-07"
+ToleranceWells="0.0001"
+TpsaIluFillinLevel="0"
+TpsaIluRelaxation="0.9"
+TpsaLinearSolver="ilu0"
+TpsaLinearSolverIgnoreConvergenceFailure="0"
+TpsaLinearSolverMaxIter="200"
+TpsaLinearSolverPrintJsonDefinition="0"
+TpsaLinearSolverReduction="0.001"
+TpsaLinearSolverRestart="40"
+TpsaLinearSolverVerbosity="0"
+TpsaNewtonMaxError="1e+100"
+TpsaNewtonMaxIterations="20"
+TpsaNewtonMinIterations="1"
+TpsaNewtonTargetIterations="10"
+TpsaNewtonTolerance="0.001"
+TpsaNewtonVerbosity="1"
+TpsaRelaxedLinearSolverReduction="0.001"
+TpsaUseGmres="0"
+UpdateEquationsScaling="0"
+UseAverageDensityMsWells="0"
+UseGmres="0"
+UseHybridNewton="0"
+UseImplicitIpr="1"
+UseMultisegmentWell="1"
+UseUpdateStabilization="1"
+VerifyGpuAwareMpi="0"
+VtkWriteAverageMolarMasses="0"
+VtkWriteDensities="1"
+VtkWriteDiffusionCoefficients="0"
+VtkWriteDofIndex="0"
+VtkWriteEffectiveDiffusionCoefficients="0"
+VtkWriteExtrusionFactor="0"
+VtkWriteFilterVelocities="0"
+VtkWriteFugacities="0"
+VtkWriteFugacityCoeffs="0"
+VtkWriteGasDissolutionFactor="0"
+VtkWriteGasFormationVolumeFactor="0"
+VtkWriteGasSaturationPressure="0"
+VtkWriteIntrinsicPermeabilities="0"
+VtkWriteMassFractions="0"
+VtkWriteMobilities="0"
+VtkWriteMolarities="0"
+VtkWriteMoleFractions="1"
+VtkWriteOilFormationVolumeFactor="0"
+VtkWriteOilSaturationPressure="0"
+VtkWriteOilVaporizationFactor="0"
+VtkWritePorosity="1"
+VtkWritePotentialGradients="0"
+VtkWritePressures="1"
+VtkWritePrimaryVars="0"
+VtkWritePrimaryVarsMeaning="0"
+VtkWriteProcessRank="0"
+VtkWriteRelativePermeabilities="1"
+VtkWriteSaturatedGasOilVaporizationFactor="0"
+VtkWriteSaturatedOilGasDissolutionFactor="0"
+VtkWriteSaturationRatios="0"
+VtkWriteSaturations="1"
+VtkWriteTemperature="1"
+VtkWriteTortuosities="0"
+VtkWriteTotalMassFractions="0"
+VtkWriteTotalMoleFractions="0"
+VtkWriteTracerConcentration="0"
+VtkWriteViscosities="0"
+VtkWriteWaterFormationVolumeFactor="0"
+WaterOnlyThreshold="1"
+WellGroupConstraintsMaxIterations="1"
+ZoltanImbalanceTol="1.1"
+ZoltanParams="graph"
+ZoltanPhgEdgeSizeThreshold="0.35"
+
+Reading deck file '/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA'
+    0 Reading RUNSPEC  in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 9
+    1 Reading DIMENS   in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 11
+    2 Reading GRIDOPTS in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 14
+    3 Reading OIL      in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 17
+    4 Reading WATER    in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 19
+    5 Reading GAS      in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 21
+    6 Reading DISGAS   in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 23
+    7 Reading VAPOIL   in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 25
+    8 Reading POLYMER  in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 27
+    9 Reading METRIC   in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 29
+   10 Reading START    in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 32
+   11 Reading EQLDIMS  in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 35
+   12 Reading WELLDIMS in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 38
+   13 Reading TABDIMS  in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 44
+   14 Reading REGDIMS  in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 48
+   15 Reading PIMTDIMS in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 51
+   16 Reading NSTACK   in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 54
+   17 Reading UNIFIN   in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 57
+   18 Reading UNIFOUT  in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 58
+   19 Reading GRID     in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 65
+   20 Reading NEWTRAN  in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 67
+   21 Reading GRIDFILE in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 69
+   22 Reading INIT     in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 72
+   23 Reading MESSAGES in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 74
+   24 Reading NOECHO   in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 77
+   25 Reading DX       in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 85
+   26 Reading DY       in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 87
+   27 Reading DZ       in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 89
+   28 Reading TOPS     in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 92
+   29 Reading PORO     in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 105
+   30 Reading PERMX    in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 209
+   31 Reading PERMY    in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 314
+   32 Reading PERMZ    in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 419
+   33 Reading PROPS    in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 527
+   34 Reading SWOF     in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 535
+   35 Reading SGOF     in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 560
+   36 Reading PVTW     in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 585
+   37 Reading ROCK     in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 588
+   38 Reading DENSITY  in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 591
+   39 Reading PVTG     in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 596
+   40 Reading PVTO     in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 767
+   41 Reading NOECHO   in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1017
+   42 Reading NOECHO   in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/POLY.inc line 9
+   43 Reading PLYVISC  in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/POLY.inc line 10
+   44 Reading PLYROCK  in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/POLY.inc line 19
+   45 Reading PLYADS   in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/POLY.inc line 24
+   46 Reading PLMIXPAR in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/POLY.inc line 36
+   47 Reading PLYMAX   in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/POLY.inc line 39
+   48 Reading PLYSHLOG in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/POLY.inc line 43
+   49 Reading ECHO     in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/POLY.inc line 63
+   50 Reading SOLUTION in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1023
+   51 Reading EQUIL    in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1027
+   52 Reading RPTRST   in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1031
+   53 Reading RPTSOL   in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1034
+   54 Reading SUMMARY  in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1038
+   55 Reading ALL      in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1040
+   56 Reading WOPP     in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1042
+   57 Reading WWIP     in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1045
+   58 Reading WPI      in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1048
+   59 Reading SCHEDULE in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1051
+   60 Reading RPTSCHED in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1053
+   61 Reading RPTRST   in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1056
+   62 Reading WELSPECS in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1060
+   63 Reading COMPDAT  in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1065
+   64 Reading WCONINJE in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1070
+   65 Reading WCONPROD in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1073
+   66 Reading WPOLYMER in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1077
+   67 Reading TSTEP    in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1080
+   68 Reading WCONINJE in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1086
+   69 Reading WCONPROD in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1089
+   70 Reading WPOLYMER in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1092
+   71 Reading TSTEP    in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1095
+   72 Reading WCONINJE in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1100
+   73 Reading WCONPROD in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1103
+   74 Reading WPOLYMER in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1106
+   75 Reading TSTEP    in /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1109
+
+Warning: Unsupported keywords or keyword items:
+
+  NSTACK: keyword not supported
+  In file: /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA, line 54
+
+  MESSAGES: invalid value '10000' for item 7
+  In file: /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA, line 74
+  MESSAGES(STOPMESG): option is not supported
+
+  MESSAGES: invalid value '10000' for item 8
+  In file: /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA, line 74
+  MESSAGES(STOPCOMT): option is not supported
+
+  MESSAGES: invalid value '20000' for item 9
+  In file: /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA, line 74
+  MESSAGES(STOPWARN): option is not supported
+
+  MESSAGES: invalid value '10000' for item 10
+  In file: /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA, line 74
+  MESSAGES(STOPPROB): option is not supported
+
+  MESSAGES: invalid value '1000' for item 11
+  In file: /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA, line 74
+  MESSAGES(STOPERRS): option is not supported
+
+  NOECHO: keyword not supported
+  In file: /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA, line 77
+
+  NOECHO: keyword not supported
+  In file: /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA, line 1017
+
+  NOECHO: keyword not supported
+  In file: /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/POLY.inc, line 9
+
+  PLYMAX: invalid value '0.000000' for item 2
+  In file: /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/POLY.inc, line 39
+  PLYMAX(SALTCON): option is ignored since BRINE and POLYMER combination is not implemented in OPM Flow
+
+  ECHO: keyword not supported
+  In file: /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/POLY.inc, line 63
+
+  RPTSOL: keyword not supported
+  In file: /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA, line 1034
+
+Creating grid from keywords DX, DY, DZ and TOPS
+4 fluid phases are active
+
+Warning: Error in keyword RPTRST, unrecognized mnemonic SWAT
+In /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1031.
+
+Warning: Error in keyword RPTRST, unrecognized mnemonic SGAS
+In /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1031.
+
+Warning: Error in keyword RPTRST, unrecognized mnemonic SOIL
+In /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1031.
+
+Processing dynamic information from
+/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1051
+Initializing report step 0/228 at 2011-11-06 0 DAYS line 1051
+Processing keyword RPTSCHED at line 1053
+Processing keyword RPTRST at line 1056
+Processing keyword WELSPECS at line 1060
+Processing keyword COMPDAT at line 1065
+Processing keyword WCONINJE at line 1070
+Processing keyword WCONPROD at line 1073
+Processing keyword WPOLYMER at line 1077
+Complete report step 1 (1 DAYS) at 2011-11-07 (0 DAYS)
+
+Initializing report step 2/228 at 2011-11-07 (0 DAYS) line 1080
+Complete report step 2 (1 DAYS) at 2011-11-08 (1 DAYS)
+
+Initializing report step 3/228 at 2011-11-08 (1 DAYS) line 1080
+Complete report step 3 (1 DAYS) at 2011-11-09 (2 DAYS)
+
+Initializing report step 4/228 at 2011-11-09 (2 DAYS) line 1080
+Complete report step 4 (1 DAYS) at 2011-11-10 (3 DAYS)
+
+Initializing report step 5/228 at 2011-11-10 (3 DAYS) line 1080
+Complete report step 5 (1 DAYS) at 2011-11-11 (4 DAYS)
+Report limit reached, see PRT-file for remaining Schedule initialization.
+
+Initializing report step 6/228 at 2011-11-11 (4 DAYS) line 1080
+Complete report step 6 (1 DAYS) at 2011-11-12 (5 DAYS)
+
+Initializing report step 7/228 at 2011-11-12 (5 DAYS) line 1080
+Complete report step 7 (1 DAYS) at 2011-11-13 (6 DAYS)
+
+Initializing report step 8/228 at 2011-11-13 (6 DAYS) line 1080
+Complete report step 8 (1 DAYS) at 2011-11-14 (7 DAYS)
+
+Initializing report step 9/228 at 2011-11-14 (7 DAYS) line 1080
+Complete report step 9 (1 DAYS) at 2011-11-15 (8 DAYS)
+
+Initializing report step 10/228 at 2011-11-15 (8 DAYS) line 1080
+Complete report step 10 (1 DAYS) at 2011-11-16 (9 DAYS)
+
+Initializing report step 11/228 at 2011-11-16 (9 DAYS) line 1080
+Complete report step 11 (5 DAYS) at 2011-11-21 (10 DAYS)
+
+Initializing report step 12/228 at 2011-11-21 (10 DAYS) line 1080
+Complete report step 12 (5 DAYS) at 2011-11-26 (15 DAYS)
+
+Initializing report step 13/228 at 2011-11-26 (15 DAYS) line 1080
+Complete report step 13 (5 DAYS) at 2011-12-01 (20 DAYS)
+
+Initializing report step 14/228 at 2011-12-01 (20 DAYS) line 1080
+Complete report step 14 (5 DAYS) at 2011-12-06 (25 DAYS)
+
+Initializing report step 15/228 at 2011-12-06 (25 DAYS) line 1080
+Complete report step 15 (5 DAYS) at 2011-12-11 (30 DAYS)
+
+Initializing report step 16/228 at 2011-12-11 (30 DAYS) line 1080
+Complete report step 16 (5 DAYS) at 2011-12-16 (35 DAYS)
+
+Initializing report step 17/228 at 2011-12-16 (35 DAYS) line 1080
+Complete report step 17 (5 DAYS) at 2011-12-21 (40 DAYS)
+
+Initializing report step 18/228 at 2011-12-21 (40 DAYS) line 1080
+Complete report step 18 (5 DAYS) at 2011-12-26 (45 DAYS)
+
+Initializing report step 19/228 at 2011-12-26 (45 DAYS) line 1080
+Complete report step 19 (5 DAYS) at 2011-12-31 (50 DAYS)
+
+Initializing report step 20/228 at 2011-12-31 (50 DAYS) line 1080
+Complete report step 20 (5 DAYS) at 2012-01-05 (55 DAYS)
+
+Initializing report step 21/228 at 2012-01-05 (55 DAYS) line 1080
+Complete report step 21 (20 DAYS) at 2012-01-25 (60 DAYS)
+
+Initializing report step 22/228 at 2012-01-25 (60 DAYS) line 1080
+Complete report step 22 (20 DAYS) at 2012-02-14 (80 DAYS)
+
+Initializing report step 23/228 at 2012-02-14 (80 DAYS) line 1080
+Complete report step 23 (20 DAYS) at 2012-03-05 (100 DAYS)
+
+Initializing report step 24/228 at 2012-03-05 (100 DAYS) line 1080
+Complete report step 24 (20 DAYS) at 2012-03-25 (120 DAYS)
+
+Initializing report step 25/228 at 2012-03-25 (120 DAYS) line 1080
+Complete report step 25 (20 DAYS) at 2012-04-14 (140 DAYS)
+
+Initializing report step 26/228 at 2012-04-14 (140 DAYS) line 1080
+Complete report step 26 (20 DAYS) at 2012-05-04 (160 DAYS)
+
+Initializing report step 27/228 at 2012-05-04 (160 DAYS) line 1080
+Complete report step 27 (20 DAYS) at 2012-05-24 (180 DAYS)
+
+Initializing report step 28/228 at 2012-05-24 (180 DAYS) line 1080
+Complete report step 28 (20 DAYS) at 2012-06-13 (200 DAYS)
+
+Initializing report step 29/228 at 2012-06-13 (200 DAYS) line 1080
+Complete report step 29 (20 DAYS) at 2012-07-03 (220 DAYS)
+
+Initializing report step 30/228 at 2012-07-03 (220 DAYS) line 1080
+Complete report step 30 (20 DAYS) at 2012-07-23 (240 DAYS)
+
+Initializing report step 31/228 at 2012-07-23 (240 DAYS) line 1080
+Complete report step 31 (20 DAYS) at 2012-08-12 (260 DAYS)
+
+Initializing report step 32/228 at 2012-08-12 (260 DAYS) line 1080
+Complete report step 32 (20 DAYS) at 2012-09-01 (280 DAYS)
+
+Initializing report step 33/228 at 2012-09-01 (280 DAYS) line 1080
+Complete report step 33 (20 DAYS) at 2012-09-21 (300 DAYS)
+
+Initializing report step 34/228 at 2012-09-21 (300 DAYS) line 1080
+Complete report step 34 (20 DAYS) at 2012-10-11 (320 DAYS)
+
+Initializing report step 35/228 at 2012-10-11 (320 DAYS) line 1080
+Complete report step 35 (20 DAYS) at 2012-10-31 (340 DAYS)
+
+Initializing report step 36/228 at 2012-10-31 (340 DAYS) line 1080
+Complete report step 36 (20 DAYS) at 2012-11-20 (360 DAYS)
+
+Initializing report step 37/228 at 2012-11-20 (360 DAYS) line 1080
+Complete report step 37 (20 DAYS) at 2012-12-10 (380 DAYS)
+
+Initializing report step 38/228 at 2012-12-10 (380 DAYS) line 1080
+Complete report step 38 (20 DAYS) at 2012-12-30 (400 DAYS)
+
+Initializing report step 39/228 at 2012-12-30 (400 DAYS) line 1080
+Complete report step 39 (20 DAYS) at 2013-01-19 (420 DAYS)
+
+Initializing report step 40/228 at 2013-01-19 (420 DAYS) line 1080
+Complete report step 40 (20 DAYS) at 2013-02-08 (440 DAYS)
+
+Initializing report step 41/228 at 2013-02-08 (440 DAYS) line 1080
+Processing keyword WCONINJE at line 1086
+Processing keyword WCONPROD at line 1089
+Processing keyword WPOLYMER at line 1092
+Complete report step 41 (20 DAYS) at 2013-02-28 (460 DAYS)
+
+Initializing report step 42/228 at 2013-02-28 (460 DAYS) line 1095
+Complete report step 42 (20 DAYS) at 2013-03-20 (480 DAYS)
+
+Initializing report step 43/228 at 2013-03-20 (480 DAYS) line 1095
+Complete report step 43 (20 DAYS) at 2013-04-09 (500 DAYS)
+
+Initializing report step 44/228 at 2013-04-09 (500 DAYS) line 1095
+Complete report step 44 (20 DAYS) at 2013-04-29 (520 DAYS)
+
+Initializing report step 45/228 at 2013-04-29 (520 DAYS) line 1095
+Complete report step 45 (20 DAYS) at 2013-05-19 (540 DAYS)
+
+Initializing report step 46/228 at 2013-05-19 (540 DAYS) line 1095
+Complete report step 46 (20 DAYS) at 2013-06-08 (560 DAYS)
+
+Initializing report step 47/228 at 2013-06-08 (560 DAYS) line 1095
+Complete report step 47 (20 DAYS) at 2013-06-28 (580 DAYS)
+
+Initializing report step 48/228 at 2013-06-28 (580 DAYS) line 1095
+Complete report step 48 (20 DAYS) at 2013-07-18 (600 DAYS)
+
+Initializing report step 49/228 at 2013-07-18 (600 DAYS) line 1095
+Complete report step 49 (20 DAYS) at 2013-08-07 (620 DAYS)
+
+Initializing report step 50/228 at 2013-08-07 (620 DAYS) line 1095
+Complete report step 50 (20 DAYS) at 2013-08-27 (640 DAYS)
+
+Initializing report step 51/228 at 2013-08-27 (640 DAYS) line 1095
+Complete report step 51 (20 DAYS) at 2013-09-16 (660 DAYS)
+
+Initializing report step 52/228 at 2013-09-16 (660 DAYS) line 1095
+Complete report step 52 (20 DAYS) at 2013-10-06 (680 DAYS)
+
+Initializing report step 53/228 at 2013-10-06 (680 DAYS) line 1095
+Complete report step 53 (20 DAYS) at 2013-10-26 (700 DAYS)
+
+Initializing report step 54/228 at 2013-10-26 (700 DAYS) line 1095
+Complete report step 54 (20 DAYS) at 2013-11-15 (720 DAYS)
+
+Initializing report step 55/228 at 2013-11-15 (720 DAYS) line 1095
+Complete report step 55 (20 DAYS) at 2013-12-05 (740 DAYS)
+
+Initializing report step 56/228 at 2013-12-05 (740 DAYS) line 1095
+Complete report step 56 (20 DAYS) at 2013-12-25 (760 DAYS)
+
+Initializing report step 57/228 at 2013-12-25 (760 DAYS) line 1095
+Complete report step 57 (20 DAYS) at 2014-01-14 (780 DAYS)
+
+Initializing report step 58/228 at 2014-01-14 (780 DAYS) line 1095
+Complete report step 58 (20 DAYS) at 2014-02-03 (800 DAYS)
+
+Initializing report step 59/228 at 2014-02-03 (800 DAYS) line 1095
+Complete report step 59 (20 DAYS) at 2014-02-23 (820 DAYS)
+
+Initializing report step 60/228 at 2014-02-23 (820 DAYS) line 1095
+Complete report step 60 (20 DAYS) at 2014-03-15 (840 DAYS)
+
+Initializing report step 61/228 at 2014-03-15 (840 DAYS) line 1095
+Complete report step 61 (20 DAYS) at 2014-04-04 (860 DAYS)
+
+Initializing report step 62/228 at 2014-04-04 (860 DAYS) line 1095
+Complete report step 62 (20 DAYS) at 2014-04-24 (880 DAYS)
+
+Initializing report step 63/228 at 2014-04-24 (880 DAYS) line 1095
+Complete report step 63 (20 DAYS) at 2014-05-14 (900 DAYS)
+
+Initializing report step 64/228 at 2014-05-14 (900 DAYS) line 1095
+Complete report step 64 (20 DAYS) at 2014-06-03 (920 DAYS)
+
+Initializing report step 65/228 at 2014-06-03 (920 DAYS) line 1095
+Complete report step 65 (20 DAYS) at 2014-06-23 (940 DAYS)
+
+Initializing report step 66/228 at 2014-06-23 (940 DAYS) line 1095
+Complete report step 66 (20 DAYS) at 2014-07-13 (960 DAYS)
+
+Initializing report step 67/228 at 2014-07-13 (960 DAYS) line 1095
+Complete report step 67 (20 DAYS) at 2014-08-02 (980 DAYS)
+
+Initializing report step 68/228 at 2014-08-02 (980 DAYS) line 1095
+Complete report step 68 (20 DAYS) at 2014-08-22 (1000 DAYS)
+
+Initializing report step 69/228 at 2014-08-22 (1000 DAYS) line 1095
+Complete report step 69 (20 DAYS) at 2014-09-11 (1020 DAYS)
+
+Initializing report step 70/228 at 2014-09-11 (1020 DAYS) line 1095
+Complete report step 70 (20 DAYS) at 2014-10-01 (1040 DAYS)
+
+Initializing report step 71/228 at 2014-10-01 (1040 DAYS) line 1095
+Complete report step 71 (20 DAYS) at 2014-10-21 (1060 DAYS)
+
+Initializing report step 72/228 at 2014-10-21 (1060 DAYS) line 1095
+Complete report step 72 (20 DAYS) at 2014-11-10 (1080 DAYS)
+
+Initializing report step 73/228 at 2014-11-10 (1080 DAYS) line 1095
+Complete report step 73 (20 DAYS) at 2014-11-30 (1100 DAYS)
+
+Initializing report step 74/228 at 2014-11-30 (1100 DAYS) line 1095
+Complete report step 74 (20 DAYS) at 2014-12-20 (1120 DAYS)
+
+Initializing report step 75/228 at 2014-12-20 (1120 DAYS) line 1095
+Complete report step 75 (20 DAYS) at 2015-01-09 (1140 DAYS)
+
+Initializing report step 76/228 at 2015-01-09 (1140 DAYS) line 1095
+Complete report step 76 (20 DAYS) at 2015-01-29 (1160 DAYS)
+
+Initializing report step 77/228 at 2015-01-29 (1160 DAYS) line 1095
+Complete report step 77 (20 DAYS) at 2015-02-18 (1180 DAYS)
+
+Initializing report step 78/228 at 2015-02-18 (1180 DAYS) line 1095
+Complete report step 78 (20 DAYS) at 2015-03-10 (1200 DAYS)
+
+Initializing report step 79/228 at 2015-03-10 (1200 DAYS) line 1095
+Complete report step 79 (20 DAYS) at 2015-03-30 (1220 DAYS)
+
+Initializing report step 80/228 at 2015-03-30 (1220 DAYS) line 1095
+Complete report step 80 (20 DAYS) at 2015-04-19 (1240 DAYS)
+
+Initializing report step 81/228 at 2015-04-19 (1240 DAYS) line 1095
+Complete report step 81 (25 DAYS) at 2015-05-14 (1260 DAYS)
+
+Initializing report step 82/228 at 2015-05-14 (1260 DAYS) line 1095
+Complete report step 82 (25 DAYS) at 2015-06-08 (1285 DAYS)
+
+Initializing report step 83/228 at 2015-06-08 (1285 DAYS) line 1095
+Complete report step 83 (25 DAYS) at 2015-07-03 (1310 DAYS)
+
+Initializing report step 84/228 at 2015-07-03 (1310 DAYS) line 1095
+Complete report step 84 (25 DAYS) at 2015-07-28 (1335 DAYS)
+
+Initializing report step 85/228 at 2015-07-28 (1335 DAYS) line 1095
+Complete report step 85 (25 DAYS) at 2015-08-22 (1360 DAYS)
+
+Initializing report step 86/228 at 2015-08-22 (1360 DAYS) line 1095
+Complete report step 86 (25 DAYS) at 2015-09-16 (1385 DAYS)
+
+Initializing report step 87/228 at 2015-09-16 (1385 DAYS) line 1095
+Complete report step 87 (25 DAYS) at 2015-10-11 (1410 DAYS)
+
+Initializing report step 88/228 at 2015-10-11 (1410 DAYS) line 1095
+Complete report step 88 (25 DAYS) at 2015-11-05 (1435 DAYS)
+
+Initializing report step 89/228 at 2015-11-05 (1435 DAYS) line 1095
+Complete report step 89 (25 DAYS) at 2015-11-30 (1460 DAYS)
+
+Initializing report step 90/228 at 2015-11-30 (1460 DAYS) line 1095
+Complete report step 90 (25 DAYS) at 2015-12-25 (1485 DAYS)
+
+Initializing report step 91/228 at 2015-12-25 (1485 DAYS) line 1095
+Complete report step 91 (25 DAYS) at 2016-01-19 (1510 DAYS)
+
+Initializing report step 92/228 at 2016-01-19 (1510 DAYS) line 1095
+Complete report step 92 (25 DAYS) at 2016-02-13 (1535 DAYS)
+
+Initializing report step 93/228 at 2016-02-13 (1535 DAYS) line 1095
+Complete report step 93 (25 DAYS) at 2016-03-09 (1560 DAYS)
+
+Initializing report step 94/228 at 2016-03-09 (1560 DAYS) line 1095
+Complete report step 94 (25 DAYS) at 2016-04-03 (1585 DAYS)
+
+Initializing report step 95/228 at 2016-04-03 (1585 DAYS) line 1095
+Complete report step 95 (25 DAYS) at 2016-04-28 (1610 DAYS)
+
+Initializing report step 96/228 at 2016-04-28 (1610 DAYS) line 1095
+Complete report step 96 (25 DAYS) at 2016-05-23 (1635 DAYS)
+
+Initializing report step 97/228 at 2016-05-23 (1635 DAYS) line 1095
+Complete report step 97 (25 DAYS) at 2016-06-17 (1660 DAYS)
+
+Initializing report step 98/228 at 2016-06-17 (1660 DAYS) line 1095
+Complete report step 98 (25 DAYS) at 2016-07-12 (1685 DAYS)
+
+Initializing report step 99/228 at 2016-07-12 (1685 DAYS) line 1095
+Complete report step 99 (25 DAYS) at 2016-08-06 (1710 DAYS)
+
+Initializing report step 100/228 at 2016-08-06 (1710 DAYS) line 1095
+Complete report step 100 (25 DAYS) at 2016-08-31 (1735 DAYS)
+
+Initializing report step 101/228 at 2016-08-31 (1735 DAYS) line 1095
+Complete report step 101 (25 DAYS) at 2016-09-25 (1760 DAYS)
+
+Initializing report step 102/228 at 2016-09-25 (1760 DAYS) line 1095
+Complete report step 102 (25 DAYS) at 2016-10-20 (1785 DAYS)
+
+Initializing report step 103/228 at 2016-10-20 (1785 DAYS) line 1095
+Complete report step 103 (25 DAYS) at 2016-11-14 (1810 DAYS)
+
+Initializing report step 104/228 at 2016-11-14 (1810 DAYS) line 1095
+Complete report step 104 (25 DAYS) at 2016-12-09 (1835 DAYS)
+
+Initializing report step 105/228 at 2016-12-09 (1835 DAYS) line 1095
+Complete report step 105 (25 DAYS) at 2017-01-03 (1860 DAYS)
+
+Initializing report step 106/228 at 2017-01-03 (1860 DAYS) line 1095
+Complete report step 106 (25 DAYS) at 2017-01-28 (1885 DAYS)
+
+Initializing report step 107/228 at 2017-01-28 (1885 DAYS) line 1095
+Complete report step 107 (25 DAYS) at 2017-02-22 (1910 DAYS)
+
+Initializing report step 108/228 at 2017-02-22 (1910 DAYS) line 1095
+Complete report step 108 (25 DAYS) at 2017-03-19 (1935 DAYS)
+
+Initializing report step 109/228 at 2017-03-19 (1935 DAYS) line 1095
+Complete report step 109 (25 DAYS) at 2017-04-13 (1960 DAYS)
+
+Initializing report step 110/228 at 2017-04-13 (1960 DAYS) line 1095
+Complete report step 110 (25 DAYS) at 2017-05-08 (1985 DAYS)
+
+Initializing report step 111/228 at 2017-05-08 (1985 DAYS) line 1095
+Complete report step 111 (25 DAYS) at 2017-06-02 (2010 DAYS)
+
+Initializing report step 112/228 at 2017-06-02 (2010 DAYS) line 1095
+Complete report step 112 (25 DAYS) at 2017-06-27 (2035 DAYS)
+
+Initializing report step 113/228 at 2017-06-27 (2035 DAYS) line 1095
+Complete report step 113 (25 DAYS) at 2017-07-22 (2060 DAYS)
+
+Initializing report step 114/228 at 2017-07-22 (2060 DAYS) line 1095
+Complete report step 114 (25 DAYS) at 2017-08-16 (2085 DAYS)
+
+Initializing report step 115/228 at 2017-08-16 (2085 DAYS) line 1095
+Processing keyword WCONINJE at line 1100
+Processing keyword WCONPROD at line 1103
+Processing keyword WPOLYMER at line 1106
+Complete report step 115 (25 DAYS) at 2017-09-10 (2110 DAYS)
+
+Initializing report step 116/228 at 2017-09-10 (2110 DAYS) line 1109
+Complete report step 116 (25 DAYS) at 2017-10-05 (2135 DAYS)
+
+Initializing report step 117/228 at 2017-10-05 (2135 DAYS) line 1109
+Complete report step 117 (25 DAYS) at 2017-10-30 (2160 DAYS)
+
+Initializing report step 118/228 at 2017-10-30 (2160 DAYS) line 1109
+Complete report step 118 (25 DAYS) at 2017-11-24 (2185 DAYS)
+
+Initializing report step 119/228 at 2017-11-24 (2185 DAYS) line 1109
+Complete report step 119 (25 DAYS) at 2017-12-19 (2210 DAYS)
+
+Initializing report step 120/228 at 2017-12-19 (2210 DAYS) line 1109
+Complete report step 120 (25 DAYS) at 2018-01-13 (2235 DAYS)
+
+Initializing report step 121/228 at 2018-01-13 (2235 DAYS) line 1109
+Complete report step 121 (25 DAYS) at 2018-02-07 (2260 DAYS)
+
+Initializing report step 122/228 at 2018-02-07 (2260 DAYS) line 1109
+Complete report step 122 (25 DAYS) at 2018-03-04 (2285 DAYS)
+
+Initializing report step 123/228 at 2018-03-04 (2285 DAYS) line 1109
+Complete report step 123 (25 DAYS) at 2018-03-29 (2310 DAYS)
+
+Initializing report step 124/228 at 2018-03-29 (2310 DAYS) line 1109
+Complete report step 124 (25 DAYS) at 2018-04-23 (2335 DAYS)
+
+Initializing report step 125/228 at 2018-04-23 (2335 DAYS) line 1109
+Complete report step 125 (25 DAYS) at 2018-05-18 (2360 DAYS)
+
+Initializing report step 126/228 at 2018-05-18 (2360 DAYS) line 1109
+Complete report step 126 (25 DAYS) at 2018-06-12 (2385 DAYS)
+
+Initializing report step 127/228 at 2018-06-12 (2385 DAYS) line 1109
+Complete report step 127 (25 DAYS) at 2018-07-07 (2410 DAYS)
+
+Initializing report step 128/228 at 2018-07-07 (2410 DAYS) line 1109
+Complete report step 128 (25 DAYS) at 2018-08-01 (2435 DAYS)
+
+Initializing report step 129/228 at 2018-08-01 (2435 DAYS) line 1109
+Complete report step 129 (25 DAYS) at 2018-08-26 (2460 DAYS)
+
+Initializing report step 130/228 at 2018-08-26 (2460 DAYS) line 1109
+Complete report step 130 (25 DAYS) at 2018-09-20 (2485 DAYS)
+
+Initializing report step 131/228 at 2018-09-20 (2485 DAYS) line 1109
+Complete report step 131 (25 DAYS) at 2018-10-15 (2510 DAYS)
+
+Initializing report step 132/228 at 2018-10-15 (2510 DAYS) line 1109
+Complete report step 132 (25 DAYS) at 2018-11-09 (2535 DAYS)
+
+Initializing report step 133/228 at 2018-11-09 (2535 DAYS) line 1109
+Complete report step 133 (25 DAYS) at 2018-12-04 (2560 DAYS)
+
+Initializing report step 134/228 at 2018-12-04 (2560 DAYS) line 1109
+Complete report step 134 (25 DAYS) at 2018-12-29 (2585 DAYS)
+
+Initializing report step 135/228 at 2018-12-29 (2585 DAYS) line 1109
+Complete report step 135 (25 DAYS) at 2019-01-23 (2610 DAYS)
+
+Initializing report step 136/228 at 2019-01-23 (2610 DAYS) line 1109
+Complete report step 136 (25 DAYS) at 2019-02-17 (2635 DAYS)
+
+Initializing report step 137/228 at 2019-02-17 (2635 DAYS) line 1109
+Complete report step 137 (25 DAYS) at 2019-03-14 (2660 DAYS)
+
+Initializing report step 138/228 at 2019-03-14 (2660 DAYS) line 1109
+Complete report step 138 (25 DAYS) at 2019-04-08 (2685 DAYS)
+
+Initializing report step 139/228 at 2019-04-08 (2685 DAYS) line 1109
+Complete report step 139 (25 DAYS) at 2019-05-03 (2710 DAYS)
+
+Initializing report step 140/228 at 2019-05-03 (2710 DAYS) line 1109
+Complete report step 140 (25 DAYS) at 2019-05-28 (2735 DAYS)
+
+Initializing report step 141/228 at 2019-05-28 (2735 DAYS) line 1109
+Complete report step 141 (25 DAYS) at 2019-06-22 (2760 DAYS)
+
+Initializing report step 142/228 at 2019-06-22 (2760 DAYS) line 1109
+Complete report step 142 (25 DAYS) at 2019-07-17 (2785 DAYS)
+
+Initializing report step 143/228 at 2019-07-17 (2785 DAYS) line 1109
+Complete report step 143 (25 DAYS) at 2019-08-11 (2810 DAYS)
+
+Initializing report step 144/228 at 2019-08-11 (2810 DAYS) line 1109
+Complete report step 144 (25 DAYS) at 2019-09-05 (2835 DAYS)
+
+Initializing report step 145/228 at 2019-09-05 (2835 DAYS) line 1109
+Complete report step 145 (25 DAYS) at 2019-09-30 (2860 DAYS)
+
+Initializing report step 146/228 at 2019-09-30 (2860 DAYS) line 1109
+Complete report step 146 (25 DAYS) at 2019-10-25 (2885 DAYS)
+
+Initializing report step 147/228 at 2019-10-25 (2885 DAYS) line 1109
+Complete report step 147 (25 DAYS) at 2019-11-19 (2910 DAYS)
+
+Initializing report step 148/228 at 2019-11-19 (2910 DAYS) line 1109
+Complete report step 148 (25 DAYS) at 2019-12-14 (2935 DAYS)
+
+Initializing report step 149/228 at 2019-12-14 (2935 DAYS) line 1109
+Complete report step 149 (100 DAYS) at 2020-03-23 (2960 DAYS)
+
+Initializing report step 150/228 at 2020-03-23 (2960 DAYS) line 1109
+Complete report step 150 (100 DAYS) at 2020-07-01 (3060 DAYS)
+
+Initializing report step 151/228 at 2020-07-01 (3060 DAYS) line 1109
+Complete report step 151 (100 DAYS) at 2020-10-09 (3160 DAYS)
+
+Initializing report step 152/228 at 2020-10-09 (3160 DAYS) line 1109
+Complete report step 152 (100 DAYS) at 2021-01-17 (3260 DAYS)
+
+Initializing report step 153/228 at 2021-01-17 (3260 DAYS) line 1109
+Complete report step 153 (100 DAYS) at 2021-04-27 (3360 DAYS)
+
+Initializing report step 154/228 at 2021-04-27 (3360 DAYS) line 1109
+Complete report step 154 (100 DAYS) at 2021-08-05 (3460 DAYS)
+
+Initializing report step 155/228 at 2021-08-05 (3460 DAYS) line 1109
+Complete report step 155 (100 DAYS) at 2021-11-13 (3560 DAYS)
+
+Initializing report step 156/228 at 2021-11-13 (3560 DAYS) line 1109
+Complete report step 156 (100 DAYS) at 2022-02-21 (3660 DAYS)
+
+Initializing report step 157/228 at 2022-02-21 (3660 DAYS) line 1109
+Complete report step 157 (100 DAYS) at 2022-06-01 (3760 DAYS)
+
+Initializing report step 158/228 at 2022-06-01 (3760 DAYS) line 1109
+Complete report step 158 (100 DAYS) at 2022-09-09 (3860 DAYS)
+
+Initializing report step 159/228 at 2022-09-09 (3860 DAYS) line 1109
+Complete report step 159 (100 DAYS) at 2022-12-18 (3960 DAYS)
+
+Initializing report step 160/228 at 2022-12-18 (3960 DAYS) line 1109
+Complete report step 160 (100 DAYS) at 2023-03-28 (4060 DAYS)
+
+Initializing report step 161/228 at 2023-03-28 (4060 DAYS) line 1109
+Complete report step 161 (100 DAYS) at 2023-07-06 (4160 DAYS)
+
+Initializing report step 162/228 at 2023-07-06 (4160 DAYS) line 1109
+Complete report step 162 (100 DAYS) at 2023-10-14 (4260 DAYS)
+
+Initializing report step 163/228 at 2023-10-14 (4260 DAYS) line 1109
+Complete report step 163 (100 DAYS) at 2024-01-22 (4360 DAYS)
+
+Initializing report step 164/228 at 2024-01-22 (4360 DAYS) line 1109
+Complete report step 164 (100 DAYS) at 2024-05-01 (4460 DAYS)
+
+Initializing report step 165/228 at 2024-05-01 (4460 DAYS) line 1109
+Complete report step 165 (100 DAYS) at 2024-08-09 (4560 DAYS)
+
+Initializing report step 166/228 at 2024-08-09 (4560 DAYS) line 1109
+Complete report step 166 (100 DAYS) at 2024-11-17 (4660 DAYS)
+
+Initializing report step 167/228 at 2024-11-17 (4660 DAYS) line 1109
+Complete report step 167 (100 DAYS) at 2025-02-25 (4760 DAYS)
+
+Initializing report step 168/228 at 2025-02-25 (4760 DAYS) line 1109
+Complete report step 168 (100 DAYS) at 2025-06-05 (4860 DAYS)
+
+Initializing report step 169/228 at 2025-06-05 (4860 DAYS) line 1109
+Complete report step 169 (100 DAYS) at 2025-09-13 (4960 DAYS)
+
+Initializing report step 170/228 at 2025-09-13 (4960 DAYS) line 1109
+Complete report step 170 (100 DAYS) at 2025-12-22 (5060 DAYS)
+
+Initializing report step 171/228 at 2025-12-22 (5060 DAYS) line 1109
+Complete report step 171 (100 DAYS) at 2026-04-01 (5160 DAYS)
+
+Initializing report step 172/228 at 2026-04-01 (5160 DAYS) line 1109
+Complete report step 172 (100 DAYS) at 2026-07-10 (5260 DAYS)
+
+Initializing report step 173/228 at 2026-07-10 (5260 DAYS) line 1109
+Complete report step 173 (100 DAYS) at 2026-10-18 (5360 DAYS)
+
+Initializing report step 174/228 at 2026-10-18 (5360 DAYS) line 1109
+Complete report step 174 (100 DAYS) at 2027-01-26 (5460 DAYS)
+
+Initializing report step 175/228 at 2027-01-26 (5460 DAYS) line 1109
+Complete report step 175 (100 DAYS) at 2027-05-06 (5560 DAYS)
+
+Initializing report step 176/228 at 2027-05-06 (5560 DAYS) line 1109
+Complete report step 176 (100 DAYS) at 2027-08-14 (5660 DAYS)
+
+Initializing report step 177/228 at 2027-08-14 (5660 DAYS) line 1109
+Complete report step 177 (100 DAYS) at 2027-11-22 (5760 DAYS)
+
+Initializing report step 178/228 at 2027-11-22 (5760 DAYS) line 1109
+Complete report step 178 (100 DAYS) at 2028-03-01 (5860 DAYS)
+
+Initializing report step 179/228 at 2028-03-01 (5860 DAYS) line 1109
+Complete report step 179 (100 DAYS) at 2028-06-09 (5960 DAYS)
+
+Initializing report step 180/228 at 2028-06-09 (5960 DAYS) line 1109
+Complete report step 180 (100 DAYS) at 2028-09-17 (6060 DAYS)
+
+Initializing report step 181/228 at 2028-09-17 (6060 DAYS) line 1109
+Complete report step 181 (100 DAYS) at 2028-12-26 (6160 DAYS)
+
+Initializing report step 182/228 at 2028-12-26 (6160 DAYS) line 1109
+Complete report step 182 (100 DAYS) at 2029-04-05 (6260 DAYS)
+
+Initializing report step 183/228 at 2029-04-05 (6260 DAYS) line 1109
+Complete report step 183 (100 DAYS) at 2029-07-14 (6360 DAYS)
+
+Initializing report step 184/228 at 2029-07-14 (6360 DAYS) line 1109
+Complete report step 184 (100 DAYS) at 2029-10-22 (6460 DAYS)
+
+Initializing report step 185/228 at 2029-10-22 (6460 DAYS) line 1109
+Complete report step 185 (100 DAYS) at 2030-01-30 (6560 DAYS)
+
+Initializing report step 186/228 at 2030-01-30 (6560 DAYS) line 1109
+Complete report step 186 (100 DAYS) at 2030-05-10 (6660 DAYS)
+
+Initializing report step 187/228 at 2030-05-10 (6660 DAYS) line 1109
+Complete report step 187 (100 DAYS) at 2030-08-18 (6760 DAYS)
+
+Initializing report step 188/228 at 2030-08-18 (6760 DAYS) line 1109
+Complete report step 188 (100 DAYS) at 2030-11-26 (6860 DAYS)
+
+Initializing report step 189/228 at 2030-11-26 (6860 DAYS) line 1109
+Complete report step 189 (100 DAYS) at 2031-03-06 (6960 DAYS)
+
+Initializing report step 190/228 at 2031-03-06 (6960 DAYS) line 1109
+Complete report step 190 (100 DAYS) at 2031-06-14 (7060 DAYS)
+
+Initializing report step 191/228 at 2031-06-14 (7060 DAYS) line 1109
+Complete report step 191 (100 DAYS) at 2031-09-22 (7160 DAYS)
+
+Initializing report step 192/228 at 2031-09-22 (7160 DAYS) line 1109
+Complete report step 192 (100 DAYS) at 2031-12-31 (7260 DAYS)
+
+Initializing report step 193/228 at 2031-12-31 (7260 DAYS) line 1109
+Complete report step 193 (100 DAYS) at 2032-04-09 (7360 DAYS)
+
+Initializing report step 194/228 at 2032-04-09 (7360 DAYS) line 1109
+Complete report step 194 (100 DAYS) at 2032-07-18 (7460 DAYS)
+
+Initializing report step 195/228 at 2032-07-18 (7460 DAYS) line 1109
+Complete report step 195 (100 DAYS) at 2032-10-26 (7560 DAYS)
+
+Initializing report step 196/228 at 2032-10-26 (7560 DAYS) line 1109
+Complete report step 196 (100 DAYS) at 2033-02-03 (7660 DAYS)
+
+Initializing report step 197/228 at 2033-02-03 (7660 DAYS) line 1109
+Complete report step 197 (100 DAYS) at 2033-05-14 (7760 DAYS)
+
+Initializing report step 198/228 at 2033-05-14 (7760 DAYS) line 1109
+Complete report step 198 (100 DAYS) at 2033-08-22 (7860 DAYS)
+
+Initializing report step 199/228 at 2033-08-22 (7860 DAYS) line 1109
+Complete report step 199 (100 DAYS) at 2033-11-30 (7960 DAYS)
+
+Initializing report step 200/228 at 2033-11-30 (7960 DAYS) line 1109
+Complete report step 200 (100 DAYS) at 2034-03-10 (8060 DAYS)
+
+Initializing report step 201/228 at 2034-03-10 (8060 DAYS) line 1109
+Complete report step 201 (100 DAYS) at 2034-06-18 (8160 DAYS)
+
+Initializing report step 202/228 at 2034-06-18 (8160 DAYS) line 1109
+Complete report step 202 (100 DAYS) at 2034-09-26 (8260 DAYS)
+
+Initializing report step 203/228 at 2034-09-26 (8260 DAYS) line 1109
+Complete report step 203 (100 DAYS) at 2035-01-04 (8360 DAYS)
+
+Initializing report step 204/228 at 2035-01-04 (8360 DAYS) line 1109
+Complete report step 204 (100 DAYS) at 2035-04-14 (8460 DAYS)
+
+Initializing report step 205/228 at 2035-04-14 (8460 DAYS) line 1109
+Complete report step 205 (100 DAYS) at 2035-07-23 (8560 DAYS)
+
+Initializing report step 206/228 at 2035-07-23 (8560 DAYS) line 1109
+Complete report step 206 (100 DAYS) at 2035-10-31 (8660 DAYS)
+
+Initializing report step 207/228 at 2035-10-31 (8660 DAYS) line 1109
+Complete report step 207 (100 DAYS) at 2036-02-08 (8760 DAYS)
+
+Initializing report step 208/228 at 2036-02-08 (8760 DAYS) line 1109
+Complete report step 208 (100 DAYS) at 2036-05-18 (8860 DAYS)
+
+Initializing report step 209/228 at 2036-05-18 (8860 DAYS) line 1109
+Complete report step 209 (100 DAYS) at 2036-08-26 (8960 DAYS)
+
+Initializing report step 210/228 at 2036-08-26 (8960 DAYS) line 1109
+Complete report step 210 (100 DAYS) at 2036-12-04 (9060 DAYS)
+
+Initializing report step 211/228 at 2036-12-04 (9060 DAYS) line 1109
+Complete report step 211 (100 DAYS) at 2037-03-14 (9160 DAYS)
+
+Initializing report step 212/228 at 2037-03-14 (9160 DAYS) line 1109
+Complete report step 212 (100 DAYS) at 2037-06-22 (9260 DAYS)
+
+Initializing report step 213/228 at 2037-06-22 (9260 DAYS) line 1109
+Complete report step 213 (100 DAYS) at 2037-09-30 (9360 DAYS)
+
+Initializing report step 214/228 at 2037-09-30 (9360 DAYS) line 1109
+Complete report step 214 (100 DAYS) at 2038-01-08 (9460 DAYS)
+
+Initializing report step 215/228 at 2038-01-08 (9460 DAYS) line 1109
+Complete report step 215 (100 DAYS) at 2038-04-18 (9560 DAYS)
+
+Initializing report step 216/228 at 2038-04-18 (9560 DAYS) line 1109
+Complete report step 216 (100 DAYS) at 2038-07-27 (9660 DAYS)
+
+Initializing report step 217/228 at 2038-07-27 (9660 DAYS) line 1109
+Complete report step 217 (100 DAYS) at 2038-11-04 (9760 DAYS)
+
+Initializing report step 218/228 at 2038-11-04 (9760 DAYS) line 1109
+Complete report step 218 (100 DAYS) at 2039-02-12 (9860 DAYS)
+
+Initializing report step 219/228 at 2039-02-12 (9860 DAYS) line 1109
+Complete report step 219 (100 DAYS) at 2039-05-23 (9960 DAYS)
+
+Initializing report step 220/228 at 2039-05-23 (9960 DAYS) line 1109
+Complete report step 220 (100 DAYS) at 2039-08-31 (10060 DAYS)
+
+Initializing report step 221/228 at 2039-08-31 (10060 DAYS) line 1109
+Complete report step 221 (100 DAYS) at 2039-12-09 (10160 DAYS)
+
+Initializing report step 222/228 at 2039-12-09 (10160 DAYS) line 1109
+Complete report step 222 (100 DAYS) at 2040-03-18 (10260 DAYS)
+
+Initializing report step 223/228 at 2040-03-18 (10260 DAYS) line 1109
+Complete report step 223 (100 DAYS) at 2040-06-26 (10360 DAYS)
+
+Initializing report step 224/228 at 2040-06-26 (10360 DAYS) line 1109
+Complete report step 224 (100 DAYS) at 2040-10-04 (10460 DAYS)
+
+Initializing report step 225/228 at 2040-10-04 (10460 DAYS) line 1109
+Complete report step 225 (100 DAYS) at 2041-01-12 (10560 DAYS)
+
+Initializing report step 226/228 at 2041-01-12 (10560 DAYS) line 1109
+Complete report step 226 (100 DAYS) at 2041-04-22 (10660 DAYS)
+
+Initializing report step 227/228 at 2041-04-22 (10660 DAYS) line 1109
+Complete report step 227 (100 DAYS) at 2041-07-31 (10760 DAYS)
+
+Initializing report step 228/228 at 2041-07-31 (10760 DAYS) line 1109
+Complete report step 228 (100 DAYS) at 2041-11-08 (10860 DAYS)
+
+
+Processing grid
+Total number of active cells: 100 / total pore volume: 8922115 RM3
+
+Property tree for linear solvers:
+{
+    "maxiter": "20",
+    "tol": "0.0050000000000000001",
+    "verbosity": "0",
+    "solver": "bicgstab",
+    "preconditioner": {
+        "type": "cprw",
+        "use_well_weights": "false",
+        "add_wells": "true",
+        "weight_type": "trueimpes",
+        "pre_smooth": "0",
+        "post_smooth": "1",
+        "finesmoother": {
+            "type": "paroverilu0",
+            "relaxation": "1"
+        },
+        "verbosity": "0",
+        "coarsesolver": {
+            "maxiter": "1",
+            "tol": "0.10000000000000001",
+            "solver": "loopsolver",
+            "verbosity": "0",
+            "preconditioner": {
+                "type": "amg",
+                "alpha": "0.33333333333300003",
+                "relaxation": "1",
+                "iterations": "1",
+                "coarsenTarget": "1200",
+                "pre_smooth": "1",
+                "post_smooth": "1",
+                "beta": "0",
+                "smoother": "ilu0",
+                "verbosity": "0",
+                "maxlevel": "15",
+                "skip_isolated": "0",
+                "accumulate": "1",
+                "prolongationdamping": "1",
+                "maxdistance": "2",
+                "maxconnectivity": "15",
+                "maxaggsize": "6",
+                "minaggsize": "4"
+            }
+        }
+    }
+}
+
+
+Warning: Unhandled summary keyword ALL/FAQR
+In /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1040
+
+Warning: Unhandled summary keyword ALL/FAQRG
+In /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1040
+
+Warning: Unhandled summary keyword ALL/FAQT
+In /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1040
+
+Warning: Unhandled summary keyword ALL/FAQTG
+In /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1040
+
+Warning: Unhandled summary keyword ALL/FWGR
+In /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1040
+
+Warning: Unhandled summary keyword ALL/GWGR
+In /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA line 1040
+
+                              **************************************************************************
+  BALANCE  AT         0  DAYS *                                                                        *
+  REPORT    0    06 Nov 2011  *                                             Flow  version     2026.04  *
+                              **************************************************************************
+
+
+                                                     ==================================================
+                                                     :                  FIELD TOTALS                  :
+                                                     :        PAV  =           272  BARSA             :
+                                                     :        PORV =       8922115  RM3               :
+                                                     : Pressure is weighted by hydrocarbon pore volume:
+                                                     : Pore volumes are taken at reference conditions :
+                           :--------------- OIL  SM3 ------------------:-- WAT    SM3 --:--------------  GAS     SM3 ---------------:
+                           :    LIQUID         VAPOUR        TOTAL     :     TOTAL      :     FREE        DISSOLVED       TOTAL     :
+ :-------------------------:-------------------------------------------:----------------:-------------------------------------------:
+ :CURRENTLY IN PLACE       :    3256671        17174        3273846    :    3035080     :   293868339     394858223     688726562   :
+ :-------------------------:-------------------------------------------:----------------:-------------------------------------------:
+ :ORIGINALLY IN PLACE      :    3256671        17174        3273846    :    3035080     :   293868339     394858223     688726562   :
+ ====================================================================================================================================
+
+
+
+                                                     ==================================================
+                                                     :              FIPNUM REPORT REGION  1           :
+                                                     :        PAV  =           272  BARSA             :
+                                                     :        PORV =       8922115  RM3               :
+                           :--------------- OIL  SM3 ------------------:-- WAT    SM3 --:--------------  GAS     SM3 ---------------:
+                           :    LIQUID         VAPOUR        TOTAL     :     TOTAL      :     FREE        DISSOLVED       TOTAL     :
+ :-------------------------:-------------------------------------------:----------------:-------------------------------------------:
+ :CURRENTLY IN PLACE       :    3256671        17174        3273846    :    3035080     :   293868339     394858223     688726562   :
+ :-------------------------:-------------------------------------------:----------------:-------------------------------------------:
+ :ORIGINALLY IN PLACE      :    3256671        17174        3273846    :    3035080     :   293868339     394858223     688726562   :
+ :-------------------------:-------------------------------------------:----------------:-------------------------------------------:
+ ====================================================================================================================================
+
+
+
+
+================ Starting main simulation loop ===============
+
+
+Report step  0/228 at day 0/10960, date = 06-Nov-2011
+Using Newton nonlinear solver.
+
+Starting time step 0, stepsize 1 days, at day 0/1, date = 06-Nov-2011
+Restart file written for report step   0/228, date = 06-Nov-2011 00:00:00
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  0 (0.0sec)
+
+
+Report step  1/228 at day 1/10960, date = 07-Nov-2011
+
+Starting time step 0, stepsize 1 days, at day 1/2, date = 07-Nov-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step   1/228, date = 07-Nov-2011 00:00:00
+
+
+Report step  2/228 at day 2/10960, date = 08-Nov-2011
+
+Starting time step 0, stepsize 1 days, at day 2/3, date = 08-Nov-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step   2/228, date = 08-Nov-2011 00:00:00
+
+
+Report step  3/228 at day 3/10960, date = 09-Nov-2011
+
+Starting time step 0, stepsize 1 days, at day 3/4, date = 09-Nov-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step   3/228, date = 09-Nov-2011 00:00:00
+
+
+Report step  4/228 at day 4/10960, date = 10-Nov-2011
+
+Starting time step 0, stepsize 1 days, at day 4/5, date = 10-Nov-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step   4/228, date = 10-Nov-2011 00:00:00
+
+
+Report step  5/228 at day 5/10960, date = 11-Nov-2011
+
+Starting time step 0, stepsize 1 days, at day 5/6, date = 11-Nov-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step   5/228, date = 11-Nov-2011 00:00:00
+
+
+Report step  6/228 at day 6/10960, date = 12-Nov-2011
+
+Starting time step 0, stepsize 1 days, at day 6/7, date = 12-Nov-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step   6/228, date = 12-Nov-2011 00:00:00
+
+
+Report step  7/228 at day 7/10960, date = 13-Nov-2011
+
+Starting time step 0, stepsize 1 days, at day 7/8, date = 13-Nov-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step   7/228, date = 13-Nov-2011 00:00:00
+
+
+Report step  8/228 at day 8/10960, date = 14-Nov-2011
+
+Starting time step 0, stepsize 1 days, at day 8/9, date = 14-Nov-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step   8/228, date = 14-Nov-2011 00:00:00
+
+
+Report step  9/228 at day 9/10960, date = 15-Nov-2011
+
+Starting time step 0, stepsize 1 days, at day 9/10, date = 15-Nov-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step   9/228, date = 15-Nov-2011 00:00:00
+
+
+Report step 10/228 at day 10/10960, date = 16-Nov-2011
+
+Starting time step 0, stepsize 3 days, at day 10/15, date = 16-Nov-2011
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step  10/228, date = 16-Nov-2011 00:00:00
+
+Starting time step 1, stepsize 2 days, at day 13/15, date = 19-Nov-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+
+
+Report step 11/228 at day 15/10960, date = 21-Nov-2011
+
+Starting time step 0, stepsize 5 days, at day 15/20, date = 21-Nov-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step  11/228, date = 21-Nov-2011 00:00:00
+
+
+Report step 12/228 at day 20/10960, date = 26-Nov-2011
+
+Starting time step 0, stepsize 5 days, at day 20/25, date = 26-Nov-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step  12/228, date = 26-Nov-2011 00:00:00
+
+
+Report step 13/228 at day 25/10960, date = 01-Dec-2011
+
+Starting time step 0, stepsize 5 days, at day 25/30, date = 01-Dec-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step  13/228, date = 01-Dec-2011 00:00:00
+
+
+Report step 14/228 at day 30/10960, date = 06-Dec-2011
+
+Starting time step 0, stepsize 5 days, at day 30/35, date = 06-Dec-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step  14/228, date = 06-Dec-2011 00:00:00
+
+
+Report step 15/228 at day 35/10960, date = 11-Dec-2011
+
+Starting time step 0, stepsize 5 days, at day 35/40, date = 11-Dec-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step  15/228, date = 11-Dec-2011 00:00:00
+
+
+Report step 16/228 at day 40/10960, date = 16-Dec-2011
+
+Starting time step 0, stepsize 5 days, at day 40/45, date = 16-Dec-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  0 (0.0sec)
+Restart file written for report step  16/228, date = 16-Dec-2011 00:00:00
+
+
+Report step 17/228 at day 45/10960, date = 21-Dec-2011
+
+Starting time step 0, stepsize 5 days, at day 45/50, date = 21-Dec-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step  17/228, date = 21-Dec-2011 00:00:00
+
+
+Report step 18/228 at day 50/10960, date = 26-Dec-2011
+
+Starting time step 0, stepsize 5 days, at day 50/55, date = 26-Dec-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step  18/228, date = 26-Dec-2011 00:00:00
+
+
+Report step 19/228 at day 55/10960, date = 31-Dec-2011
+
+Starting time step 0, stepsize 5 days, at day 55/60, date = 31-Dec-2011
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step  19/228, date = 31-Dec-2011 00:00:00
+
+
+Report step 20/228 at day 60/10960, date = 05-Jan-2012
+
+Starting time step 0, stepsize 10 days, at day 60/80, date = 05-Jan-2012
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step  20/228, date = 05-Jan-2012 00:00:00
+
+Starting time step 1, stepsize 10 days, at day 70/80, date = 15-Jan-2012
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+
+
+Report step 21/228 at day 80/10960, date = 25-Jan-2012
+
+Starting time step 0, stepsize 20 days, at day 80/100, date = 25-Jan-2012
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step  21/228, date = 25-Jan-2012 00:00:00
+
+
+Report step 22/228 at day 100/10960, date = 14-Feb-2012
+
+Starting time step 0, stepsize 20 days, at day 100/120, date = 14-Feb-2012
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step  22/228, date = 14-Feb-2012 00:00:00
+
+
+Report step 23/228 at day 120/10960, date = 05-Mar-2012
+
+Starting time step 0, stepsize 20 days, at day 120/140, date = 05-Mar-2012
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step  23/228, date = 05-Mar-2012 00:00:00
+
+
+Report step 24/228 at day 140/10960, date = 25-Mar-2012
+
+Starting time step 0, stepsize 20 days, at day 140/160, date = 25-Mar-2012
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step  24/228, date = 25-Mar-2012 00:00:00
+
+
+Report step 25/228 at day 160/10960, date = 14-Apr-2012
+
+Starting time step 0, stepsize 20 days, at day 160/180, date = 14-Apr-2012
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step  25/228, date = 14-Apr-2012 00:00:00
+
+
+Report step 26/228 at day 180/10960, date = 04-May-2012
+
+Starting time step 0, stepsize 20 days, at day 180/200, date = 04-May-2012
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step  26/228, date = 04-May-2012 00:00:00
+
+
+Report step 27/228 at day 200/10960, date = 24-May-2012
+
+Starting time step 0, stepsize 20 days, at day 200/220, date = 24-May-2012
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step  27/228, date = 24-May-2012 00:00:00
+
+
+Report step 28/228 at day 220/10960, date = 13-Jun-2012
+
+Starting time step 0, stepsize 20 days, at day 220/240, date = 13-Jun-2012
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step  28/228, date = 13-Jun-2012 00:00:00
+
+
+Report step 29/228 at day 240/10960, date = 03-Jul-2012
+
+Starting time step 0, stepsize 20 days, at day 240/260, date = 03-Jul-2012
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step  29/228, date = 03-Jul-2012 00:00:00
+
+
+Report step 30/228 at day 260/10960, date = 23-Jul-2012
+
+Starting time step 0, stepsize 20 days, at day 260/280, date = 23-Jul-2012
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  30/228, date = 23-Jul-2012 00:00:00
+
+
+Report step 31/228 at day 280/10960, date = 12-Aug-2012
+
+Starting time step 0, stepsize 20 days, at day 280/300, date = 12-Aug-2012
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step  31/228, date = 12-Aug-2012 00:00:00
+
+
+Report step 32/228 at day 300/10960, date = 01-Sep-2012
+
+Starting time step 0, stepsize 20 days, at day 300/320, date = 01-Sep-2012
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  32/228, date = 01-Sep-2012 00:00:00
+
+
+Report step 33/228 at day 320/10960, date = 21-Sep-2012
+
+Starting time step 0, stepsize 20 days, at day 320/340, date = 21-Sep-2012
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step  33/228, date = 21-Sep-2012 00:00:00
+
+
+Report step 34/228 at day 340/10960, date = 11-Oct-2012
+
+Starting time step 0, stepsize 20 days, at day 340/360, date = 11-Oct-2012
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  34/228, date = 11-Oct-2012 00:00:00
+
+
+Report step 35/228 at day 360/10960, date = 31-Oct-2012
+
+Starting time step 0, stepsize 20 days, at day 360/380, date = 31-Oct-2012
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step  35/228, date = 31-Oct-2012 00:00:00
+
+
+Report step 36/228 at day 380/10960, date = 20-Nov-2012
+
+Starting time step 0, stepsize 20 days, at day 380/400, date = 20-Nov-2012
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  36/228, date = 20-Nov-2012 00:00:00
+
+
+Report step 37/228 at day 400/10960, date = 10-Dec-2012
+
+Starting time step 0, stepsize 20 days, at day 400/420, date = 10-Dec-2012
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step  37/228, date = 10-Dec-2012 00:00:00
+
+
+Report step 38/228 at day 420/10960, date = 30-Dec-2012
+
+Starting time step 0, stepsize 20 days, at day 420/440, date = 30-Dec-2012
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  38/228, date = 30-Dec-2012 00:00:00
+
+
+Report step 39/228 at day 440/10960, date = 19-Jan-2013
+
+Starting time step 0, stepsize 20 days, at day 440/460, date = 19-Jan-2013
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step  39/228, date = 19-Jan-2013 00:00:00
+
+
+Report step 40/228 at day 460/10960, date = 08-Feb-2013
+
+Starting time step 0, stepsize 20 days, at day 460/480, date = 08-Feb-2013
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 8, linearizations= 9 (0.0sec), linear its=  9 (0.0sec)
+Restart file written for report step  40/228, date = 08-Feb-2013 00:00:00
+
+
+Report step 41/228 at day 480/10960, date = 28-Feb-2013
+
+Starting time step 0, stepsize 20 days, at day 480/500, date = 28-Feb-2013
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 8, linearizations= 9 (0.0sec), linear its=  7 (0.0sec)
+Restart file written for report step  41/228, date = 28-Feb-2013 00:00:00
+
+
+Report step 42/228 at day 500/10960, date = 20-Mar-2013
+
+Starting time step 0, stepsize 20 days, at day 500/520, date = 20-Mar-2013
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 7, linearizations= 8 (0.0sec), linear its=  7 (0.0sec)
+Restart file written for report step  42/228, date = 20-Mar-2013 00:00:00
+
+
+Report step 43/228 at day 520/10960, date = 09-Apr-2013
+
+Starting time step 0, stepsize 20 days, at day 520/540, date = 09-Apr-2013
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 7, linearizations= 8 (0.0sec), linear its=  6 (0.0sec)
+Restart file written for report step  43/228, date = 09-Apr-2013 00:00:00
+
+
+Report step 44/228 at day 540/10960, date = 29-Apr-2013
+
+Starting time step 0, stepsize 20 days, at day 540/560, date = 29-Apr-2013
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 6, linearizations= 7 (0.0sec), linear its=  6 (0.0sec)
+Restart file written for report step  44/228, date = 29-Apr-2013 00:00:00
+
+
+Report step 45/228 at day 560/10960, date = 19-May-2013
+
+Starting time step 0, stepsize 20 days, at day 560/580, date = 19-May-2013
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 7, linearizations= 8 (0.0sec), linear its=  7 (0.0sec)
+Restart file written for report step  45/228, date = 19-May-2013 00:00:00
+
+
+Report step 46/228 at day 580/10960, date = 08-Jun-2013
+
+Starting time step 0, stepsize 20 days, at day 580/600, date = 08-Jun-2013
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  46/228, date = 08-Jun-2013 00:00:00
+
+
+Report step 47/228 at day 600/10960, date = 28-Jun-2013
+
+Starting time step 0, stepsize 20 days, at day 600/620, date = 28-Jun-2013
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  47/228, date = 28-Jun-2013 00:00:00
+
+
+Report step 48/228 at day 620/10960, date = 18-Jul-2013
+
+Starting time step 0, stepsize 20 days, at day 620/640, date = 18-Jul-2013
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  48/228, date = 18-Jul-2013 00:00:00
+
+
+Report step 49/228 at day 640/10960, date = 07-Aug-2013
+
+Starting time step 0, stepsize 20 days, at day 640/660, date = 07-Aug-2013
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  49/228, date = 07-Aug-2013 00:00:00
+
+
+Report step 50/228 at day 660/10960, date = 27-Aug-2013
+
+Starting time step 0, stepsize 20 days, at day 660/680, date = 27-Aug-2013
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 6, linearizations= 7 (0.0sec), linear its=  6 (0.0sec)
+Restart file written for report step  50/228, date = 27-Aug-2013 00:00:00
+
+
+Report step 51/228 at day 680/10960, date = 16-Sep-2013
+
+Starting time step 0, stepsize 20 days, at day 680/700, date = 16-Sep-2013
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  51/228, date = 16-Sep-2013 00:00:00
+
+
+Report step 52/228 at day 700/10960, date = 06-Oct-2013
+
+Starting time step 0, stepsize 20 days, at day 700/720, date = 06-Oct-2013
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 6, linearizations= 7 (0.0sec), linear its=  6 (0.0sec)
+Restart file written for report step  52/228, date = 06-Oct-2013 00:00:00
+
+
+Report step 53/228 at day 720/10960, date = 26-Oct-2013
+
+Starting time step 0, stepsize 20 days, at day 720/740, date = 26-Oct-2013
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step  53/228, date = 26-Oct-2013 00:00:00
+
+
+Report step 54/228 at day 740/10960, date = 15-Nov-2013
+
+Starting time step 0, stepsize 20 days, at day 740/760, date = 15-Nov-2013
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 6, linearizations= 7 (0.0sec), linear its=  6 (0.0sec)
+Restart file written for report step  54/228, date = 15-Nov-2013 00:00:00
+
+
+Report step 55/228 at day 760/10960, date = 05-Dec-2013
+
+Starting time step 0, stepsize 20 days, at day 760/780, date = 05-Dec-2013
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  55/228, date = 05-Dec-2013 00:00:00
+
+
+Report step 56/228 at day 780/10960, date = 25-Dec-2013
+
+Starting time step 0, stepsize 20 days, at day 780/800, date = 25-Dec-2013
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  56/228, date = 25-Dec-2013 00:00:00
+
+
+Report step 57/228 at day 800/10960, date = 14-Jan-2014
+
+Starting time step 0, stepsize 20 days, at day 800/820, date = 14-Jan-2014
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  57/228, date = 14-Jan-2014 00:00:00
+
+
+Report step 58/228 at day 820/10960, date = 03-Feb-2014
+
+Starting time step 0, stepsize 20 days, at day 820/840, date = 03-Feb-2014
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  58/228, date = 03-Feb-2014 00:00:00
+
+
+Report step 59/228 at day 840/10960, date = 23-Feb-2014
+
+Starting time step 0, stepsize 20 days, at day 840/860, date = 23-Feb-2014
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  59/228, date = 23-Feb-2014 00:00:00
+
+
+Report step 60/228 at day 860/10960, date = 15-Mar-2014
+
+Starting time step 0, stepsize 20 days, at day 860/880, date = 15-Mar-2014
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  60/228, date = 15-Mar-2014 00:00:00
+
+
+Report step 61/228 at day 880/10960, date = 04-Apr-2014
+
+Starting time step 0, stepsize 20 days, at day 880/900, date = 04-Apr-2014
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step  61/228, date = 04-Apr-2014 00:00:00
+
+
+Report step 62/228 at day 900/10960, date = 24-Apr-2014
+
+Starting time step 0, stepsize 20 days, at day 900/920, date = 24-Apr-2014
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  62/228, date = 24-Apr-2014 00:00:00
+
+
+Report step 63/228 at day 920/10960, date = 14-May-2014
+
+Starting time step 0, stepsize 20 days, at day 920/940, date = 14-May-2014
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step  63/228, date = 14-May-2014 00:00:00
+
+
+Report step 64/228 at day 940/10960, date = 03-Jun-2014
+
+Starting time step 0, stepsize 20 days, at day 940/960, date = 03-Jun-2014
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  64/228, date = 03-Jun-2014 00:00:00
+
+
+Report step 65/228 at day 960/10960, date = 23-Jun-2014
+
+Starting time step 0, stepsize 20 days, at day 960/980, date = 23-Jun-2014
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step  65/228, date = 23-Jun-2014 00:00:00
+
+
+Report step 66/228 at day 980/10960, date = 13-Jul-2014
+
+Starting time step 0, stepsize 20 days, at day 980/1000, date = 13-Jul-2014
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  66/228, date = 13-Jul-2014 00:00:00
+
+
+Report step 67/228 at day 1000/10960, date = 02-Aug-2014
+
+Starting time step 0, stepsize 20 days, at day 1000/1020, date = 02-Aug-2014
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step  67/228, date = 02-Aug-2014 00:00:00
+
+
+Report step 68/228 at day 1020/10960, date = 22-Aug-2014
+
+Starting time step 0, stepsize 20 days, at day 1020/1040, date = 22-Aug-2014
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  68/228, date = 22-Aug-2014 00:00:00
+
+
+Report step 69/228 at day 1040/10960, date = 11-Sep-2014
+
+Starting time step 0, stepsize 20 days, at day 1040/1060, date = 11-Sep-2014
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step  69/228, date = 11-Sep-2014 00:00:00
+
+
+Report step 70/228 at day 1060/10960, date = 01-Oct-2014
+
+Starting time step 0, stepsize 20 days, at day 1060/1080, date = 01-Oct-2014
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  70/228, date = 01-Oct-2014 00:00:00
+
+
+Report step 71/228 at day 1080/10960, date = 21-Oct-2014
+
+Starting time step 0, stepsize 20 days, at day 1080/1100, date = 21-Oct-2014
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step  71/228, date = 21-Oct-2014 00:00:00
+
+
+Report step 72/228 at day 1100/10960, date = 10-Nov-2014
+
+Starting time step 0, stepsize 20 days, at day 1100/1120, date = 10-Nov-2014
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  72/228, date = 10-Nov-2014 00:00:00
+
+
+Report step 73/228 at day 1120/10960, date = 30-Nov-2014
+
+Starting time step 0, stepsize 20 days, at day 1120/1140, date = 30-Nov-2014
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step  73/228, date = 30-Nov-2014 00:00:00
+
+
+Report step 74/228 at day 1140/10960, date = 20-Dec-2014
+
+Starting time step 0, stepsize 20 days, at day 1140/1160, date = 20-Dec-2014
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  6 (0.0sec)
+Restart file written for report step  74/228, date = 20-Dec-2014 00:00:00
+
+
+Report step 75/228 at day 1160/10960, date = 09-Jan-2015
+
+Starting time step 0, stepsize 20 days, at day 1160/1180, date = 09-Jan-2015
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step  75/228, date = 09-Jan-2015 00:00:00
+
+
+Report step 76/228 at day 1180/10960, date = 29-Jan-2015
+
+Starting time step 0, stepsize 20 days, at day 1180/1200, date = 29-Jan-2015
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  76/228, date = 29-Jan-2015 00:00:00
+
+
+Report step 77/228 at day 1200/10960, date = 18-Feb-2015
+
+Starting time step 0, stepsize 20 days, at day 1200/1220, date = 18-Feb-2015
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step  77/228, date = 18-Feb-2015 00:00:00
+
+
+Report step 78/228 at day 1220/10960, date = 10-Mar-2015
+
+Starting time step 0, stepsize 20 days, at day 1220/1240, date = 10-Mar-2015
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  78/228, date = 10-Mar-2015 00:00:00
+
+
+Report step 79/228 at day 1240/10960, date = 30-Mar-2015
+
+Starting time step 0, stepsize 20 days, at day 1240/1260, date = 30-Mar-2015
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step  79/228, date = 30-Mar-2015 00:00:00
+
+
+Report step 80/228 at day 1260/10960, date = 19-Apr-2015
+
+Starting time step 0, stepsize 25 days, at day 1260/1285, date = 19-Apr-2015
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  80/228, date = 19-Apr-2015 00:00:00
+
+
+Report step 81/228 at day 1285/10960, date = 14-May-2015
+
+Starting time step 0, stepsize 25 days, at day 1285/1310, date = 14-May-2015
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step  81/228, date = 14-May-2015 00:00:00
+
+
+Report step 82/228 at day 1310/10960, date = 08-Jun-2015
+
+Starting time step 0, stepsize 25 days, at day 1310/1335, date = 08-Jun-2015
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  82/228, date = 08-Jun-2015 00:00:00
+
+
+Report step 83/228 at day 1335/10960, date = 03-Jul-2015
+
+Starting time step 0, stepsize 25 days, at day 1335/1360, date = 03-Jul-2015
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step  83/228, date = 03-Jul-2015 00:00:00
+
+
+Report step 84/228 at day 1360/10960, date = 28-Jul-2015
+
+Starting time step 0, stepsize 25 days, at day 1360/1385, date = 28-Jul-2015
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  84/228, date = 28-Jul-2015 00:00:00
+
+
+Report step 85/228 at day 1385/10960, date = 22-Aug-2015
+
+Starting time step 0, stepsize 25 days, at day 1385/1410, date = 22-Aug-2015
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step  85/228, date = 22-Aug-2015 00:00:00
+
+
+Report step 86/228 at day 1410/10960, date = 16-Sep-2015
+
+Starting time step 0, stepsize 25 days, at day 1410/1435, date = 16-Sep-2015
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  86/228, date = 16-Sep-2015 00:00:00
+
+
+Report step 87/228 at day 1435/10960, date = 11-Oct-2015
+
+Starting time step 0, stepsize 25 days, at day 1435/1460, date = 11-Oct-2015
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step  87/228, date = 11-Oct-2015 00:00:00
+
+
+Report step 88/228 at day 1460/10960, date = 05-Nov-2015
+
+Starting time step 0, stepsize 25 days, at day 1460/1485, date = 05-Nov-2015
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  88/228, date = 05-Nov-2015 00:00:00
+
+
+Report step 89/228 at day 1485/10960, date = 30-Nov-2015
+
+Starting time step 0, stepsize 25 days, at day 1485/1510, date = 30-Nov-2015
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  89/228, date = 30-Nov-2015 00:00:00
+
+
+Report step 90/228 at day 1510/10960, date = 25-Dec-2015
+
+Starting time step 0, stepsize 25 days, at day 1510/1535, date = 25-Dec-2015
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  90/228, date = 25-Dec-2015 00:00:00
+
+
+Report step 91/228 at day 1535/10960, date = 19-Jan-2016
+
+Starting time step 0, stepsize 25 days, at day 1535/1560, date = 19-Jan-2016
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  91/228, date = 19-Jan-2016 00:00:00
+
+
+Report step 92/228 at day 1560/10960, date = 13-Feb-2016
+
+Starting time step 0, stepsize 25 days, at day 1560/1585, date = 13-Feb-2016
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  92/228, date = 13-Feb-2016 00:00:00
+
+
+Report step 93/228 at day 1585/10960, date = 09-Mar-2016
+
+Starting time step 0, stepsize 25 days, at day 1585/1610, date = 09-Mar-2016
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step  93/228, date = 09-Mar-2016 00:00:00
+
+
+Report step 94/228 at day 1610/10960, date = 03-Apr-2016
+
+Starting time step 0, stepsize 25 days, at day 1610/1635, date = 03-Apr-2016
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  94/228, date = 03-Apr-2016 00:00:00
+
+
+Report step 95/228 at day 1635/10960, date = 28-Apr-2016
+
+Starting time step 0, stepsize 25 days, at day 1635/1660, date = 28-Apr-2016
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step  95/228, date = 28-Apr-2016 00:00:00
+
+
+Report step 96/228 at day 1660/10960, date = 23-May-2016
+
+Starting time step 0, stepsize 25 days, at day 1660/1685, date = 23-May-2016
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  96/228, date = 23-May-2016 00:00:00
+
+
+Report step 97/228 at day 1685/10960, date = 17-Jun-2016
+
+Starting time step 0, stepsize 25 days, at day 1685/1710, date = 17-Jun-2016
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step  97/228, date = 17-Jun-2016 00:00:00
+
+
+Report step 98/228 at day 1710/10960, date = 12-Jul-2016
+
+Starting time step 0, stepsize 25 days, at day 1710/1735, date = 12-Jul-2016
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step  98/228, date = 12-Jul-2016 00:00:00
+
+
+Report step 99/228 at day 1735/10960, date = 06-Aug-2016
+
+Starting time step 0, stepsize 25 days, at day 1735/1760, date = 06-Aug-2016
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step  99/228, date = 06-Aug-2016 00:00:00
+
+
+Report step 100/228 at day 1760/10960, date = 31-Aug-2016
+
+Starting time step 0, stepsize 25 days, at day 1760/1785, date = 31-Aug-2016
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step 100/228, date = 31-Aug-2016 00:00:00
+
+
+Report step 101/228 at day 1785/10960, date = 25-Sep-2016
+
+Starting time step 0, stepsize 25 days, at day 1785/1810, date = 25-Sep-2016
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 101/228, date = 25-Sep-2016 00:00:00
+
+
+Report step 102/228 at day 1810/10960, date = 20-Oct-2016
+
+Starting time step 0, stepsize 25 days, at day 1810/1835, date = 20-Oct-2016
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 5, linearizations= 6 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step 102/228, date = 20-Oct-2016 00:00:00
+
+
+Report step 103/228 at day 1835/10960, date = 14-Nov-2016
+
+Starting time step 0, stepsize 25 days, at day 1835/1860, date = 14-Nov-2016
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 103/228, date = 14-Nov-2016 00:00:00
+
+
+Report step 104/228 at day 1860/10960, date = 09-Dec-2016
+
+Starting time step 0, stepsize 25 days, at day 1860/1885, date = 09-Dec-2016
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 104/228, date = 09-Dec-2016 00:00:00
+
+
+Report step 105/228 at day 1885/10960, date = 03-Jan-2017
+
+Starting time step 0, stepsize 25 days, at day 1885/1910, date = 03-Jan-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 105/228, date = 03-Jan-2017 00:00:00
+
+
+Report step 106/228 at day 1910/10960, date = 28-Jan-2017
+
+Starting time step 0, stepsize 25 days, at day 1910/1935, date = 28-Jan-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 106/228, date = 28-Jan-2017 00:00:00
+
+
+Report step 107/228 at day 1935/10960, date = 22-Feb-2017
+
+Starting time step 0, stepsize 25 days, at day 1935/1960, date = 22-Feb-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 107/228, date = 22-Feb-2017 00:00:00
+
+
+Report step 108/228 at day 1960/10960, date = 19-Mar-2017
+
+Starting time step 0, stepsize 25 days, at day 1960/1985, date = 19-Mar-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 108/228, date = 19-Mar-2017 00:00:00
+
+
+Report step 109/228 at day 1985/10960, date = 13-Apr-2017
+
+Starting time step 0, stepsize 25 days, at day 1985/2010, date = 13-Apr-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 109/228, date = 13-Apr-2017 00:00:00
+
+
+Report step 110/228 at day 2010/10960, date = 08-May-2017
+
+Starting time step 0, stepsize 25 days, at day 2010/2035, date = 08-May-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 110/228, date = 08-May-2017 00:00:00
+
+
+Report step 111/228 at day 2035/10960, date = 02-Jun-2017
+
+Starting time step 0, stepsize 25 days, at day 2035/2060, date = 02-Jun-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 111/228, date = 02-Jun-2017 00:00:00
+
+
+Report step 112/228 at day 2060/10960, date = 27-Jun-2017
+
+Starting time step 0, stepsize 25 days, at day 2060/2085, date = 27-Jun-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 112/228, date = 27-Jun-2017 00:00:00
+
+
+Report step 113/228 at day 2085/10960, date = 22-Jul-2017
+
+Starting time step 0, stepsize 25 days, at day 2085/2110, date = 22-Jul-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 113/228, date = 22-Jul-2017 00:00:00
+
+
+Report step 114/228 at day 2110/10960, date = 16-Aug-2017
+
+Starting time step 0, stepsize 25 days, at day 2110/2135, date = 16-Aug-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 114/228, date = 16-Aug-2017 00:00:00
+
+
+Report step 115/228 at day 2135/10960, date = 10-Sep-2017
+
+Starting time step 0, stepsize 25 days, at day 2135/2160, date = 10-Sep-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 115/228, date = 10-Sep-2017 00:00:00
+
+
+Report step 116/228 at day 2160/10960, date = 05-Oct-2017
+
+Starting time step 0, stepsize 25 days, at day 2160/2185, date = 05-Oct-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 116/228, date = 05-Oct-2017 00:00:00
+
+
+Report step 117/228 at day 2185/10960, date = 30-Oct-2017
+
+Starting time step 0, stepsize 25 days, at day 2185/2210, date = 30-Oct-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 117/228, date = 30-Oct-2017 00:00:00
+
+
+Report step 118/228 at day 2210/10960, date = 24-Nov-2017
+
+Starting time step 0, stepsize 25 days, at day 2210/2235, date = 24-Nov-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 118/228, date = 24-Nov-2017 00:00:00
+
+
+Report step 119/228 at day 2235/10960, date = 19-Dec-2017
+
+Starting time step 0, stepsize 25 days, at day 2235/2260, date = 19-Dec-2017
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 119/228, date = 19-Dec-2017 00:00:00
+
+
+Report step 120/228 at day 2260/10960, date = 13-Jan-2018
+
+Starting time step 0, stepsize 25 days, at day 2260/2285, date = 13-Jan-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 120/228, date = 13-Jan-2018 00:00:00
+
+
+Report step 121/228 at day 2285/10960, date = 07-Feb-2018
+
+Starting time step 0, stepsize 25 days, at day 2285/2310, date = 07-Feb-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 121/228, date = 07-Feb-2018 00:00:00
+
+
+Report step 122/228 at day 2310/10960, date = 04-Mar-2018
+
+Starting time step 0, stepsize 25 days, at day 2310/2335, date = 04-Mar-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step 122/228, date = 04-Mar-2018 00:00:00
+
+
+Report step 123/228 at day 2335/10960, date = 29-Mar-2018
+
+Starting time step 0, stepsize 25 days, at day 2335/2360, date = 29-Mar-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 123/228, date = 29-Mar-2018 00:00:00
+
+
+Report step 124/228 at day 2360/10960, date = 23-Apr-2018
+
+Starting time step 0, stepsize 25 days, at day 2360/2385, date = 23-Apr-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step 124/228, date = 23-Apr-2018 00:00:00
+
+
+Report step 125/228 at day 2385/10960, date = 18-May-2018
+
+Starting time step 0, stepsize 25 days, at day 2385/2410, date = 18-May-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 125/228, date = 18-May-2018 00:00:00
+
+
+Report step 126/228 at day 2410/10960, date = 12-Jun-2018
+
+Starting time step 0, stepsize 25 days, at day 2410/2435, date = 12-Jun-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step 126/228, date = 12-Jun-2018 00:00:00
+
+
+Report step 127/228 at day 2435/10960, date = 07-Jul-2018
+
+Starting time step 0, stepsize 25 days, at day 2435/2460, date = 07-Jul-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 127/228, date = 07-Jul-2018 00:00:00
+
+
+Report step 128/228 at day 2460/10960, date = 01-Aug-2018
+
+Starting time step 0, stepsize 25 days, at day 2460/2485, date = 01-Aug-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step 128/228, date = 01-Aug-2018 00:00:00
+
+
+Report step 129/228 at day 2485/10960, date = 26-Aug-2018
+
+Starting time step 0, stepsize 25 days, at day 2485/2510, date = 26-Aug-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 129/228, date = 26-Aug-2018 00:00:00
+
+
+Report step 130/228 at day 2510/10960, date = 20-Sep-2018
+
+Starting time step 0, stepsize 25 days, at day 2510/2535, date = 20-Sep-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step 130/228, date = 20-Sep-2018 00:00:00
+
+
+Report step 131/228 at day 2535/10960, date = 15-Oct-2018
+
+Starting time step 0, stepsize 25 days, at day 2535/2560, date = 15-Oct-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 131/228, date = 15-Oct-2018 00:00:00
+
+
+Report step 132/228 at day 2560/10960, date = 09-Nov-2018
+
+Starting time step 0, stepsize 25 days, at day 2560/2585, date = 09-Nov-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step 132/228, date = 09-Nov-2018 00:00:00
+
+
+Report step 133/228 at day 2585/10960, date = 04-Dec-2018
+
+Starting time step 0, stepsize 25 days, at day 2585/2610, date = 04-Dec-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 133/228, date = 04-Dec-2018 00:00:00
+
+
+Report step 134/228 at day 2610/10960, date = 29-Dec-2018
+
+Starting time step 0, stepsize 25 days, at day 2610/2635, date = 29-Dec-2018
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step 134/228, date = 29-Dec-2018 00:00:00
+
+
+Report step 135/228 at day 2635/10960, date = 23-Jan-2019
+
+Starting time step 0, stepsize 25 days, at day 2635/2660, date = 23-Jan-2019
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 135/228, date = 23-Jan-2019 00:00:00
+
+
+Report step 136/228 at day 2660/10960, date = 17-Feb-2019
+
+Starting time step 0, stepsize 25 days, at day 2660/2685, date = 17-Feb-2019
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step 136/228, date = 17-Feb-2019 00:00:00
+
+
+Report step 137/228 at day 2685/10960, date = 14-Mar-2019
+
+Starting time step 0, stepsize 25 days, at day 2685/2710, date = 14-Mar-2019
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 137/228, date = 14-Mar-2019 00:00:00
+
+
+Report step 138/228 at day 2710/10960, date = 08-Apr-2019
+
+Starting time step 0, stepsize 25 days, at day 2710/2735, date = 08-Apr-2019
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step 138/228, date = 08-Apr-2019 00:00:00
+
+
+Report step 139/228 at day 2735/10960, date = 03-May-2019
+
+Starting time step 0, stepsize 25 days, at day 2735/2760, date = 03-May-2019
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 139/228, date = 03-May-2019 00:00:00
+
+
+Report step 140/228 at day 2760/10960, date = 28-May-2019
+
+Starting time step 0, stepsize 25 days, at day 2760/2785, date = 28-May-2019
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step 140/228, date = 28-May-2019 00:00:00
+
+
+Report step 141/228 at day 2785/10960, date = 22-Jun-2019
+
+Starting time step 0, stepsize 25 days, at day 2785/2810, date = 22-Jun-2019
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 141/228, date = 22-Jun-2019 00:00:00
+
+
+Report step 142/228 at day 2810/10960, date = 17-Jul-2019
+
+Starting time step 0, stepsize 25 days, at day 2810/2835, date = 17-Jul-2019
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step 142/228, date = 17-Jul-2019 00:00:00
+
+
+Report step 143/228 at day 2835/10960, date = 11-Aug-2019
+
+Starting time step 0, stepsize 25 days, at day 2835/2860, date = 11-Aug-2019
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 143/228, date = 11-Aug-2019 00:00:00
+
+
+Report step 144/228 at day 2860/10960, date = 05-Sep-2019
+
+Starting time step 0, stepsize 25 days, at day 2860/2885, date = 05-Sep-2019
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step 144/228, date = 05-Sep-2019 00:00:00
+
+
+Report step 145/228 at day 2885/10960, date = 30-Sep-2019
+
+Starting time step 0, stepsize 25 days, at day 2885/2910, date = 30-Sep-2019
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 145/228, date = 30-Sep-2019 00:00:00
+
+
+Report step 146/228 at day 2910/10960, date = 25-Oct-2019
+
+Starting time step 0, stepsize 25 days, at day 2910/2935, date = 25-Oct-2019
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 146/228, date = 25-Oct-2019 00:00:00
+
+
+Report step 147/228 at day 2935/10960, date = 19-Nov-2019
+
+Starting time step 0, stepsize 25 days, at day 2935/2960, date = 19-Nov-2019
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 147/228, date = 19-Nov-2019 00:00:00
+
+
+Report step 148/228 at day 2960/10960, date = 14-Dec-2019
+
+Starting time step 0, stepsize 50 days, at day 2960/3060, date = 14-Dec-2019
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 148/228, date = 14-Dec-2019 00:00:00
+
+Starting time step 1, stepsize 50 days, at day 3010/3060, date = 02-Feb-2020
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+
+
+Report step 149/228 at day 3060/10960, date = 23-Mar-2020
+
+Starting time step 0, stepsize 100 days, at day 3060/3160, date = 23-Mar-2020
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 7, linearizations= 8 (0.0sec), linear its=  6 (0.0sec)
+Restart file written for report step 149/228, date = 23-Mar-2020 00:00:00
+
+
+Report step 150/228 at day 3160/10960, date = 01-Jul-2020
+
+Starting time step 0, stepsize 100 days, at day 3160/3260, date = 01-Jul-2020
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step 150/228, date = 01-Jul-2020 00:00:00
+
+
+Report step 151/228 at day 3260/10960, date = 09-Oct-2020
+
+Starting time step 0, stepsize 100 days, at day 3260/3360, date = 09-Oct-2020
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 7, linearizations= 8 (0.0sec), linear its=  6 (0.0sec)
+Restart file written for report step 151/228, date = 09-Oct-2020 00:00:00
+
+
+Report step 152/228 at day 3360/10960, date = 17-Jan-2021
+
+Starting time step 0, stepsize 100 days, at day 3360/3460, date = 17-Jan-2021
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 152/228, date = 17-Jan-2021 00:00:00
+
+
+Report step 153/228 at day 3460/10960, date = 27-Apr-2021
+
+Starting time step 0, stepsize 100 days, at day 3460/3560, date = 27-Apr-2021
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 7, linearizations= 8 (0.0sec), linear its=  6 (0.0sec)
+Restart file written for report step 153/228, date = 27-Apr-2021 00:00:00
+
+
+Report step 154/228 at day 3560/10960, date = 05-Aug-2021
+
+Starting time step 0, stepsize 100 days, at day 3560/3660, date = 05-Aug-2021
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 154/228, date = 05-Aug-2021 00:00:00
+
+
+Report step 155/228 at day 3660/10960, date = 13-Nov-2021
+
+Starting time step 0, stepsize 100 days, at day 3660/3760, date = 13-Nov-2021
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 7, linearizations= 8 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step 155/228, date = 13-Nov-2021 00:00:00
+
+
+Report step 156/228 at day 3760/10960, date = 21-Feb-2022
+
+Starting time step 0, stepsize 100 days, at day 3760/3860, date = 21-Feb-2022
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 4, linearizations= 5 (0.0sec), linear its=  4 (0.0sec)
+Restart file written for report step 156/228, date = 21-Feb-2022 00:00:00
+
+
+Report step 157/228 at day 3860/10960, date = 01-Jun-2022
+
+Starting time step 0, stepsize 100 days, at day 3860/3960, date = 01-Jun-2022
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 7, linearizations= 8 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step 157/228, date = 01-Jun-2022 00:00:00
+
+
+Report step 158/228 at day 3960/10960, date = 09-Sep-2022
+
+Starting time step 0, stepsize 100 days, at day 3960/4060, date = 09-Sep-2022
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 158/228, date = 09-Sep-2022 00:00:00
+
+
+Report step 159/228 at day 4060/10960, date = 18-Dec-2022
+
+Starting time step 0, stepsize 100 days, at day 4060/4160, date = 18-Dec-2022
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 7, linearizations= 8 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 159/228, date = 18-Dec-2022 00:00:00
+
+
+Report step 160/228 at day 4160/10960, date = 28-Mar-2023
+
+Starting time step 0, stepsize 100 days, at day 4160/4260, date = 28-Mar-2023
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 160/228, date = 28-Mar-2023 00:00:00
+
+
+Report step 161/228 at day 4260/10960, date = 06-Jul-2023
+
+Starting time step 0, stepsize 100 days, at day 4260/4360, date = 06-Jul-2023
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 7, linearizations= 8 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step 161/228, date = 06-Jul-2023 00:00:00
+
+
+Report step 162/228 at day 4360/10960, date = 14-Oct-2023
+
+Starting time step 0, stepsize 100 days, at day 4360/4460, date = 14-Oct-2023
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 162/228, date = 14-Oct-2023 00:00:00
+
+
+Report step 163/228 at day 4460/10960, date = 22-Jan-2024
+
+Starting time step 0, stepsize 100 days, at day 4460/4560, date = 22-Jan-2024
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 7, linearizations= 8 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step 163/228, date = 22-Jan-2024 00:00:00
+
+
+Report step 164/228 at day 4560/10960, date = 01-May-2024
+
+Starting time step 0, stepsize 100 days, at day 4560/4660, date = 01-May-2024
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 164/228, date = 01-May-2024 00:00:00
+
+
+Report step 165/228 at day 4660/10960, date = 09-Aug-2024
+
+Starting time step 0, stepsize 100 days, at day 4660/4760, date = 09-Aug-2024
+    Oscillating behavior detected: Relaxation set to 0.900000
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 7, linearizations= 8 (0.0sec), linear its=  5 (0.0sec)
+Restart file written for report step 165/228, date = 09-Aug-2024 00:00:00
+
+
+Report step 166/228 at day 4760/10960, date = 17-Nov-2024
+
+Starting time step 0, stepsize 100 days, at day 4760/4860, date = 17-Nov-2024
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 3, linearizations= 4 (0.0sec), linear its=  3 (0.0sec)
+Restart file written for report step 166/228, date = 17-Nov-2024 00:00:00
+
+
+Report step 167/228 at day 4860/10960, date = 25-Feb-2025
+
+Starting time step 0, stepsize 100 days, at day 4860/4960, date = 25-Feb-2025
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 167/228, date = 25-Feb-2025 00:00:00
+
+
+Report step 168/228 at day 4960/10960, date = 05-Jun-2025
+
+Starting time step 0, stepsize 100 days, at day 4960/5060, date = 05-Jun-2025
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 168/228, date = 05-Jun-2025 00:00:00
+
+
+Report step 169/228 at day 5060/10960, date = 13-Sep-2025
+
+Starting time step 0, stepsize 100 days, at day 5060/5160, date = 13-Sep-2025
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 169/228, date = 13-Sep-2025 00:00:00
+
+
+Report step 170/228 at day 5160/10960, date = 22-Dec-2025
+
+Starting time step 0, stepsize 100 days, at day 5160/5260, date = 22-Dec-2025
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 170/228, date = 22-Dec-2025 00:00:00
+
+
+Report step 171/228 at day 5260/10960, date = 01-Apr-2026
+
+Starting time step 0, stepsize 100 days, at day 5260/5360, date = 01-Apr-2026
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 171/228, date = 01-Apr-2026 00:00:00
+
+
+Report step 172/228 at day 5360/10960, date = 10-Jul-2026
+
+Starting time step 0, stepsize 100 days, at day 5360/5460, date = 10-Jul-2026
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 172/228, date = 10-Jul-2026 00:00:00
+
+
+Report step 173/228 at day 5460/10960, date = 18-Oct-2026
+
+Starting time step 0, stepsize 100 days, at day 5460/5560, date = 18-Oct-2026
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 173/228, date = 18-Oct-2026 00:00:00
+
+
+Report step 174/228 at day 5560/10960, date = 26-Jan-2027
+
+Starting time step 0, stepsize 100 days, at day 5560/5660, date = 26-Jan-2027
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 174/228, date = 26-Jan-2027 00:00:00
+
+
+Report step 175/228 at day 5660/10960, date = 06-May-2027
+
+Starting time step 0, stepsize 100 days, at day 5660/5760, date = 06-May-2027
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 175/228, date = 06-May-2027 00:00:00
+
+
+Report step 176/228 at day 5760/10960, date = 14-Aug-2027
+
+Starting time step 0, stepsize 100 days, at day 5760/5860, date = 14-Aug-2027
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 176/228, date = 14-Aug-2027 00:00:00
+
+
+Report step 177/228 at day 5860/10960, date = 22-Nov-2027
+
+Starting time step 0, stepsize 100 days, at day 5860/5960, date = 22-Nov-2027
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 177/228, date = 22-Nov-2027 00:00:00
+
+
+Report step 178/228 at day 5960/10960, date = 01-Mar-2028
+
+Starting time step 0, stepsize 100 days, at day 5960/6060, date = 01-Mar-2028
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 178/228, date = 01-Mar-2028 00:00:00
+
+
+Report step 179/228 at day 6060/10960, date = 09-Jun-2028
+
+Starting time step 0, stepsize 100 days, at day 6060/6160, date = 09-Jun-2028
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 179/228, date = 09-Jun-2028 00:00:00
+
+
+Report step 180/228 at day 6160/10960, date = 17-Sep-2028
+
+Starting time step 0, stepsize 100 days, at day 6160/6260, date = 17-Sep-2028
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 180/228, date = 17-Sep-2028 00:00:00
+
+
+Report step 181/228 at day 6260/10960, date = 26-Dec-2028
+
+Starting time step 0, stepsize 100 days, at day 6260/6360, date = 26-Dec-2028
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 181/228, date = 26-Dec-2028 00:00:00
+
+
+Report step 182/228 at day 6360/10960, date = 05-Apr-2029
+
+Starting time step 0, stepsize 100 days, at day 6360/6460, date = 05-Apr-2029
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 182/228, date = 05-Apr-2029 00:00:00
+
+
+Report step 183/228 at day 6460/10960, date = 14-Jul-2029
+
+Starting time step 0, stepsize 100 days, at day 6460/6560, date = 14-Jul-2029
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 183/228, date = 14-Jul-2029 00:00:00
+
+
+Report step 184/228 at day 6560/10960, date = 22-Oct-2029
+
+Starting time step 0, stepsize 100 days, at day 6560/6660, date = 22-Oct-2029
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 184/228, date = 22-Oct-2029 00:00:00
+
+
+Report step 185/228 at day 6660/10960, date = 30-Jan-2030
+
+Starting time step 0, stepsize 100 days, at day 6660/6760, date = 30-Jan-2030
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 185/228, date = 30-Jan-2030 00:00:00
+
+
+Report step 186/228 at day 6760/10960, date = 10-May-2030
+
+Starting time step 0, stepsize 100 days, at day 6760/6860, date = 10-May-2030
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 186/228, date = 10-May-2030 00:00:00
+
+
+Report step 187/228 at day 6860/10960, date = 18-Aug-2030
+
+Starting time step 0, stepsize 100 days, at day 6860/6960, date = 18-Aug-2030
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 187/228, date = 18-Aug-2030 00:00:00
+
+
+Report step 188/228 at day 6960/10960, date = 26-Nov-2030
+
+Starting time step 0, stepsize 100 days, at day 6960/7060, date = 26-Nov-2030
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 188/228, date = 26-Nov-2030 00:00:00
+
+
+Report step 189/228 at day 7060/10960, date = 06-Mar-2031
+
+Starting time step 0, stepsize 100 days, at day 7060/7160, date = 06-Mar-2031
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 189/228, date = 06-Mar-2031 00:00:00
+
+
+Report step 190/228 at day 7160/10960, date = 14-Jun-2031
+
+Starting time step 0, stepsize 100 days, at day 7160/7260, date = 14-Jun-2031
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 190/228, date = 14-Jun-2031 00:00:00
+
+
+Report step 191/228 at day 7260/10960, date = 22-Sep-2031
+
+Starting time step 0, stepsize 100 days, at day 7260/7360, date = 22-Sep-2031
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 191/228, date = 22-Sep-2031 00:00:00
+
+
+Report step 192/228 at day 7360/10960, date = 31-Dec-2031
+
+Starting time step 0, stepsize 100 days, at day 7360/7460, date = 31-Dec-2031
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 192/228, date = 31-Dec-2031 00:00:00
+
+
+Report step 193/228 at day 7460/10960, date = 09-Apr-2032
+
+Starting time step 0, stepsize 100 days, at day 7460/7560, date = 09-Apr-2032
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 193/228, date = 09-Apr-2032 00:00:00
+
+
+Report step 194/228 at day 7560/10960, date = 18-Jul-2032
+
+Starting time step 0, stepsize 100 days, at day 7560/7660, date = 18-Jul-2032
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 194/228, date = 18-Jul-2032 00:00:00
+
+
+Report step 195/228 at day 7660/10960, date = 26-Oct-2032
+
+Starting time step 0, stepsize 100 days, at day 7660/7760, date = 26-Oct-2032
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 195/228, date = 26-Oct-2032 00:00:00
+
+
+Report step 196/228 at day 7760/10960, date = 03-Feb-2033
+
+Starting time step 0, stepsize 100 days, at day 7760/7860, date = 03-Feb-2033
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  1 (0.0sec)
+Restart file written for report step 196/228, date = 03-Feb-2033 00:00:00
+
+
+Report step 197/228 at day 7860/10960, date = 14-May-2033
+
+Starting time step 0, stepsize 100 days, at day 7860/7960, date = 14-May-2033
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 197/228, date = 14-May-2033 00:00:00
+
+
+Report step 198/228 at day 7960/10960, date = 22-Aug-2033
+
+Starting time step 0, stepsize 100 days, at day 7960/8060, date = 22-Aug-2033
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 198/228, date = 22-Aug-2033 00:00:00
+
+
+Report step 199/228 at day 8060/10960, date = 30-Nov-2033
+
+Starting time step 0, stepsize 100 days, at day 8060/8160, date = 30-Nov-2033
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 199/228, date = 30-Nov-2033 00:00:00
+
+
+Report step 200/228 at day 8160/10960, date = 10-Mar-2034
+
+Starting time step 0, stepsize 100 days, at day 8160/8260, date = 10-Mar-2034
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 200/228, date = 10-Mar-2034 00:00:00
+
+
+Report step 201/228 at day 8260/10960, date = 18-Jun-2034
+
+Starting time step 0, stepsize 100 days, at day 8260/8360, date = 18-Jun-2034
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 201/228, date = 18-Jun-2034 00:00:00
+
+
+Report step 202/228 at day 8360/10960, date = 26-Sep-2034
+
+Starting time step 0, stepsize 100 days, at day 8360/8460, date = 26-Sep-2034
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 202/228, date = 26-Sep-2034 00:00:00
+
+
+Report step 203/228 at day 8460/10960, date = 04-Jan-2035
+
+Starting time step 0, stepsize 100 days, at day 8460/8560, date = 04-Jan-2035
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 203/228, date = 04-Jan-2035 00:00:00
+
+
+Report step 204/228 at day 8560/10960, date = 14-Apr-2035
+
+Starting time step 0, stepsize 100 days, at day 8560/8660, date = 14-Apr-2035
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 204/228, date = 14-Apr-2035 00:00:00
+
+
+Report step 205/228 at day 8660/10960, date = 23-Jul-2035
+
+Starting time step 0, stepsize 100 days, at day 8660/8760, date = 23-Jul-2035
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 205/228, date = 23-Jul-2035 00:00:00
+
+
+Report step 206/228 at day 8760/10960, date = 31-Oct-2035
+
+Starting time step 0, stepsize 100 days, at day 8760/8860, date = 31-Oct-2035
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 206/228, date = 31-Oct-2035 00:00:00
+
+
+Report step 207/228 at day 8860/10960, date = 08-Feb-2036
+
+Starting time step 0, stepsize 100 days, at day 8860/8960, date = 08-Feb-2036
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 207/228, date = 08-Feb-2036 00:00:00
+
+
+Report step 208/228 at day 8960/10960, date = 18-May-2036
+
+Starting time step 0, stepsize 100 days, at day 8960/9060, date = 18-May-2036
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 208/228, date = 18-May-2036 00:00:00
+
+
+Report step 209/228 at day 9060/10960, date = 26-Aug-2036
+
+Starting time step 0, stepsize 100 days, at day 9060/9160, date = 26-Aug-2036
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 209/228, date = 26-Aug-2036 00:00:00
+
+
+Report step 210/228 at day 9160/10960, date = 04-Dec-2036
+
+Starting time step 0, stepsize 100 days, at day 9160/9260, date = 04-Dec-2036
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 210/228, date = 04-Dec-2036 00:00:00
+
+
+Report step 211/228 at day 9260/10960, date = 14-Mar-2037
+
+Starting time step 0, stepsize 100 days, at day 9260/9360, date = 14-Mar-2037
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 211/228, date = 14-Mar-2037 00:00:00
+
+
+Report step 212/228 at day 9360/10960, date = 22-Jun-2037
+
+Starting time step 0, stepsize 100 days, at day 9360/9460, date = 22-Jun-2037
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 212/228, date = 22-Jun-2037 00:00:00
+
+
+Report step 213/228 at day 9460/10960, date = 30-Sep-2037
+
+Starting time step 0, stepsize 100 days, at day 9460/9560, date = 30-Sep-2037
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 213/228, date = 30-Sep-2037 00:00:00
+
+
+Report step 214/228 at day 9560/10960, date = 08-Jan-2038
+
+Starting time step 0, stepsize 100 days, at day 9560/9660, date = 08-Jan-2038
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 214/228, date = 08-Jan-2038 00:00:00
+
+
+Report step 215/228 at day 9660/10960, date = 18-Apr-2038
+
+Starting time step 0, stepsize 100 days, at day 9660/9760, date = 18-Apr-2038
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 215/228, date = 18-Apr-2038 00:00:00
+
+
+Report step 216/228 at day 9760/10960, date = 27-Jul-2038
+
+Starting time step 0, stepsize 100 days, at day 9760/9860, date = 27-Jul-2038
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 216/228, date = 27-Jul-2038 00:00:00
+
+
+Report step 217/228 at day 9860/10960, date = 04-Nov-2038
+
+Starting time step 0, stepsize 100 days, at day 9860/9960, date = 04-Nov-2038
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 217/228, date = 04-Nov-2038 00:00:00
+
+
+Report step 218/228 at day 9960/10960, date = 12-Feb-2039
+
+Starting time step 0, stepsize 100 days, at day 9960/10060, date = 12-Feb-2039
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 218/228, date = 12-Feb-2039 00:00:00
+
+
+Report step 219/228 at day 10060/10960, date = 23-May-2039
+
+Starting time step 0, stepsize 100 days, at day 10060/10160, date = 23-May-2039
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 219/228, date = 23-May-2039 00:00:00
+
+
+Report step 220/228 at day 10160/10960, date = 31-Aug-2039
+
+Starting time step 0, stepsize 100 days, at day 10160/10260, date = 31-Aug-2039
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 220/228, date = 31-Aug-2039 00:00:00
+
+
+Report step 221/228 at day 10260/10960, date = 09-Dec-2039
+
+Starting time step 0, stepsize 100 days, at day 10260/10360, date = 09-Dec-2039
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 221/228, date = 09-Dec-2039 00:00:00
+
+
+Report step 222/228 at day 10360/10960, date = 18-Mar-2040
+
+Starting time step 0, stepsize 100 days, at day 10360/10460, date = 18-Mar-2040
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 222/228, date = 18-Mar-2040 00:00:00
+
+
+Report step 223/228 at day 10460/10960, date = 26-Jun-2040
+
+Starting time step 0, stepsize 100 days, at day 10460/10560, date = 26-Jun-2040
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 223/228, date = 26-Jun-2040 00:00:00
+
+
+Report step 224/228 at day 10560/10960, date = 04-Oct-2040
+
+Starting time step 0, stepsize 100 days, at day 10560/10660, date = 04-Oct-2040
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 224/228, date = 04-Oct-2040 00:00:00
+
+
+Report step 225/228 at day 10660/10960, date = 12-Jan-2041
+
+Starting time step 0, stepsize 100 days, at day 10660/10760, date = 12-Jan-2041
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 225/228, date = 12-Jan-2041 00:00:00
+
+
+Report step 226/228 at day 10760/10960, date = 22-Apr-2041
+
+Starting time step 0, stepsize 100 days, at day 10760/10860, date = 22-Apr-2041
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 226/228, date = 22-Apr-2041 00:00:00
+
+
+Report step 227/228 at day 10860/10960, date = 31-Jul-2041
+
+Starting time step 0, stepsize 100 days, at day 10860/10960, date = 31-Jul-2041
+
+Warning: Keyword 'POLYMER' is unhandled for output to restart file.
+
+Warning: Keyword 'VELOCITY' is unhandled for output to restart file.
+ Newton its= 2, linearizations= 3 (0.0sec), linear its=  2 (0.0sec)
+Restart file written for report step 227/228, date = 31-Jul-2041 00:00:00
+
+Restart file written for report step 228/228, date = 08-Nov-2041 00:00:00
+
+
+================    End of simulation     ===============
+
+Number of MPI processes:         1
+Threads per MPI process:         2
+Setup time:                      0.68 s
+  Deck input:                    0.63 s
+Number of timesteps:           231
+Simulation time:               244.08 s
+  Assembly time:                 0.62 s (Wasted: 0.0 s; 0.0%)
+    Well assembly:               0.38 s (Wasted: 0.0 s; 0.0%)
+  Linear solve time:             0.35 s (Wasted: 0.0 s; 0.0%)
+    Linear setup:                0.27 s (Wasted: 0.0 s; 0.0%)
+  Props/update time:             0.71 s (Wasted: 0.0 s; 0.0%)
+  Pre/post step:                 0.76 s (Wasted: 0.0 s; 0.0%)
+  Output write time:           243.11 s
+Overall Linearizations:       1028      (Wasted:     0; 0.0%)
+Overall Newton Iterations:     797      (Wasted:     0; 0.0%)
+Overall Linear Iterations:     660      (Wasted:     0; 0.0%)
+
+
+
+Error summary:
+Warnings          466
+Info              1064
+Errors            0
+Bugs              0
+Debug             0
+Problems          0
+

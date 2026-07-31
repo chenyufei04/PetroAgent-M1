@@ -1,16 +1,192 @@
 # PetroAgent M1
 
+> 当前版本：`v0.9.0`
+
+## v0.9.0：参数化 Deck 与多算例合成数据集
+
+本版在 `v0.8.0` 的 ESMRY 自动分析闭环上增加批量实验编排：
+
+- 使用显式占位符和参数白名单生成派生 Deck，不猜测修改 Deck 关键字；
+- 支持 `cartesian`（参数笛卡尔积）与 `zip`（成对组合）；
+- 设置 `max_cases`，防止误生成超大实验；
+- 每个算例使用独立的 Deck、Flow 输出、日志、转换结果和清单；
+- 单个算例失败不会中断剩余实验，失败原因进入清单和数据集；
+- 默认复用已经成功的算例，支持断点续跑；
+- 从每个 ESMRY 计算算例级标签，并汇总完整时间序列；
+- 所有汇总产物明确标记为 `OPM数值模拟数据`。
+
+### 1. 给基础 Deck 加入参数占位符
+
+只在确定允许修改的位置加入占位符。例如：
+
+```text
+-- 聚合物浓度所在的数值位置
+{{PETRO_PARAM_POLYMER_CONCENTRATION}}
+
+-- 注入速率所在的数值位置
+{{PETRO_PARAM_INJECTION_RATE}}
+```
+
+占位符可以位于根 `.DATA` 或其同目录的 `.INC` 等文本 INCLUDE 文件中。程序会
+复制整个案例目录后修改派生副本，不会改动基础 Deck。占位符必须精确放在原数值
+位置，不能额外保留旧数值。
+
+### 2. 配置参数实验
+
+模板位于：
+
+```text
+config/experiments/polymer_sensitivity.yaml
+```
+
+核心配置：
+
+```yaml
+experiment_id: polymer_sensitivity_v1
+base_deck: data/opm/polymer_simple2D/2D_THREEPHASE_POLY_HETER.DATA
+output_root: outputs/experiments
+design: cartesian
+max_cases: 30
+
+parameters:
+  polymer_concentration:
+    token: "{{PETRO_PARAM_POLYMER_CONCENTRATION}}"
+    values: [0.5, 1.0, 1.5]
+    unit: "kg/m3"
+    format: ".6g"
+  injection_rate:
+    token: "{{PETRO_PARAM_INJECTION_RATE}}"
+    values: [100, 150, 200]
+    unit: "m3/day"
+    format: ".6g"
+```
+
+上例生成 `3 × 3 = 9` 个算例。第一批建议保持在 10～30 个算例以内，先确认每个
+参数在 Deck 中确实生效，再扩大规模。
+
+### 3. 先只生成派生 Deck
+
+```powershell
+python scripts\run_parameter_sweep.py `
+  "config\experiments\polymer_sensitivity.yaml" `
+  --prepare-only
+```
+
+检查 `outputs\experiments\<experiment_id>\derived_decks` 中的数值和 INCLUDE
+路径无误后，再进行真实批量模拟。
+
+### 4. 批量运行并生成数据集
+
+```powershell
+python scripts\run_parameter_sweep.py `
+  "config\experiments\polymer_sensitivity.yaml"
+```
+
+默认会跳过已经成功的算例。需要强制重新运行全部算例时：
+
+```powershell
+python scripts\run_parameter_sweep.py `
+  "config\experiments\polymer_sensitivity.yaml" `
+  --no-resume
+```
+
+主要输出：
+
+```text
+outputs/experiments/<experiment_id>/
+├─ derived_decks/<case_id>/       # 派生 Deck 与参数清单
+├─ cases/<case_id>/
+│  ├─ flow/                       # ESMRY、Flow 日志和运行清单
+│  ├─ converted/                  # 标准 CSV、向量目录和元数据
+│  └─ case_manifest.json          # 状态、参数、标签与溯源
+├─ dataset/
+│  ├─ cases.csv                   # 每个算例一行的参数、状态和标签
+│  └─ time_series.csv             # 所有成功算例的完整时间序列
+└─ experiment_manifest.json       # 实验总清单
+```
+
+`cases.csv` 当前可计算的标签包括模拟天数、最终累计产油量、最终累计产水量、
+最终累计注水量、最终含水率、峰值产油速率和平均产油速率。ESMRY 缺少某字段时，
+对应标签留空，不由程序或大语言模型猜测。
+
+当前批量阶段不自动写入 Neo4j，也不自动刷新 Web 页面；实例图谱接入仍按原计划
+属于 `v0.10.0`。
+
+## v0.7.0～v0.8.0：OPM Summary 自动分析闭环
+
+`v0.7.0` 新增：
+
+- 通过 WSL 中 OPM Python 绑定读取 `.ESMRY`；
+- 枚举全部 Summary 向量、对象名称、作用域和原始单位；
+- 映射已确认的全场向量，未知向量保留在目录中；
+- 输出标准时间序列 CSV、向量目录 CSV 和转换元数据 JSON。
+
+只转换并检查向量：
+
+```powershell
+python scripts\convert_opm_summary.py `
+  "outputs\opm\polymer_simple2D\2D_THREEPHASE_POLY_HETER.ESMRY" `
+  --output-dir "outputs\converted" `
+  --case-id "polymer_simple2d"
+```
+
+主要输出：
+
+```text
+outputs/converted/polymer_simple2d_summary_standard.csv
+outputs/converted/polymer_simple2d_summary_vectors.csv
+outputs/converted/polymer_simple2d_summary_metadata.json
+```
+
+`v0.8.0` 新增完整入口，将标准 CSV 自动交给现有 `analyze_csv()`：
+
+```powershell
+python scripts\analyze_opm_summary.py `
+  "outputs\opm\polymer_simple2D\2D_THREEPHASE_POLY_HETER.ESMRY" `
+  --output-root "outputs" `
+  --case-id "polymer_simple2d"
+```
+
+完整链路：
+
+```text
+ESMRY
+→ 向量与单位目录
+→ PetroAgent 标准 CSV
+→ 数据与知识规则校验
+→ 指标汇总
+→ 科研图表
+→ Markdown 统一报告
+```
+
+最终报告位于：
+
+```text
+outputs/reports/polymer_simple2d.md
+```
+
+本阶段的数据性质固定为 OPM Flow 数值模拟数据，不代表真实油田生产数据。
+如果提示无法导入 `opm.io.ecl.ESmry`，先在 PowerShell 中确认 WSL Python
+绑定是否存在：
+
+```powershell
+wsl.exe -d Ubuntu-24.04 -- python3 -c "from opm.io.ecl import ESmry; print('OK')"
+```
+
+当前优先读取 `ESMRY`；`SMSPEC + UNSMRY` 兼容读取属于后续增强项，不在
+本次两个版本的完成范围内。
+
 面向石油工程科研的第一阶段智能体内核。项目以 OPM 官方开放案例
 `polymer_simple2D` 为主案例，以 `SPE9` 为跨场景验证案例，先建立一个
 可测试、可追溯、可替换数据源的确定性分析底座，并在同一项目中建设
 `PetroleumEngineeringCoreOntology v0.2`（石油工程核心本体 v0.2），并提供
 YAML 到 Neo4j 的可重复导入与查询适配层。
 
-> 当前版本：`PetroAgent v0.6.0（WSL OPM 执行接入） / Knowledge Foundation v0.2.0`  
+> 当前版本：`PetroAgent v0.9.0（参数实验与数据集） / Knowledge Foundation v0.2.0`  
 > Python：`3.10+`  
 > 当前边界：确定性分析内核＋YAML知识源＋Neo4j存储/查询＋Web 演示展示；
-> 已支持从 Windows 调用 WSL2 Ubuntu 中的 OPM Flow；
-> 不包含 LLM、RAG、自动字段/单位映射和 OPM 二进制结果解析。
+> 已支持从 Windows 调用 WSL2 Ubuntu 中的 OPM Flow、ESMRY 解析和参数化批量实验；
+> 不包含 LLM、RAG、算例实例自动写回 Neo4j 和批量结果页面展示。
 
 v0.4.2 在保留原始产物下载功能的基础上，增加图表、文档和表格三类在线
 预览；Neo4j“全部图谱”视图同步展示全部实体列表与全部关系列表，并支持
@@ -73,6 +249,9 @@ PetroAgent 程序版本与 Knowledge Foundation 知识库版本分别管理：�
 | `v0.4.2` | 输出预览与图谱清单 | 增加图表/文档/表格在线预览，以及全部实体、全部关系和图谱搜索 | 用户文件导入、字段映射 |
 | `v0.5.0` | 文件导入读取 | 增加 CSV/XLSX 上传、Sheet 读取、数据预览、必需字段准入检查和导入数据分析 | 自动字段映射、单位换算和自动清洗 |
 | `v0.6.0` | WSL OPM Flow 接入 | Windows 调用 WSL2 Flow、路径转换、Deck 运行、日志、版本与运行清单 | Summary 解析和标准 CSV 转换 |
+| `v0.7.0` | OPM Summary 转换 | ESMRY 读取、向量与单位枚举、标准 CSV、向量目录和转换元数据 | 自动分析与统一报告 |
+| `v0.8.0` | OPM 自动分析闭环 | ESMRY 接入 `analyze_csv()`，生成规则结果、图表和科研报告 | 参数化批量实验 |
+| `v0.9.0` | 参数实验与数据集 | 显式占位符参数化 Deck、多算例 Flow、断点续跑、标签和数据集汇总 | Neo4j 实例写回、页面自动展示、LLM 解释 |
 
 ### v0.1.0：确定性分析内核
 

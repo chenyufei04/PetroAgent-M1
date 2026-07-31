@@ -1,0 +1,20 @@
+{
+  "deck_file": "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\derived_decks\\polymer_sensitivity_v1-0006-b9353855\\2D_THREEPHASE_POLY_HETER.DATA",
+  "deck_sha256": "84de3e73bce6bccd21c7279c14513a8ba5c87c1a1d7bd96d729aded4e18a74a8",
+  "opm_flow_version": "flow 2026.04",
+  "execution_mode": "wsl",
+  "wsl_distribution": "Ubuntu-24.04",
+  "command": [
+    "wsl.exe",
+    "-d",
+    "Ubuntu-24.04",
+    "--",
+    "flow",
+    "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0006-b9353855/2D_THREEPHASE_POLY_HETER.DATA",
+    "--output-dir=/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0006-b9353855/flow",
+    "--enable-esmry=true"
+  ],
+  "started_at": "2026-07-31T08:25:01.414200+00:00",
+  "finished_at": "2026-07-31T08:25:02.039228+00:00",
+  "return_code": 1
+}

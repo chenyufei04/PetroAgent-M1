@@ -1,0 +1,14 @@
+{
+  "case_id": "polymer_sensitivity_v1-0003-8cd10086",
+  "base_deck": "/mnt/f/Projects/petro-agent/data/raw/polymer_simple2D/2D_THREEPHASE_POLY_HETER.DATA",
+  "derived_deck": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0003-8cd10086/2D_THREEPHASE_POLY_HETER.DATA",
+  "parameters": {
+    "polymer_concentration": 0.5,
+    "injection_rate": 200
+  },
+  "replacements": {
+    "polymer_concentration": 1,
+    "injection_rate": 3
+  },
+  "generated_at": "2026-07-31T09:16:59.999850+00:00"
+}

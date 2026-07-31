@@ -1,0 +1,23 @@
+# v0.9.0 参数实验模板。使用前先在基础 Deck 中加入下列显式占位符。
+experiment_id: polymer_sensitivity_v1
+base_deck: data/raw/polymer_simple2D/2D_THREEPHASE_POLY_HETER.DATA
+output_root: outputs/experiments
+design: cartesian
+max_cases: 30
+
+# 默认不增加未经当前 Flow 版本验证的命令行参数。
+flow_args: []
+
+parameters:
+  polymer_concentration:
+    token: "{{PETRO_PARAM_POLYMER_CONCENTRATION}}"
+    values: [0.5, 1.0, 1.5]
+    unit: "kg/m3"
+    file_glob: "**/*"
+    format: ".6g"
+  injection_rate:
+    token: "{{PETRO_PARAM_INJECTION_RATE}}"
+    values: [100, 150, 200]
+    unit: "m3/day"
+    file_glob: "**/*"
+    format: ".6g"

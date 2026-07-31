@@ -1,0 +1,22 @@
+**********************************************************************
+*                                                                    *
+*                        This is flow 2026.04                        *
+*                                                                    *
+* Flow is a simulator for fully implicit three-phase black-oil flow, *
+*             including solvent and polymer capabilities.            *
+*          For more information, see https://opm-project.org         *
+*                                                                    *
+**********************************************************************
+
+Using 1 MPI processes with 2 OMP threads on each 
+
+Reading deck file '/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0007-ee90198c/2D_THREEPHASE_POLY_HETER.DATA'
+
+Error: String ﻿ not formatted as valid keyword
+In /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0007-ee90198c/2D_THREEPHASE_POLY_HETER.DATA line 1.
+
+Error: Unrecoverable errors while loading input:
+Problem with keyword 
+In /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0007-ee90198c/2D_THREEPHASE_POLY_HETER.DATA line 1
+String ﻿ not formatted as valid keyword
+In /mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0007-ee90198c/2D_THREEPHASE_POLY_HETER.DATA line 1.

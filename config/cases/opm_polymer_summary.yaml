@@ -1,0 +1,32 @@
+case_id: opm_polymer_summary
+domain: reservoir_engineering
+process: polymer_flooding
+source_type: opm_flow_esmry
+model: 2D_THREEPHASE_POLY_HETER
+repository: https://github.com/OPM/opm-tests
+domain_packs:
+  - common_reservoir
+  - polymer_flooding
+required_columns:
+  - time_days
+column_mapping: {}
+units:
+  time_days: day
+  oil_rate_m3_day: m3/day
+  water_rate_m3_day: m3/day
+  gas_rate_m3_day: m3/day
+  cumulative_oil_m3: m3
+  cumulative_water_m3: m3
+  cumulative_gas_m3: m3
+  water_injection_rate_m3_day: m3/day
+  cumulative_injected_water_m3: m3
+  water_cut_fraction: fraction
+  field_pressure_bar: bar
+metadata:
+  dataset_status: opm_flow_simulation_output
+  data_nature: 数值模拟数据，非真实油田生产数据
+knowledge:
+  enabled: true
+  execution_mode: knowledge
+  context:
+    representation: decimal_fraction

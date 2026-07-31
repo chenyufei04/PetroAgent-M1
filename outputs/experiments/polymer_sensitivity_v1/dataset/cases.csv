@@ -1,0 +1,10 @@
+case_id,parameter_polymer_concentration,parameter_injection_rate,status,error
+polymer_sensitivity_v1-0001-16d0f364,0.5,100,failed,无法转换为 WSL 路径：/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0001-16d0f364/2D_THREEPHASE_POLY_HETER.DATA
+polymer_sensitivity_v1-0002-5e32fee9,0.5,150,failed,无法转换为 WSL 路径：/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0002-5e32fee9/2D_THREEPHASE_POLY_HETER.DATA
+polymer_sensitivity_v1-0003-8cd10086,0.5,200,failed,无法转换为 WSL 路径：/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0003-8cd10086/2D_THREEPHASE_POLY_HETER.DATA
+polymer_sensitivity_v1-0004-737bf45b,1.0,100,failed,无法转换为 WSL 路径：/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA
+polymer_sensitivity_v1-0005-d0a64fb5,1.0,150,failed,无法转换为 WSL 路径：/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0005-d0a64fb5/2D_THREEPHASE_POLY_HETER.DATA
+polymer_sensitivity_v1-0006-b9353855,1.0,200,failed,无法转换为 WSL 路径：/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0006-b9353855/2D_THREEPHASE_POLY_HETER.DATA
+polymer_sensitivity_v1-0007-ee90198c,1.5,100,failed,无法转换为 WSL 路径：/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0007-ee90198c/2D_THREEPHASE_POLY_HETER.DATA
+polymer_sensitivity_v1-0008-5f63a4ec,1.5,150,failed,无法转换为 WSL 路径：/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0008-5f63a4ec/2D_THREEPHASE_POLY_HETER.DATA
+polymer_sensitivity_v1-0009-9c30f23a,1.5,200,failed,无法转换为 WSL 路径：/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0009-9c30f23a/2D_THREEPHASE_POLY_HETER.DATA

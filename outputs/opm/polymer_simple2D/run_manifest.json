@@ -1,0 +1,20 @@
+{
+  "deck_file": "F:\\Projects\\petro-agent\\data\\raw\\polymer_simple2D\\2D_THREEPHASE_POLY_HETER.DATA",
+  "deck_sha256": "150613181aa6a196b3155105baac6991358bcd8ea45cf8baa72a2a27203f169f",
+  "opm_flow_version": "flow 2026.04",
+  "execution_mode": "wsl",
+  "wsl_distribution": "Ubuntu-24.04",
+  "command": [
+    "wsl.exe",
+    "-d",
+    "Ubuntu-24.04",
+    "--",
+    "flow",
+    "/mnt/f/Projects/petro-agent/data/raw/polymer_simple2D/2D_THREEPHASE_POLY_HETER.DATA",
+    "--output-dir=/mnt/f/Projects/petro-agent/outputs/opm/polymer_simple2D",
+    "--enable-esmry=true"
+  ],
+  "started_at": "2026-07-31T03:12:34.159519+00:00",
+  "finished_at": "2026-07-31T03:17:08.165097+00:00",
+  "return_code": 0
+}

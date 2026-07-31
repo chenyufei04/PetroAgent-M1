@@ -6,10 +6,11 @@
 `PetroleumEngineeringCoreOntology v0.2`（石油工程核心本体 v0.2），并提供
 YAML 到 Neo4j 的可重复导入与查询适配层。
 
-> 当前版本：`PetroAgent v0.5.0 / Knowledge Foundation v0.2.0`  
+> 当前版本：`PetroAgent v0.6.0（WSL OPM 执行接入） / Knowledge Foundation v0.2.0`  
 > Python：`3.10+`  
 > 当前边界：确定性分析内核＋YAML知识源＋Neo4j存储/查询＋Web 演示展示；
-> 不包含 LLM、RAG、自动字段/单位映射和自动运行模拟器。
+> 已支持从 Windows 调用 WSL2 Ubuntu 中的 OPM Flow；
+> 不包含 LLM、RAG、自动字段/单位映射和 OPM 二进制结果解析。
 
 v0.4.2 在保留原始产物下载功能的基础上，增加图表、文档和表格三类在线
 预览；Neo4j“全部图谱”视图同步展示全部实体列表与全部关系列表，并支持
@@ -18,6 +19,41 @@ LangChain 工具。
 
 v0.5.0 增加 CSV/XLSX 文件导入、Sheet 读取、数据预览和必需字段准入检查；
 页面及分析接口不指定导入数据时，仍调用原有演示案例。
+
+v0.6.0 增加 WSL OPM Flow 环境检查、Windows 路径转换、Deck 运行、超时控制、
+日志留存和运行清单。PetroAgent 继续在 Windows 运行，Flow 由 WSL2 承担。
+
+## v0.6.0 开发记录（2026-07-30）
+
+本次以 `v0.5.0 文件导入读取版` 为基线，不删除现有 FastAPI、Vue、Neo4j、
+知识规则、CSV/XLSX 导入和分析功能。
+
+| 项目 | 开发记录 |
+|---|---|
+| 环境确认 | 用户台式机已验证 WSL2、Ubuntu 24.04.4、`/usr/bin/flow` 和 Flow 2026.04 |
+| 执行架构 | Windows 运行 PetroAgent；通过 `wsl.exe` 调用 Ubuntu 中的 Flow |
+| 配置 | 新增执行模式、发行版、Flow 命令和超时时间配置 |
+| 路径处理 | 新增 Windows 盘符路径到 `/mnt/<盘符>/...` 的转换 |
+| 环境检查 | 检查 `wsl.exe`、目标发行版内的 Flow 及版本命令退出码 |
+| Deck 运行 | 校验 `.DATA` 主文件，启用 ESMRY，支持额外 Flow 参数 |
+| 运行留痕 | 保存标准输出、错误输出、Flow 版本和 JSON 运行清单 |
+| 溯源内容 | 记录 Deck 路径与 SHA-256、实际命令、UTC 起止时间和退出码 |
+| 安全边界 | 使用参数列表启动进程，不使用 Shell 拼接；配置运行超时 |
+| 测试 | 增加环境缺失、无效 Deck、路径转换和 WSL 命令构造测试 |
+| 保留边界 | 未内置官方 Deck，未声称已在交付环境完成真实模拟 |
+| 下一阶段 | 获取并固定官方案例提交，实跑 Deck，解析 Summary 并转换标准 CSV |
+
+本次主要文件变更：
+
+```text
+.env.example
+README.md
+src/petro_agent/adapters/opm/__init__.py
+src/petro_agent/adapters/opm/deck_runner.py
+scripts/check_opm_flow.py
+scripts/run_opm_case.py
+tests/adapters/opm/test_deck_runner.py
+```
 
 ## 版本迭代记录
 
@@ -36,6 +72,7 @@ PetroAgent 程序版本与 Knowledge Foundation 知识库版本分别管理：�
 | `v0.4.1` | Neo4j 查询工作台 | 增加预定义图谱视图和页面查询切换，扩展图谱浏览能力 | 任意 Cypher、完整图谱清单 |
 | `v0.4.2` | 输出预览与图谱清单 | 增加图表/文档/表格在线预览，以及全部实体、全部关系和图谱搜索 | 用户文件导入、字段映射 |
 | `v0.5.0` | 文件导入读取 | 增加 CSV/XLSX 上传、Sheet 读取、数据预览、必需字段准入检查和导入数据分析 | 自动字段映射、单位换算和自动清洗 |
+| `v0.6.0` | WSL OPM Flow 接入 | Windows 调用 WSL2 Flow、路径转换、Deck 运行、日志、版本与运行清单 | Summary 解析和标准 CSV 转换 |
 
 ### v0.1.0：确定性分析内核
 
@@ -171,6 +208,31 @@ Foundation 的初始版本。
 本版边界：只解决同结构数据的导入、预览与分析准入，不会自动理解任意字段，
 也不会静默进行字段映射、单位换算、缺失值填补、异常值修正或数据清洗。正式科研
 数据仍需遵守本文“导入数据约束”。
+
+### v0.6.0：WSL OPM Flow 执行接入
+
+本阶段根据已验证的 `Ubuntu-24.04 + WSL2 + Flow 2026.04` 环境，建立
+Windows PetroAgent 到 WSL Flow 的正式调用边界。
+
+已完成：
+
+- 通过 `wsl.exe -d Ubuntu-24.04 -- flow` 调用模拟器；
+- 支持环境变量或命令参数选择发行版、Flow 命令和超时时间；
+- 自动把 `F:\...` 等 Windows 路径转换为 `/mnt/f/...`；
+- 使用 `flow --version` 检查 WSL、发行版和 Flow；
+- 运行前校验根文件必须是实际存在的 `.DATA` 文件；
+- 使用参数列表调用进程，不通过 Shell 拼接命令；
+- 为每次运行指定独立输出目录；
+- 分别保存标准输出和错误输出日志；
+- 保存 `flow.stdout.log`、`flow.stderr.log` 和 `opm_flow_version.txt`；
+- 保存包含 Deck SHA-256、命令、时间、版本和退出码的 `run_manifest.json`；
+- Flow 超时后以退出码 `124` 结束并保留诊断信息；
+- 保留 `native` 模式用于 Linux 本机或未来可信原生环境，但默认使用 `wsl`；
+- 增加环境缺失、Deck 校验、路径转换和命令构造测试。
+
+当前边界：执行器已经完成，但完整包不内置 OPM 官方 Deck，也不伪造模拟结果。
+需要先运行 `fetch_opm_data.py` 获取官方案例，再在用户的 Windows + WSL 环境实跑。
+Summary 二进制解析与标准 CSV 转换留给 v0.6.x 后续阶段。
 
 ### v0.2.0 与前一版的区别
 
@@ -309,14 +371,18 @@ petro-agent-m1/
 │   ├── reports/                      # Markdown 报告
 │   └── runs/                         # 标准 CSV 与 JSON 结果
 ├── scripts/
+│   ├── check_opm_flow.py             # 检查本机 flow.exe 与版本
 │   ├── fetch_opm_data.py             # 下载官方案例并记录上游修订号
 │   ├── import_neo4j.py               # 幂等导入 YAML 图谱
 │   ├── query_neo4j.py                # 查询并输出 Neo4j 关系
 │   ├── run_demo.py                   # 运行默认命令行演示案例
+│   ├── run_opm_case.py               # 调用显式配置的本机 Flow 运行 Deck
 │   ├── run_web.py                    # 启动 FastAPI Web 服务
 │   └── validate_knowledge.py         # 校验知识源结构与引用
 ├── src/petro_agent/
 │   ├── adapters/                     # CSV、Deck 和 OPM 数据适配器
+│   │   └── opm/
+│   │       └── deck_runner.py        # 本机 Flow 检查与进程执行边界
 │   ├── api/                          # FastAPI 接口与序列化模型
 │   ├── core/                         # 通用协议、配置、模型和指标计算
 │   ├── domain_packs/
@@ -329,6 +395,7 @@ petro-agent-m1/
 │   ├── cli.py                        # 命令行入口
 │   └── pipeline.py                   # 分析主编排管线
 ├── tests/
+│   ├── adapters/opm/                 # OPM Flow 执行边界测试
 │   ├── knowledge/                    # YAML 与 Neo4j 相关测试
 │   ├── test_dataset_upload.py        # CSV/XLSX 导入与默认案例测试
 │   ├── test_api_serializers.py       # Web 响应序列化测试
@@ -363,14 +430,13 @@ petro-agent-m1/
 
 ```powershell
 cd F:\Projects\petro-agent-m1
-py -3.10 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-python -m pip install -e ".[dev]"
+py -3.10 -m pip install -e ".[dev]"
 pytest
 python scripts\validate_knowledge.py
 python scripts\run_demo.py
 ```
+
+以上命令直接使用本机 Python 3.10，不创建或激活 Python 虚拟环境。
 
 如需使用清华镜像：
 
@@ -599,6 +665,40 @@ petro-agent inspect-deck --input data/raw/polymer_simple2D/CASE.DATA
 这一步只检查输入组织和依赖完整性，不运行数值模拟，也不证明模型物理正确。
 
 ## 7. 接入 OPM Flow 实际结果
+
+### 7.1 Windows + WSL2 执行方式
+
+PetroAgent 和 Python 仍在 Windows 本机运行；OPM Flow 安装在 WSL2 的
+`Ubuntu-24.04` 中。项目不要求 Python 虚拟环境，也不使用 Docker。
+
+复制配置：
+
+```powershell
+Copy-Item .env.example .env
+$env:PYTHONPATH = "src"
+```
+
+检查 WSL 中的 Flow：
+
+```powershell
+python scripts\check_opm_flow.py
+```
+
+环境检查通过后运行 Deck：
+
+```powershell
+python scripts\run_opm_case.py `
+  "data\raw\polymer_simple2D\POLYMER_SIMPLE2D.DATA" `
+  --output-dir "outputs\opm\polymer_simple2D" `
+  --mode wsl `
+  --distribution Ubuntu-24.04
+```
+
+运行后保存标准输出、错误输出、Flow 版本和 `run_manifest.json`。命令退出码为
+`0` 才表示 Flow 进程成功结束；仍需检查 `.ESMRY`、`.SMSPEC`、`.UNSMRY` 等结果。
+仓库演示 CSV 与 OPM 真实输出分目录保存，不能混用。
+
+### 7.2 标准字段映射
 
 当前 M1 不绑定某个 OPM 版本或二进制输出解析库。推荐先用你安装的
 OPM Flow 运行案例，再将 summary/well 结果导出为 CSV，映射到以下标准字段。
@@ -1127,12 +1227,13 @@ pytest -q
 - Python 查询服务、文本关系佐证和 Browser 可视化；
 - YAML dry-run 校验，Neo4j 继续作为派生查询存储。
 
-### M1.4
+### M1.4（当前：v0.6.0 WSL OPM 执行接入）
 
-- 安装并自动调用 OPM Flow；
-- 直接读取 summary / restart 输出；
-- 建立水驱与聚合物驱成对运行配置；
-- 增加运行清单和完整 provenance。
+- 已建立 Windows 到 WSL OPM Flow 的调用边界；
+- 已增加版本检查、Windows/WSL 路径转换、超时和日志留存；
+- 已生成 Deck 哈希、实际命令、版本、时间与退出码运行清单；
+- 下一步直接读取 Summary 输出并转换标准 CSV；
+- 下一步建立水驱与聚合物驱成对运行配置。
 
 ### M1.5
 
@@ -1159,7 +1260,7 @@ pytest -q
 ## 15. 当前限制
 
 - 仓库内的演示 CSV 不是 OPM 官方模拟输出；
-- 尚未自动安装或运行 OPM Flow；
+- WSL Flow 2026.04 已由用户安装验证，但本交付环境无法代替用户电脑完成真实 Deck 实跑；
 - 尚未直接解析 EGRID/UNRST/SMSPEC 等二进制结果；
 - 累计产油量当前使用离散矩形积分，正式工作可替换为模拟器累计量；
 - 未知 OOIP 时不会自动推导采收率；

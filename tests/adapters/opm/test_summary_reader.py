@@ -1,10 +1,17 @@
 import json
+import sys
+import types
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
-from petro_agent.adapters.opm.summary_reader import convert_esmry, describe_vector
+from petro_agent.adapters.opm import FlowExecutionConfig
+from petro_agent.adapters.opm.summary_reader import (
+    _run_native_bridge,
+    convert_esmry,
+    describe_vector,
+)
 
 
 def test_vector_description_preserves_object_and_unknown_vectors():
@@ -66,3 +73,63 @@ def test_convert_rejects_mismatched_vector_lengths(tmp_path: Path):
                 "units": {},
             },
         )
+
+
+def test_convert_esmry_reads_directly_in_native_mode(tmp_path: Path, monkeypatch):
+    class FakeESmry:
+        def __init__(self, source):
+            assert source.endswith("CASE.ESMRY")
+
+        def keys(self):
+            return ["TIME", "FOPR"]
+
+        def get(self, key):
+            return {"TIME": [0, 1], "FOPR": [2, 1]}[key]
+
+        def get_unit(self, key):
+            return {"TIME": "DAYS", "FOPR": "SM3/DAY"}[key]
+
+    opm = types.ModuleType("opm")
+    opm_io = types.ModuleType("opm.io")
+    opm_ecl = types.ModuleType("opm.io.ecl")
+    opm_ecl.ESmry = FakeESmry
+    monkeypatch.setitem(sys.modules, "opm", opm)
+    monkeypatch.setitem(sys.modules, "opm.io", opm_io)
+    monkeypatch.setitem(sys.modules, "opm.io.ecl", opm_ecl)
+    source = tmp_path / "CASE.ESMRY"
+    source.write_bytes(b"fake")
+
+    result = convert_esmry(
+        source,
+        tmp_path / "converted",
+        config=FlowExecutionConfig(execution_mode="native"),
+    )
+
+    assert pd.read_csv(result.standard_csv).to_dict("list") == {
+        "time_days": [0.0, 1.0],
+        "oil_rate_m3_day": [2.0, 1.0],
+    }
+
+
+def test_native_bridge_uses_system_python_outside_active_venv(tmp_path, monkeypatch):
+    source = tmp_path / "CASE.ESMRY"
+    source.write_bytes(b"fake")
+    observed = {}
+
+    def fake_run(command, **_):
+        observed["command"] = command
+        Path(command[-1]).write_text(
+            json.dumps({"vectors": {"TIME": [0]}, "units": {}}),
+            encoding="utf-8",
+        )
+        return type("Completed", (), {"returncode": 0, "stderr": "", "stdout": ""})()
+
+    monkeypatch.setattr("petro_agent.adapters.opm.summary_reader.subprocess.run", fake_run)
+    payload = _run_native_bridge(
+        source,
+        FlowExecutionConfig(execution_mode="native"),
+        ImportError("opm unavailable in venv"),
+    )
+
+    assert observed["command"][0] == "/usr/bin/python3"
+    assert payload["vectors"]["TIME"] == [0]

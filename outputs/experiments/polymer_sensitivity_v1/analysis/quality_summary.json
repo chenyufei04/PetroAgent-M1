@@ -1,0 +1,105 @@
+{
+  "status": "passed",
+  "case_rows": 9,
+  "time_series_rows": 2098,
+  "case_columns": [
+    "case_id",
+    "parameter_polymer_concentration",
+    "parameter_injection_rate",
+    "time_steps",
+    "simulation_days",
+    "final_cumulative_oil_m3",
+    "final_cumulative_water_m3",
+    "final_cumulative_injected_water_m3",
+    "final_water_cut_fraction",
+    "peak_oil_rate_m3_day",
+    "mean_oil_rate_m3_day",
+    "status",
+    "deck_file",
+    "summary_file",
+    "standard_csv"
+  ],
+  "time_series_columns": [
+    "case_id",
+    "time_days",
+    "gas_rate_m3_day",
+    "cumulative_gas_m3",
+    "oil_rate_m3_day",
+    "cumulative_oil_m3",
+    "field_pressure_bar",
+    "water_cut_fraction",
+    "water_injection_rate_m3_day",
+    "cumulative_injected_water_m3",
+    "water_rate_m3_day",
+    "cumulative_water_m3",
+    "parameter_polymer_concentration",
+    "parameter_injection_rate"
+  ],
+  "missing_case_columns": [],
+  "missing_time_series_columns": [],
+  "null_cells": {
+    "cases": 0,
+    "time_series": 0
+  },
+  "duplicate_case_ids": 0,
+  "duplicate_case_time_points": 0,
+  "finite_numeric_values": {
+    "cases": true,
+    "time_series": true
+  },
+  "rows_per_case": {
+    "polymer_sensitivity_v1-0001-16d0f364": 231,
+    "polymer_sensitivity_v1-0002-5e32fee9": 233,
+    "polymer_sensitivity_v1-0003-8cd10086": 233,
+    "polymer_sensitivity_v1-0004-737bf45b": 231,
+    "polymer_sensitivity_v1-0005-d0a64fb5": 233,
+    "polymer_sensitivity_v1-0006-b9353855": 234,
+    "polymer_sensitivity_v1-0007-ee90198c": 233,
+    "polymer_sensitivity_v1-0008-5f63a4ec": 233,
+    "polymer_sensitivity_v1-0009-9c30f23a": 237
+  },
+  "time_coverage_days": {
+    "polymer_sensitivity_v1-0001-16d0f364": {
+      "min": 1.0,
+      "max": 10960.0
+    },
+    "polymer_sensitivity_v1-0002-5e32fee9": {
+      "min": 1.0,
+      "max": 10960.0
+    },
+    "polymer_sensitivity_v1-0003-8cd10086": {
+      "min": 1.0,
+      "max": 10960.0
+    },
+    "polymer_sensitivity_v1-0004-737bf45b": {
+      "min": 1.0,
+      "max": 10960.0
+    },
+    "polymer_sensitivity_v1-0005-d0a64fb5": {
+      "min": 1.0,
+      "max": 10960.0
+    },
+    "polymer_sensitivity_v1-0006-b9353855": {
+      "min": 1.0,
+      "max": 10960.0
+    },
+    "polymer_sensitivity_v1-0007-ee90198c": {
+      "min": 1.0,
+      "max": 10960.0
+    },
+    "polymer_sensitivity_v1-0008-5f63a4ec": {
+      "min": 1.0,
+      "max": 10960.0
+    },
+    "polymer_sensitivity_v1-0009-9c30f23a": {
+      "min": 1.0,
+      "max": 10960.0
+    }
+  },
+  "non_monotonic_cases": [],
+  "range_violations": {
+    "negative_rates_or_cumulatives": 0,
+    "water_cut_outside_0_1": 0,
+    "nonpositive_pressure": 0
+  }
+}

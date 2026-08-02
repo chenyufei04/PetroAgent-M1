@@ -159,6 +159,86 @@ def _run_wsl_bridge(
         return json.loads(payload.read_text(encoding="utf-8"))
 
 
+def _value_or_call(obj: Any, names: Sequence[str], *args: Any) -> Any:
+    for name in names:
+        if not hasattr(obj, name):
+            continue
+        value = getattr(obj, name)
+        try:
+            return value(*args) if callable(value) else value
+        except (TypeError, KeyError, RuntimeError):
+            continue
+    raise AttributeError("No supported ESmry API member: " + ", ".join(names))
+
+
+def _run_native_reader(
+    summary_file: Path,
+    config: FlowExecutionConfig,
+) -> dict[str, Any]:
+    try:
+        from opm.io.ecl import ESmry
+    except ImportError as exc:
+        return _run_native_bridge(summary_file, config, exc)
+
+    summary = ESmry(str(summary_file))
+    keys = list(_value_or_call(summary, ("keys", "keywordList", "summaryKeys")))
+    vectors: dict[str, list[float]] = {}
+    units: dict[str, str] = {}
+    for raw_key in keys:
+        key = str(raw_key)
+        values = _value_or_call(summary, ("get", "get_vector", "__getitem__"), key)
+        vectors[key] = [float(item) for item in values]
+        try:
+            units[key] = str(
+                _value_or_call(summary, ("get_unit", "unit", "getUnit"), key)
+            )
+        except AttributeError:
+            units[key] = ""
+    return {"vectors": vectors, "units": units}
+
+
+def _run_native_bridge(
+    summary_file: Path,
+    config: FlowExecutionConfig,
+    import_error: ImportError,
+) -> dict[str, Any]:
+    with tempfile.TemporaryDirectory(prefix="petro-agent-esmry-") as temp_dir:
+        bridge = Path(temp_dir) / "read_esmry.py"
+        payload = Path(temp_dir) / "summary.json"
+        bridge.write_text(_bridge_source(), encoding="utf-8")
+        try:
+            completed = subprocess.run(
+                ["/usr/bin/python3", str(bridge), str(summary_file), str(payload)],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=config.timeout_seconds,
+                check=False,
+            )
+        except FileNotFoundError:
+            raise RuntimeError(
+                "OPM ESMRY 读取失败。当前 Python 无法导入 opm.io.ecl.ESmry，"
+                "且未找到带 OPM Python 绑定的 /usr/bin/python3。"
+            ) from import_error
+        if completed.returncode != 0:
+            detail = (completed.stderr or completed.stdout).strip()
+            raise RuntimeError(
+                "OPM ESMRY 读取失败。请确认 /usr/bin/python3 可以导入 "
+                f"opm.io.ecl.ESmry。详情：{detail}"
+            ) from import_error
+        return json.loads(payload.read_text(encoding="utf-8"))
+
+
+def _load_payload(
+    summary_file: Path,
+    config: FlowExecutionConfig,
+) -> dict[str, Any]:
+    if config.execution_mode == "native":
+        return _run_native_reader(summary_file, config)
+    return _run_wsl_bridge(summary_file, config)
+
+
 def _validate_payload(payload: dict[str, Any]) -> tuple[dict[str, list[float]], dict[str, str]]:
     vectors = payload.get("vectors")
     units = payload.get("units", {})
@@ -182,7 +262,7 @@ def convert_esmry(
     if not source.is_file() or source.suffix.upper() != ".ESMRY":
         raise ValueError(f"ESMRY 文件不存在或扩展名错误：{source}")
     cfg = config or FlowExecutionConfig.from_environment()
-    payload = (payload_loader or _run_wsl_bridge)(source, cfg)
+    payload = (payload_loader or _load_payload)(source, cfg)
     vectors, units = _validate_payload(payload)
     descriptions = [describe_vector(key, units.get(key, "")) for key in vectors]
 

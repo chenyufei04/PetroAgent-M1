@@ -1,9 +1,10 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { getCases, getGraphView, getSubgraph, runAnalysis, uploadDataset } from "./api";
+import { getCases, getExperiment, getExperiments, getGraphView, getSubgraph, runAnalysis, uploadDataset } from "./api";
 import KnowledgeGraph from "./components/KnowledgeGraph.vue";
 import GraphInventory from "./components/GraphInventory.vue";
 import OutputViewer from "./components/OutputViewer.vue";
+import ExperimentResults from "./components/ExperimentResults.vue";
 
 const cases = ref([]);
 const selectedCase = ref("");
@@ -18,6 +19,7 @@ const inputMode = ref("demo");
 const importedDataset = ref(null);
 const uploadLoading = ref(false);
 const sheetName = ref("");
+const experiment = ref(null);
 
 const graphViews = [
   { id: "all", label: "全部图谱" },
@@ -91,7 +93,9 @@ async function loadGraph(view = graphView.value) {
 
 onMounted(async () => {
   try {
-    await Promise.all([loadCases(), loadGraph("all")]);
+    const [, , experiments] = await Promise.all([loadCases(), loadGraph("all"), getExperiments()]);
+    const latest = experiments.find((item) => item.analyzed);
+    if (latest) experiment.value = await getExperiment(latest.experiment_id);
   } catch (err) {
     error.value = err.message;
   }
@@ -113,6 +117,11 @@ onMounted(async () => {
 
     <p v-if="error" class="alert">{{ error }}</p>
 
+    <ExperimentResults
+      v-if="experiment && selectedCase === experiment.analysis_case_id"
+      :experiment="experiment"
+    />
+
     <section class="workspace">
       <aside class="panel case-panel">
         <p class="panel-label">01 · 案例输入</p>
@@ -120,7 +129,7 @@ onMounted(async () => {
         <label for="case">选择案例</label>
         <select id="case" v-model="selectedCase">
           <option v-for="item in cases" :key="item.case_id" :value="item.case_id" :disabled="!item.runnable">
-            {{ item.case_name }}{{ item.runnable ? "" : "（缺少数据）" }}
+            {{ item.case_name }}{{ item.runnable ? "" : "（缺少数据）" }}{{ item.experiments?.length ? ` · ${item.experiments.length} 个实验` : "" }}
           </option>
         </select>
         <div class="input-mode">

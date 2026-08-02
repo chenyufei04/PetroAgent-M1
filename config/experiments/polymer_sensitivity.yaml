@@ -1,5 +1,7 @@
 # v0.9.0 参数实验模板。使用前先在基础 Deck 中加入下列显式占位符。
 experiment_id: polymer_sensitivity_v1
+analysis_case_id: polymer_simple2d
+data_nature: OPM数值模拟数据
 base_deck: data/raw/polymer_simple2D/2D_THREEPHASE_POLY_HETER.DATA
 output_root: outputs/experiments
 design: cartesian

@@ -4,15 +4,56 @@
     "polymer_concentration": 1.5,
     "injection_rate": 150
   },
-  "status": "failed",
+  "status": "succeeded",
   "derived_deck": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0008-5f63a4ec/2D_THREEPHASE_POLY_HETER.DATA",
-  "error": "无法转换为 WSL 路径：/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0008-5f63a4ec/2D_THREEPHASE_POLY_HETER.DATA",
+  "flow_reused": true,
+  "flow": {
+    "command": [
+      "flow",
+      "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0008-5f63a4ec/2D_THREEPHASE_POLY_HETER.DATA",
+      "--output-dir=/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0008-5f63a4ec/flow",
+      "--enable-esmry=true"
+    ],
+    "return_code": 0,
+    "stdout_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0008-5f63a4ec/flow/flow.stdout.log",
+    "stderr_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0008-5f63a4ec/flow/flow.stderr.log",
+    "manifest_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0008-5f63a4ec/flow/run_manifest.json"
+  },
+  "conversion": {
+    "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0008-5f63a4ec/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+    "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0008-5f63a4ec/converted/polymer_sensitivity_v1-0008-5f63a4ec_summary_standard.csv",
+    "vector_catalog_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0008-5f63a4ec/converted/polymer_sensitivity_v1-0008-5f63a4ec_summary_vectors.csv",
+    "metadata_json": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0008-5f63a4ec/converted/polymer_sensitivity_v1-0008-5f63a4ec_summary_metadata.json",
+    "row_count": 233,
+    "vector_count": 112,
+    "mapped_vector_count": 11
+  },
+  "labels": {
+    "time_steps": 233,
+    "simulation_days": 10960.0,
+    "final_cumulative_oil_m3": 261203.9375,
+    "final_cumulative_water_m3": 24012.5078125,
+    "final_cumulative_injected_water_m3": 1644000.0,
+    "final_water_cut_fraction": 0.2726001441478729,
+    "peak_oil_rate_m3_day": 438.47698974609375,
+    "mean_oil_rate_m3_day": 23.350179985869083
+  },
   "dataset_row": {
     "case_id": "polymer_sensitivity_v1-0008-5f63a4ec",
     "parameter_polymer_concentration": 1.5,
     "parameter_injection_rate": 150,
-    "status": "failed",
-    "error": "无法转换为 WSL 路径：/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0008-5f63a4ec/2D_THREEPHASE_POLY_HETER.DATA"
+    "time_steps": 233,
+    "simulation_days": 10960.0,
+    "final_cumulative_oil_m3": 261203.9375,
+    "final_cumulative_water_m3": 24012.5078125,
+    "final_cumulative_injected_water_m3": 1644000.0,
+    "final_water_cut_fraction": 0.2726001441478729,
+    "peak_oil_rate_m3_day": 438.47698974609375,
+    "mean_oil_rate_m3_day": 23.350179985869083,
+    "status": "succeeded",
+    "deck_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0008-5f63a4ec/2D_THREEPHASE_POLY_HETER.DATA",
+    "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0008-5f63a4ec/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+    "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0008-5f63a4ec/converted/polymer_sensitivity_v1-0008-5f63a4ec_summary_standard.csv"
   },
-  "finished_at": "2026-07-31T08:55:06.036927+00:00"
+  "finished_at": "2026-08-01T01:56:45.104861+00:00"
 }

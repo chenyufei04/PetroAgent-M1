@@ -1,6 +1,45 @@
 # PetroAgent M1
 
-> 当前版本：`v0.9.0`
+> 当前版本：`v0.9.1`（参数敏感性分析与 Web 展示）
+
+## v0.9.1：polymer_sensitivity_v1 已完成
+
+`polymer_sensitivity_v1` 已在 OPM Flow 2026.04 下完成 3×3 参数扫描，9 个算例
+全部成功。当前新增：
+
+- 校验 `cases.csv` 与 `time_series.csv` 的字段、主键、空值、数值范围和时间覆盖；
+- 对比聚合物浓度与注入速率对累计产油、末期含水率和压力的影响；
+- 生成终值曲线、动态曲线、参数响应矩阵和 Markdown 技术报告；
+- FastAPI 提供实验列表、分析摘要和受控文件下载接口；
+- Vue 工作台自动展示最新完成的敏感性实验。
+
+重新生成分析产物：
+
+```powershell
+python scripts\analyze_parameter_sweep.py polymer_sensitivity_v1
+```
+
+分析结果位于：
+
+```text
+outputs/experiments/polymer_sensitivity_v1/analysis/
+├─ summary.json
+├─ quality_summary.json
+├─ case_metrics.csv
+├─ report.md
+└─ figures/
+   ├─ final_metrics.png
+   ├─ time_series.png
+   └─ parameter_response_heatmaps.png
+```
+
+Web API：
+
+```text
+GET /api/experiments
+GET /api/experiments/polymer_sensitivity_v1
+GET /api/experiments/polymer_sensitivity_v1/files/<analysis-file>
+```
 
 ## v0.9.0：参数化 Deck 与多算例合成数据集
 
@@ -43,6 +82,8 @@ config/experiments/polymer_sensitivity.yaml
 
 ```yaml
 experiment_id: polymer_sensitivity_v1
+analysis_case_id: polymer_simple2d
+data_nature: OPM数值模拟数据
 base_deck: data/opm/polymer_simple2D/2D_THREEPHASE_POLY_HETER.DATA
 output_root: outputs/experiments
 design: cartesian
@@ -109,8 +150,46 @@ outputs/experiments/<experiment_id>/
 最终累计注水量、最终含水率、峰值产油速率和平均产油速率。ESMRY 缺少某字段时，
 对应标签留空，不由程序或大语言模型猜测。
 
-当前批量阶段不自动写入 Neo4j，也不自动刷新 Web 页面；实例图谱接入仍按原计划
-属于 `v0.10.0`。
+`analysis_case_id` 是实验到领域案例的正式血缘键。FastAPI 会把实验
+`polymer_sensitivity_v1` 归到案例 `polymer_simple2d`，但不会把演示 CSV 与
+OPM 时间序列直接拼接；两者的数据性质和溯源仍保持独立。
+
+### 5. Git 中保留什么
+
+参数扫描的 `flow/`、`converted/` 和 `derived_decks/` 是可重算工作产物，体积大、
+更新频繁，已在 `.gitignore` 中忽略。建议在 Git 中保留：
+
+- 实验 YAML 配置和分析脚本；
+- `experiment_manifest.json` 与每个 `case_manifest.json`；
+- `dataset/cases.csv`、`dataset/time_series.csv` 等汇总数据；
+- `analysis/` 下的质量摘要、指标表、图表和 Markdown 报告。
+
+已经被 Git 跟踪的历史 Flow 文件不会因为新增忽略规则而自动移出索引。是否清理
+历史索引应单独评估后执行，不能删除本地实验结果。
+
+## 下一阶段：v0.9.2 水驱基准与增量评价
+
+当前 9 个方案的最低聚合物浓度仍为 0.5 kg/m³，只能比较聚合物方案之间的差异，
+不能严格回答“相对水驱增油多少”。下一阶段按以下顺序执行：
+
+1. **冻结本轮成果**：确认配置、Flow 版本、Deck 哈希、9 个 case manifest、汇总
+   CSV、分析报告和前端构建可以相互追溯。
+2. **设计独立水驱基准**：从同一基础 Deck 派生无聚合物方案，保持网格、初始条件、
+   井位、注入速率和 10,960 天终止时间一致；不直接假设浓度写成 0 就等同水驱。
+3. **小规模预检**：先只生成 Deck，并对 100、150、200 m³/day 三个水驱算例各跑
+   一个，检查关键字、收敛性、质量守恒和 Summary 字段。
+4. **建立成对指标**：按注入速率匹配水驱与聚合物驱，计算增量累计油、增量产水、
+   末期含水率差、压力差和单位聚合物增油量。
+5. **加入经济与约束层**：增加聚合物用量/成本、注入能耗、产水处理和压力上限，
+   将“最大产油”升级为可解释的约束优化问题。
+6. **更新应用层**：FastAPI 返回基准—方案配对结果，Vue 增加增量指标和方案排序；
+   验证稳定后再把实验、算例和汇总指标轻量写回 Neo4j。
+
+进入下一轮 Flow 前的验收门槛：基准 Deck 与聚合物 Deck 仅在声明的化学驱设置上
+存在差异；三个基准算例均成功；字段和单位完整；已有 9 个聚合物算例不被覆盖。
+
+当前批量阶段不自动写入 Neo4j；敏感性摘要、图表和报告已经接入 Web 页面。
+实例图谱写回仍按原计划属于后续版本。
 
 ## v0.7.0～v0.8.0：OPM Summary 自动分析闭环
 
@@ -182,7 +261,7 @@ wsl.exe -d Ubuntu-24.04 -- python3 -c "from opm.io.ecl import ESmry; print('OK')
 `PetroleumEngineeringCoreOntology v0.2`（石油工程核心本体 v0.2），并提供
 YAML 到 Neo4j 的可重复导入与查询适配层。
 
-> 当前版本：`PetroAgent v0.9.0（参数实验与数据集） / Knowledge Foundation v0.2.0`  
+> 当前版本：`PetroAgent v0.9.1（敏感性分析与 Web 展示） / Knowledge Foundation v0.2.0`
 > Python：`3.10+`  
 > 当前边界：确定性分析内核＋YAML知识源＋Neo4j存储/查询＋Web 演示展示；
 > 已支持从 Windows 调用 WSL2 Ubuntu 中的 OPM Flow、ESMRY 解析和参数化批量实验；
@@ -1406,13 +1485,14 @@ pytest -q
 - Python 查询服务、文本关系佐证和 Browser 可视化；
 - YAML dry-run 校验，Neo4j 继续作为派生查询存储。
 
-### M1.4（当前：v0.6.0 WSL OPM 执行接入）
+### M1.4（已完成：v0.6.0～v0.9.1 OPM 实验闭环）
 
 - 已建立 Windows 到 WSL OPM Flow 的调用边界；
 - 已增加版本检查、Windows/WSL 路径转换、超时和日志留存；
 - 已生成 Deck 哈希、实际命令、版本、时间与退出码运行清单；
-- 下一步直接读取 Summary 输出并转换标准 CSV；
-- 下一步建立水驱与聚合物驱成对运行配置。
+- 已直接读取 ESMRY 并转换标准 CSV；
+- 已完成 9 算例聚合物浓度—注入速率参数扫描、质量检查、敏感性报告和 Web 展示；
+- 下一步建立水驱与聚合物驱成对运行配置并补充经济指标。
 
 ### M1.5
 
@@ -1449,7 +1529,7 @@ pytest -q
 - 已登记论文和官方软件手册来源，但尚未导入正式标准全文及可定位条款；
 - Neo4j 已支持导入、基础查询和图形化浏览，但尚未接入分析管线的规则执行；
 - CMG 字段映射尚未在具体导出结果上验证；
-- 未接入前端。
+- 参数敏感性结果已接入前端；实验实例尚未写回 Neo4j。
 
 这些限制是刻意的：第一阶段先保证计算工具、接口、规则和来源可验证，
 再把智能体能力放在可靠内核外层。

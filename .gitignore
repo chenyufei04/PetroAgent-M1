@@ -3,9 +3,23 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
 .coverage
+.coverage.*
+htmlcov/
 .DS_Store
+Thumbs.db
+.idea/
 .env
+.env.*
+!.env.example
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
 data/raw/*
 !data/raw/.gitkeep
 data/processed/*
@@ -18,5 +32,13 @@ outputs/reports/*
 !outputs/reports/.gitkeep
 outputs/runs/*
 !outputs/runs/.gitkeep
-frontend/node_modules
 
+# OPM parameter-sweep working products. These are reproducible from the
+# experiment config and are too large/noisy for normal Git history.
+# Keep experiment_manifest.json, dataset summaries, analysis reports/figures,
+# and case_manifest.json available for review and the FastAPI/Vue UI.
+outputs/experiments/*/derived_decks/
+outputs/experiments/*/cases/*/flow/
+outputs/experiments/*/cases/*/converted/
+
+frontend/node_modules

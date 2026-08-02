@@ -13,6 +13,8 @@ async function request(path, options = {}) {
 }
 
 export const getCases = () => request("/api/cases");
+export const getExperiments = () => request("/api/experiments");
+export const getExperiment = (experimentId) => request(`/api/experiments/${experimentId}`);
 export const uploadDataset = async (file, caseId, sheetName = "") => {
   const form = new FormData();
   form.append("file", file);

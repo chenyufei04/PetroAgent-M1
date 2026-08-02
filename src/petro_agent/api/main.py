@@ -26,6 +26,7 @@ CONFIG_ROOT = ROOT / "config" / "cases"
 DATA_ROOT = ROOT / "data" / "demo"
 UPLOAD_ROOT = ROOT / "data" / "uploads"
 OUTPUT_ROOT = ROOT / "outputs"
+EXPERIMENT_ROOT = OUTPUT_ROOT / "experiments"
 FRONTEND_DIST = ROOT / "frontend" / "dist"
 
 app = FastAPI(title="PetroAgent Web Demo API", version="0.5.0")
@@ -92,6 +93,15 @@ def _dataset_payload(dataset_id: str) -> dict:
     return json.loads((directory / "metadata.json").read_text(encoding="utf-8"))
 
 
+def _experiment_dir(experiment_id: str) -> Path:
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+", experiment_id):
+        raise HTTPException(400, "非法实验编号")
+    target = (EXPERIMENT_ROOT / experiment_id).resolve()
+    if target.parent != EXPERIMENT_ROOT.resolve() or not target.is_dir():
+        raise HTTPException(404, "实验不存在")
+    return target
+
+
 @app.get("/api/health")
 def health() -> dict:
     return {"status": "ok", "version": app.version}
@@ -99,6 +109,12 @@ def health() -> dict:
 
 @app.get("/api/cases")
 def list_cases() -> list[dict]:
+    experiment_links: dict[str, list[str]] = {}
+    for manifest in EXPERIMENT_ROOT.glob("*/experiment_manifest.json"):
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+        analysis_case_id = data.get("analysis_case_id")
+        if analysis_case_id:
+            experiment_links.setdefault(str(analysis_case_id), []).append(manifest.parent.name)
     cases = []
     for path in sorted(CONFIG_ROOT.glob("*.yaml")):
         data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
@@ -111,8 +127,54 @@ def list_cases() -> list[dict]:
             "domain": data.get("domain"),
             "process": data.get("process"),
             "runnable": source.is_file(),
+            "experiments": sorted(experiment_links.get(path.stem, [])),
         })
     return cases
+
+
+@app.get("/api/experiments")
+def list_experiments() -> list[dict]:
+    experiments = []
+    for directory in sorted(EXPERIMENT_ROOT.glob("*")):
+        manifest = directory / "experiment_manifest.json"
+        if not directory.is_dir() or not manifest.is_file():
+            continue
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+        experiments.append({
+            "experiment_id": directory.name,
+            "analysis_case_id": data.get("analysis_case_id"),
+            "data_nature": data.get("data_nature"),
+            "case_count": data.get("case_count", 0),
+            "status_counts": data.get("status_counts", {}),
+            "analyzed": (directory / "analysis" / "summary.json").is_file(),
+            "updated_at": data.get("updated_at"),
+        })
+    return experiments
+
+
+@app.get("/api/experiments/{experiment_id}")
+def get_experiment(experiment_id: str) -> dict:
+    directory = _experiment_dir(experiment_id)
+    summary_file = directory / "analysis" / "summary.json"
+    if not summary_file.is_file():
+        raise HTTPException(409, "实验尚未生成敏感性分析结果")
+    payload = json.loads(summary_file.read_text(encoding="utf-8"))
+    base = f"/api/experiments/{experiment_id}/files/"
+    payload["figures"] = [
+        {**item, "url": base + item["file"]} for item in payload.get("figures", [])
+    ]
+    payload["report_url"] = base + payload["report"]
+    payload["case_metrics_url"] = base + "case_metrics.csv"
+    return payload
+
+
+@app.get("/api/experiments/{experiment_id}/files/{file_path:path}")
+def get_experiment_file(experiment_id: str, file_path: str):
+    analysis_dir = (_experiment_dir(experiment_id) / "analysis").resolve()
+    target = (analysis_dir / file_path).resolve()
+    if analysis_dir not in target.parents or not target.is_file():
+        raise HTTPException(404, "实验分析文件不存在")
+    return FileResponse(target, filename=target.name)
 
 
 @app.post("/api/datasets/upload")

@@ -192,6 +192,36 @@ def _find_esmry(output_dir: Path, deck_stem: str) -> Path:
     return matches[0]
 
 
+def _reusable_flow_result(
+    case_dir: Path,
+    derived_deck: Path,
+) -> tuple[FlowRunResult, Path] | None:
+    run_manifest_file = case_dir / "flow" / "run_manifest.json"
+    if not derived_deck.is_file() or not run_manifest_file.is_file():
+        return None
+    try:
+        run_manifest = json.loads(run_manifest_file.read_text(encoding="utf-8"))
+        if run_manifest.get("return_code") != 0:
+            return None
+        expected_sha256 = str(run_manifest.get("deck_sha256", ""))
+        if not expected_sha256:
+            return None
+        digest = hashlib.sha256(derived_deck.read_bytes()).hexdigest()
+        if digest != expected_sha256:
+            return None
+        esmry = _find_esmry(case_dir / "flow", derived_deck.stem)
+        flow_result = FlowRunResult(
+            command=[str(item) for item in run_manifest.get("command", [])],
+            return_code=0,
+            stdout_file=str(case_dir / "flow" / "flow.stdout.log"),
+            stderr_file=str(case_dir / "flow" / "flow.stderr.log"),
+            manifest_file=str(run_manifest_file),
+        )
+        return flow_result, esmry
+    except (OSError, ValueError, TypeError, json.JSONDecodeError, RuntimeError):
+        return None
+
+
 def _labels(frame: pd.DataFrame) -> dict[str, float | int | None]:
     def final(column: str) -> float | None:
         return float(frame[column].iloc[-1]) if column in frame and len(frame) else None
@@ -258,16 +288,16 @@ def run_batch_experiment(
         if resume and not prepare_only and manifest_file.is_file():
             cached = json.loads(manifest_file.read_text(encoding="utf-8"))
             if cached.get("status") == "succeeded":
-                rows.append(cached["dataset_row"])
                 standard_csv = Path(cached["conversion"]["standard_csv"])
                 if standard_csv.is_file():
+                    rows.append(cached["dataset_row"])
                     frame = pd.read_csv(standard_csv)
                     frame.insert(0, "case_id", case.case_id)
                     for name, value in case.parameters.items():
                         frame[f"parameter_{name}"] = value
                     series_frames.append(frame)
-                case_manifests.append(cached)
-                continue
+                    case_manifests.append(cached)
+                    continue
 
         case_dir.mkdir(parents=True, exist_ok=True)
         row: dict[str, Any] = {"case_id": case.case_id, **{
@@ -279,24 +309,35 @@ def run_batch_experiment(
             "status": "preparing",
         }
         try:
-            derived = prepare_derived_deck(
-                base_deck, derived_root / case.case_id, case, parameters
+            derived = derived_root / case.case_id / base_deck.name
+            reusable = (
+                _reusable_flow_result(case_dir, derived)
+                if resume and not prepare_only
+                else None
             )
+            if reusable is None:
+                derived = prepare_derived_deck(
+                    base_deck, derived_root / case.case_id, case, parameters
+                )
             manifest["derived_deck"] = str(derived)
             if prepare_only:
                 row["status"] = "prepared"
                 manifest["status"] = "prepared"
             else:
-                run_result = flow_runner(
-                    derived,
-                    case_dir / "flow",
-                    config=flow_config,
-                    extra_args=extra_args,
-                )
+                if reusable is None:
+                    run_result = flow_runner(
+                        derived,
+                        case_dir / "flow",
+                        config=flow_config,
+                        extra_args=extra_args,
+                    )
+                    esmry = _find_esmry(case_dir / "flow", derived.stem)
+                else:
+                    run_result, esmry = reusable
+                    manifest["flow_reused"] = True
                 manifest["flow"] = asdict(run_result)
                 if run_result.return_code != 0:
                     raise RuntimeError(f"Flow 退出码为 {run_result.return_code}")
-                esmry = _find_esmry(case_dir / "flow", derived.stem)
                 conversion = summary_converter(
                     esmry, case_dir / "converted", case_id=case.case_id,
                     config=flow_config,
@@ -340,7 +381,8 @@ def run_batch_experiment(
         json.dumps(
             {
                 "experiment_id": experiment_id,
-                "data_nature": "OPM数值模拟数据",
+                "analysis_case_id": config.get("analysis_case_id"),
+                "data_nature": config.get("data_nature", "OPM数值模拟数据"),
                 "config_file": str(config_path),
                 "base_deck": str(base_deck),
                 "design": config.get("design", "cartesian"),

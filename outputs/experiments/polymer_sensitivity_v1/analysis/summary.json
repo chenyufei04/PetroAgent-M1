@@ -1,0 +1,375 @@
+{
+  "experiment_id": "polymer_sensitivity_v1",
+  "analysis_case_id": "polymer_simple2d",
+  "data_nature": "OPM数值模拟数据",
+  "quality": {
+    "status": "passed",
+    "case_rows": 9,
+    "time_series_rows": 2098,
+    "case_columns": [
+      "case_id",
+      "parameter_polymer_concentration",
+      "parameter_injection_rate",
+      "time_steps",
+      "simulation_days",
+      "final_cumulative_oil_m3",
+      "final_cumulative_water_m3",
+      "final_cumulative_injected_water_m3",
+      "final_water_cut_fraction",
+      "peak_oil_rate_m3_day",
+      "mean_oil_rate_m3_day",
+      "status",
+      "deck_file",
+      "summary_file",
+      "standard_csv"
+    ],
+    "time_series_columns": [
+      "case_id",
+      "time_days",
+      "gas_rate_m3_day",
+      "cumulative_gas_m3",
+      "oil_rate_m3_day",
+      "cumulative_oil_m3",
+      "field_pressure_bar",
+      "water_cut_fraction",
+      "water_injection_rate_m3_day",
+      "cumulative_injected_water_m3",
+      "water_rate_m3_day",
+      "cumulative_water_m3",
+      "parameter_polymer_concentration",
+      "parameter_injection_rate"
+    ],
+    "missing_case_columns": [],
+    "missing_time_series_columns": [],
+    "null_cells": {
+      "cases": 0,
+      "time_series": 0
+    },
+    "duplicate_case_ids": 0,
+    "duplicate_case_time_points": 0,
+    "finite_numeric_values": {
+      "cases": true,
+      "time_series": true
+    },
+    "rows_per_case": {
+      "polymer_sensitivity_v1-0001-16d0f364": 231,
+      "polymer_sensitivity_v1-0002-5e32fee9": 233,
+      "polymer_sensitivity_v1-0003-8cd10086": 233,
+      "polymer_sensitivity_v1-0004-737bf45b": 231,
+      "polymer_sensitivity_v1-0005-d0a64fb5": 233,
+      "polymer_sensitivity_v1-0006-b9353855": 234,
+      "polymer_sensitivity_v1-0007-ee90198c": 233,
+      "polymer_sensitivity_v1-0008-5f63a4ec": 233,
+      "polymer_sensitivity_v1-0009-9c30f23a": 237
+    },
+    "time_coverage_days": {
+      "polymer_sensitivity_v1-0001-16d0f364": {
+        "min": 1.0,
+        "max": 10960.0
+      },
+      "polymer_sensitivity_v1-0002-5e32fee9": {
+        "min": 1.0,
+        "max": 10960.0
+      },
+      "polymer_sensitivity_v1-0003-8cd10086": {
+        "min": 1.0,
+        "max": 10960.0
+      },
+      "polymer_sensitivity_v1-0004-737bf45b": {
+        "min": 1.0,
+        "max": 10960.0
+      },
+      "polymer_sensitivity_v1-0005-d0a64fb5": {
+        "min": 1.0,
+        "max": 10960.0
+      },
+      "polymer_sensitivity_v1-0006-b9353855": {
+        "min": 1.0,
+        "max": 10960.0
+      },
+      "polymer_sensitivity_v1-0007-ee90198c": {
+        "min": 1.0,
+        "max": 10960.0
+      },
+      "polymer_sensitivity_v1-0008-5f63a4ec": {
+        "min": 1.0,
+        "max": 10960.0
+      },
+      "polymer_sensitivity_v1-0009-9c30f23a": {
+        "min": 1.0,
+        "max": 10960.0
+      }
+    },
+    "non_monotonic_cases": [],
+    "range_violations": {
+      "negative_rates_or_cumulatives": 0,
+      "water_cut_outside_0_1": 0,
+      "nonpositive_pressure": 0
+    }
+  },
+  "baseline": {
+    "case_id": "polymer_sensitivity_v1-0001-16d0f364",
+    "parameter_polymer_concentration": 0.5,
+    "parameter_injection_rate": 100,
+    "time_steps": 231,
+    "simulation_days": 10960.0,
+    "final_cumulative_oil_m3": 72642.0625,
+    "final_cumulative_water_m3": 404.8335266113281,
+    "final_cumulative_injected_water_m3": 1096000.0,
+    "final_water_cut_fraction": 0.0072837248444557,
+    "peak_oil_rate_m3_day": 438.476806640625,
+    "mean_oil_rate_m3_day": 13.91681165638424,
+    "status": "succeeded",
+    "deck_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0001-16d0f364/2D_THREEPHASE_POLY_HETER.DATA",
+    "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0001-16d0f364/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+    "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0001-16d0f364/converted/polymer_sensitivity_v1-0001-16d0f364_summary_standard.csv",
+    "final_field_pressure_bar": 265.0208740234375
+  },
+  "best_cumulative_oil_case": {
+    "case_id": "polymer_sensitivity_v1-0009-9c30f23a",
+    "parameter_polymer_concentration": 1.5,
+    "parameter_injection_rate": 200,
+    "time_steps": 237,
+    "simulation_days": 10960.0,
+    "final_cumulative_oil_m3": 498828.03125,
+    "final_cumulative_water_m3": 243137.34375,
+    "final_cumulative_injected_water_m3": 2192000.0,
+    "final_water_cut_fraction": 0.5189850926399231,
+    "peak_oil_rate_m3_day": 438.4772033691406,
+    "mean_oil_rate_m3_day": 34.315423411156054,
+    "status": "succeeded",
+    "deck_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0009-9c30f23a/2D_THREEPHASE_POLY_HETER.DATA",
+    "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0009-9c30f23a/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+    "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0009-9c30f23a/converted/polymer_sensitivity_v1-0009-9c30f23a_summary_standard.csv",
+    "final_field_pressure_bar": 276.7147521972656
+  },
+  "metric_effects": {
+    "final_cumulative_oil_m3": {
+      "injection_rate_mean": {
+        "100": 73218.08333333333,
+        "150": 261462.84375,
+        "200": 498487.1666666667
+      },
+      "polymer_concentration_mean": {
+        "0.5": 277519.1197916667,
+        "1.0": 277830.5026041667,
+        "1.5": 277818.4713541667
+      },
+      "rate_100_to_200_absolute": 425269.0833333334,
+      "rate_100_to_200_percent": 580.825205977121,
+      "concentration_0_5_to_1_5_absolute": 299.3515625,
+      "concentration_0_5_to_1_5_percent": 0.10786700488409906
+    },
+    "final_water_cut_fraction": {
+      "injection_rate_mean": {
+        "100": 0.007257835629085666,
+        "150": 0.27415035168329877,
+        "200": 0.5201781193415324
+      },
+      "polymer_concentration_mean": {
+        "0.5": 0.26820557564496994,
+        "1.0": 0.26710709122320014,
+        "1.5": 0.26627363978574675
+      },
+      "rate_100_to_200_absolute": 0.5129202837124467,
+      "rate_100_to_200_percent": 7067.124552351757,
+      "concentration_0_5_to_1_5_absolute": -0.0019319358592231883,
+      "concentration_0_5_to_1_5_percent": -0.7203190517487745
+    },
+    "final_field_pressure_bar": {
+      "injection_rate_mean": {
+        "100": 265.0075378417969,
+        "150": 272.97813924153644,
+        "200": 276.72609456380206
+      },
+      "polymer_concentration_mean": {
+        "0.5": 271.5826416015625,
+        "1.0": 271.5673522949219,
+        "1.5": 271.56177775065106
+      },
+      "rate_100_to_200_absolute": 11.71855672200519,
+      "rate_100_to_200_percent": 4.421971094648969,
+      "concentration_0_5_to_1_5_absolute": -0.020863850911439386,
+      "concentration_0_5_to_1_5_percent": -0.007682321222157729
+    }
+  },
+  "cases": [
+    {
+      "case_id": "polymer_sensitivity_v1-0001-16d0f364",
+      "parameter_polymer_concentration": 0.5,
+      "parameter_injection_rate": 100,
+      "time_steps": 231,
+      "simulation_days": 10960.0,
+      "final_cumulative_oil_m3": 72642.0625,
+      "final_cumulative_water_m3": 404.8335266113,
+      "final_cumulative_injected_water_m3": 1096000.0,
+      "final_water_cut_fraction": 0.0072837248,
+      "peak_oil_rate_m3_day": 438.4768066406,
+      "mean_oil_rate_m3_day": 13.9168116564,
+      "status": "succeeded",
+      "deck_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0001-16d0f364/2D_THREEPHASE_POLY_HETER.DATA",
+      "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0001-16d0f364/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+      "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0001-16d0f364/converted/polymer_sensitivity_v1-0001-16d0f364_summary_standard.csv",
+      "final_field_pressure_bar": 265.0208740234
+    },
+    {
+      "case_id": "polymer_sensitivity_v1-0002-5e32fee9",
+      "parameter_polymer_concentration": 0.5,
+      "parameter_injection_rate": 150,
+      "time_steps": 233,
+      "simulation_days": 10960.0,
+      "final_cumulative_oil_m3": 261789.984375,
+      "final_cumulative_water_m3": 24378.892578125,
+      "final_cumulative_injected_water_m3": 1644000.0,
+      "final_water_cut_fraction": 0.2759264112,
+      "peak_oil_rate_m3_day": 438.4769897461,
+      "mean_oil_rate_m3_day": 23.3567592612,
+      "status": "succeeded",
+      "deck_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0002-5e32fee9/2D_THREEPHASE_POLY_HETER.DATA",
+      "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0002-5e32fee9/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+      "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0002-5e32fee9/converted/polymer_sensitivity_v1-0002-5e32fee9_summary_standard.csv",
+      "final_field_pressure_bar": 272.9879760742
+    },
+    {
+      "case_id": "polymer_sensitivity_v1-0003-8cd10086",
+      "parameter_polymer_concentration": 0.5,
+      "parameter_injection_rate": 200,
+      "time_steps": 233,
+      "simulation_days": 10960.0,
+      "final_cumulative_oil_m3": 498125.3125,
+      "final_cumulative_water_m3": 245087.71875,
+      "final_cumulative_injected_water_m3": 2192000.0,
+      "final_water_cut_fraction": 0.5214065909,
+      "peak_oil_rate_m3_day": 438.4772033691,
+      "mean_oil_rate_m3_day": 34.5689207121,
+      "status": "succeeded",
+      "deck_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0003-8cd10086/2D_THREEPHASE_POLY_HETER.DATA",
+      "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0003-8cd10086/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+      "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0003-8cd10086/converted/polymer_sensitivity_v1-0003-8cd10086_summary_standard.csv",
+      "final_field_pressure_bar": 276.739074707
+    },
+    {
+      "case_id": "polymer_sensitivity_v1-0004-737bf45b",
+      "parameter_polymer_concentration": 1.0,
+      "parameter_injection_rate": 100,
+      "time_steps": 231,
+      "simulation_days": 10960.0,
+      "final_cumulative_oil_m3": 73588.7421875,
+      "final_cumulative_water_m3": 410.7108459473,
+      "final_cumulative_injected_water_m3": 1096000.0,
+      "final_water_cut_fraction": 0.0072540995,
+      "peak_oil_rate_m3_day": 438.4768066406,
+      "mean_oil_rate_m3_day": 13.943663273,
+      "status": "succeeded",
+      "deck_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0004-737bf45b/2D_THREEPHASE_POLY_HETER.DATA",
+      "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0004-737bf45b/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+      "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0004-737bf45b/converted/polymer_sensitivity_v1-0004-737bf45b_summary_standard.csv",
+      "final_field_pressure_bar": 265.002532959
+    },
+    {
+      "case_id": "polymer_sensitivity_v1-0005-d0a64fb5",
+      "parameter_polymer_concentration": 1.0,
+      "parameter_injection_rate": 150,
+      "time_steps": 233,
+      "simulation_days": 10960.0,
+      "final_cumulative_oil_m3": 261394.609375,
+      "final_cumulative_water_m3": 24178.99609375,
+      "final_cumulative_injected_water_m3": 1644000.0,
+      "final_water_cut_fraction": 0.2739244998,
+      "peak_oil_rate_m3_day": 438.4769897461,
+      "mean_oil_rate_m3_day": 23.3707166746,
+      "status": "succeeded",
+      "deck_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0005-d0a64fb5/2D_THREEPHASE_POLY_HETER.DATA",
+      "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0005-d0a64fb5/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+      "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0005-d0a64fb5/converted/polymer_sensitivity_v1-0005-d0a64fb5_summary_standard.csv",
+      "final_field_pressure_bar": 272.9750671387
+    },
+    {
+      "case_id": "polymer_sensitivity_v1-0006-b9353855",
+      "parameter_polymer_concentration": 1.0,
+      "parameter_injection_rate": 200,
+      "time_steps": 234,
+      "simulation_days": 10960.0,
+      "final_cumulative_oil_m3": 498508.15625,
+      "final_cumulative_water_m3": 244032.953125,
+      "final_cumulative_injected_water_m3": 2192000.0,
+      "final_water_cut_fraction": 0.5201426744,
+      "peak_oil_rate_m3_day": 438.4772033691,
+      "mean_oil_rate_m3_day": 34.5409115935,
+      "status": "succeeded",
+      "deck_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0006-b9353855/2D_THREEPHASE_POLY_HETER.DATA",
+      "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0006-b9353855/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+      "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0006-b9353855/converted/polymer_sensitivity_v1-0006-b9353855_summary_standard.csv",
+      "final_field_pressure_bar": 276.7244567871
+    },
+    {
+      "case_id": "polymer_sensitivity_v1-0007-ee90198c",
+      "parameter_polymer_concentration": 1.5,
+      "parameter_injection_rate": 100,
+      "time_steps": 233,
+      "simulation_days": 10960.0,
+      "final_cumulative_oil_m3": 73423.4453125,
+      "final_cumulative_water_m3": 409.709777832,
+      "final_cumulative_injected_water_m3": 1096000.0,
+      "final_water_cut_fraction": 0.0072356826,
+      "peak_oil_rate_m3_day": 438.4768066406,
+      "mean_oil_rate_m3_day": 13.887306987,
+      "status": "succeeded",
+      "deck_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0007-ee90198c/2D_THREEPHASE_POLY_HETER.DATA",
+      "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0007-ee90198c/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+      "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0007-ee90198c/converted/polymer_sensitivity_v1-0007-ee90198c_summary_standard.csv",
+      "final_field_pressure_bar": 264.999206543
+    },
+    {
+      "case_id": "polymer_sensitivity_v1-0008-5f63a4ec",
+      "parameter_polymer_concentration": 1.5,
+      "parameter_injection_rate": 150,
+      "time_steps": 233,
+      "simulation_days": 10960.0,
+      "final_cumulative_oil_m3": 261203.9375,
+      "final_cumulative_water_m3": 24012.5078125,
+      "final_cumulative_injected_water_m3": 1644000.0,
+      "final_water_cut_fraction": 0.2726001441,
+      "peak_oil_rate_m3_day": 438.4769897461,
+      "mean_oil_rate_m3_day": 23.3501799859,
+      "status": "succeeded",
+      "deck_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0008-5f63a4ec/2D_THREEPHASE_POLY_HETER.DATA",
+      "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0008-5f63a4ec/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+      "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0008-5f63a4ec/converted/polymer_sensitivity_v1-0008-5f63a4ec_summary_standard.csv",
+      "final_field_pressure_bar": 272.9713745117
+    },
+    {
+      "case_id": "polymer_sensitivity_v1-0009-9c30f23a",
+      "parameter_polymer_concentration": 1.5,
+      "parameter_injection_rate": 200,
+      "time_steps": 237,
+      "simulation_days": 10960.0,
+      "final_cumulative_oil_m3": 498828.03125,
+      "final_cumulative_water_m3": 243137.34375,
+      "final_cumulative_injected_water_m3": 2192000.0,
+      "final_water_cut_fraction": 0.5189850926,
+      "peak_oil_rate_m3_day": 438.4772033691,
+      "mean_oil_rate_m3_day": 34.3154234112,
+      "status": "succeeded",
+      "deck_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0009-9c30f23a/2D_THREEPHASE_POLY_HETER.DATA",
+      "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0009-9c30f23a/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+      "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0009-9c30f23a/converted/polymer_sensitivity_v1-0009-9c30f23a_summary_standard.csv",
+      "final_field_pressure_bar": 276.7147521973
+    }
+  ],
+  "figures": [
+    {
+      "name": "终值指标",
+      "file": "figures/final_metrics.png"
+    },
+    {
+      "name": "动态曲线",
+      "file": "figures/time_series.png"
+    },
+    {
+      "name": "参数响应矩阵",
+      "file": "figures/parameter_response_heatmaps.png"
+    }
+  ],
+  "report": "report.md"
+}

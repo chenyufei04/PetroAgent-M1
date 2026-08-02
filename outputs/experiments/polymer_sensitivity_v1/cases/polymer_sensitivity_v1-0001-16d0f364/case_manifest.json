@@ -4,8 +4,9 @@
     "polymer_concentration": 0.5,
     "injection_rate": 100
   },
-  "status": "failed",
+  "status": "succeeded",
   "derived_deck": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0001-16d0f364/2D_THREEPHASE_POLY_HETER.DATA",
+  "flow_reused": true,
   "flow": {
     "command": [
       "flow",
@@ -18,13 +19,41 @@
     "stderr_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0001-16d0f364/flow/flow.stderr.log",
     "manifest_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0001-16d0f364/flow/run_manifest.json"
   },
-  "error": "ESMRY 读取当前要求 OPM_EXECUTION_MODE=wsl",
+  "conversion": {
+    "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0001-16d0f364/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+    "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0001-16d0f364/converted/polymer_sensitivity_v1-0001-16d0f364_summary_standard.csv",
+    "vector_catalog_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0001-16d0f364/converted/polymer_sensitivity_v1-0001-16d0f364_summary_vectors.csv",
+    "metadata_json": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0001-16d0f364/converted/polymer_sensitivity_v1-0001-16d0f364_summary_metadata.json",
+    "row_count": 231,
+    "vector_count": 112,
+    "mapped_vector_count": 11
+  },
+  "labels": {
+    "time_steps": 231,
+    "simulation_days": 10960.0,
+    "final_cumulative_oil_m3": 72642.0625,
+    "final_cumulative_water_m3": 404.8335266113281,
+    "final_cumulative_injected_water_m3": 1096000.0,
+    "final_water_cut_fraction": 0.0072837248444557,
+    "peak_oil_rate_m3_day": 438.476806640625,
+    "mean_oil_rate_m3_day": 13.91681165638424
+  },
   "dataset_row": {
     "case_id": "polymer_sensitivity_v1-0001-16d0f364",
     "parameter_polymer_concentration": 0.5,
     "parameter_injection_rate": 100,
-    "status": "failed",
-    "error": "ESMRY 读取当前要求 OPM_EXECUTION_MODE=wsl"
+    "time_steps": 231,
+    "simulation_days": 10960.0,
+    "final_cumulative_oil_m3": 72642.0625,
+    "final_cumulative_water_m3": 404.8335266113281,
+    "final_cumulative_injected_water_m3": 1096000.0,
+    "final_water_cut_fraction": 0.0072837248444557,
+    "peak_oil_rate_m3_day": 438.476806640625,
+    "mean_oil_rate_m3_day": 13.91681165638424,
+    "status": "succeeded",
+    "deck_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0001-16d0f364/2D_THREEPHASE_POLY_HETER.DATA",
+    "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0001-16d0f364/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
+    "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0001-16d0f364/converted/polymer_sensitivity_v1-0001-16d0f364_summary_standard.csv"
   },
-  "finished_at": "2026-07-31T09:12:48.225920+00:00"
+  "finished_at": "2026-08-01T01:56:39.657558+00:00"
 }

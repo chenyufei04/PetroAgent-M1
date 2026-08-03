@@ -1,3 +1,5 @@
+"""读取 OPM Summary/ESMRY 输出并转换为统一时间序列字段。"""
+
 from __future__ import annotations
 
 import json
@@ -14,6 +16,7 @@ from .deck_runner import FlowExecutionConfig, windows_path_to_wsl
 
 @dataclass(frozen=True)
 class SummaryVector:
+    """描述一个 Summary 向量的标准字段名、单位和对象范围。"""
     key: str
     keyword: str
     object_name: str | None
@@ -24,6 +27,7 @@ class SummaryVector:
 
 @dataclass(frozen=True)
 class SummaryConversionResult:
+    """汇总 ESMRY 转换后的文件路径、行列数和向量数量。"""
     summary_file: str
     standard_csv: str
     vector_catalog_csv: str
@@ -63,6 +67,7 @@ def _split_key(key: str) -> tuple[str, str | None]:
 
 
 def describe_vector(key: str, unit: str) -> SummaryVector:
+    """把 OPM 向量键映射为前端和分析层使用的标准名称。"""
     keyword, object_name = _split_key(key)
     if keyword in FIELD_MAPPINGS:
         canonical = FIELD_MAPPINGS[keyword][0]
@@ -258,6 +263,7 @@ def convert_esmry(
     config: FlowExecutionConfig | None = None,
     payload_loader: Callable[[Path, FlowExecutionConfig], dict[str, Any]] | None = None,
 ) -> SummaryConversionResult:
+    """读取 ESMRY，校验向量长度并写出标准时间序列与元数据。"""
     source = Path(summary_file).resolve()
     if not source.is_file() or source.suffix.upper() != ".ESMRY":
         raise ValueError(f"ESMRY 文件不存在或扩展名错误：{source}")

@@ -81,3 +81,33 @@ relations:
   - relation_id: USES_INPUT
     name_zh: 使用输入
     name_en: Uses Input
+  - relation_id: HAS_EXPERIMENT
+    name_zh: 包含实验
+    name_en: Has Experiment
+  - relation_id: HAS_CASE
+    name_zh: 包含算例
+    name_en: Has Case
+  - relation_id: USES_DECK
+    name_zh: 使用 Deck
+    name_en: Uses Deck
+  - relation_id: HAS_PARAMETER_SET
+    name_zh: 具有参数集
+    name_en: Has Parameter Set
+  - relation_id: EXECUTED_AS
+    name_zh: 执行为
+    name_en: Executed As
+  - relation_id: HAS_RESULT
+    name_zh: 具有结果
+    name_en: Has Result
+  - relation_id: GENERATED_DATASET
+    name_zh: 生成数据集
+    name_en: Generated Dataset
+  - relation_id: GENERATED_REPORT
+    name_zh: 生成报告
+    name_en: Generated Report
+  - relation_id: HAS_COMPARISON
+    name_zh: 具有比较结果
+    name_en: Has Comparison
+  - relation_id: USES_BASELINE
+    name_zh: 使用基准算例
+    name_en: Uses Baseline

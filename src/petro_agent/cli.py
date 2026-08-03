@@ -1,3 +1,5 @@
+"""定义 PetroAgent 命令行入口及其参数解析流程。"""
+
 from __future__ import annotations
 
 import argparse
@@ -36,4 +38,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

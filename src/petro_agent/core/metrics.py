@@ -1,3 +1,5 @@
+"""计算油藏生产时间序列的基础确定性指标。"""
+
 from __future__ import annotations
 
 import numpy as np
@@ -34,4 +36,3 @@ def summarize(frame: pd.DataFrame) -> dict:
                 "final": float(series.iloc[-1]),
             }
     return output
-

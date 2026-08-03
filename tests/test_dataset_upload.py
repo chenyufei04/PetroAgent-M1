@@ -1,3 +1,5 @@
+"""验证 CSV/XLSX 上传、字段检查和后续分析接口。"""
+
 from __future__ import annotations
 
 from io import BytesIO

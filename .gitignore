@@ -1,31 +1,77 @@
+# Python 虚拟环境
 .venv/
 .venv-wsl/
+venv/
+env/
+ENV/
+
+# Python 缓存、测试和类型检查产物
 __pycache__/
 *.py[cod]
+*$py.class
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.pyre/
+.pytype/
+.hypothesis/
+.tox/
+.nox/
 .ipynb_checkpoints/
 .coverage
 .coverage.*
 htmlcov/
+
+# Python 构建、安装和发布产物
+build/
+dist/
+wheelhouse/
+pip-wheel-metadata/
+*.egg-info/
+*.egg
+*.whl
+MANIFEST
+
+# 操作系统和编辑器本地状态
 .DS_Store
 Thumbs.db
+Desktop.ini
 .idea/
+.vscode/
+.fleet/
+.history/
+*.code-workspace
+
+# 本地环境变量、凭据和证书
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# 日志、锁定和临时文件
 *.log
 *.tmp
 *.temp
 *.swp
 *.swo
+*.bak
+*.orig
+*.pid
+*.pid.lock
+~$*
+
+# 项目运行时数据：原始下载、处理中间文件和用户上传
 data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
 data/uploads/*
 !data/uploads/.gitkeep
+
+# 通用分析运行产物
 outputs/figures/*
 !outputs/figures/.gitkeep
 outputs/reports/*
@@ -33,12 +79,43 @@ outputs/reports/*
 outputs/runs/*
 !outputs/runs/.gitkeep
 
-# OPM parameter-sweep working products. These are reproducible from the
-# experiment config and are too large/noisy for normal Git history.
-# Keep experiment_manifest.json, dataset summaries, analysis reports/figures,
-# and case_manifest.json available for review and the FastAPI/Vue UI.
-outputs/experiments/*/derived_decks/
-outputs/experiments/*/cases/*/flow/
-outputs/experiments/*/cases/*/converted/
+# OPM 实验输出均可由配置和脚本重新生成，包含大型 Flow/ESMRY、CSV、图表和日志。
+# 保留目录占位文件即可；正式成果需要归档时应使用独立制品存储，而不是 Git 历史。
+outputs/experiments/*
+!outputs/experiments/.gitkeep
 
-frontend/node_modules
+# OPM/Eclipse 模拟器常见运行产物，防止误写到 outputs 之外后被提交。
+*.ESMRY
+*.SMSPEC
+*.UNSMRY
+*.EGRID
+*.INIT
+*.UNRST
+*.PRT
+*.DBG
+
+# Node、npm 和 Vite 生成内容
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.cache/
+node_modules/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Neo4j 本地数据库、事务日志、插件和导入暂存目录
+.neo4j/
+neo4j-data/
+neo4j/logs/
+neo4j/data/
+neo4j/import/
+neo4j/plugins/
+
+# 本地测试和工具临时目录
+.cache/
+.tmp/
+tmp/
+temp/

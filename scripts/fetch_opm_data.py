@@ -1,3 +1,5 @@
+"""下载并记录项目使用的上游 OPM 示例数据及版本来源。"""
+
 from __future__ import annotations
 
 import argparse

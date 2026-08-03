@@ -1,3 +1,5 @@
+"""验证 Deck 关键字与 INCLUDE 关系检查。"""
+
 from petro_agent.adapters.eclipse_deck import inspect_deck
 
 
@@ -11,4 +13,3 @@ def test_inspects_include_tree(tmp_path):
     assert "RUNSPEC" in result.keywords
     assert "PORO" in result.keywords
     assert len(result.files) == 2
-

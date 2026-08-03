@@ -1,4 +1,4 @@
-"""Neo4j connection configuration and lifecycle management."""
+"""封装 Neo4j 连接配置与驱动生命周期管理。"""
 
 from __future__ import annotations
 

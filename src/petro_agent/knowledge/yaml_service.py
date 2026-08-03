@@ -1,3 +1,5 @@
+"""加载、索引并查询版本化 YAML 知识目录。"""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -21,6 +23,7 @@ def _read_yaml(path: Path) -> dict[str, Any]:
 
 
 class YamlKnowledgeService:
+    """把分散的 YAML 知识文件组织成可查询的内存索引。"""
     """Read the version-controlled knowledge source without requiring Neo4j."""
 
     def __init__(self, knowledge_root: Path):

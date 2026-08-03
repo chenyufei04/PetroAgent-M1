@@ -1,3 +1,5 @@
+"""执行 YAML 声明的确定性规则，并生成带证据的判断结果。"""
+
 from __future__ import annotations
 
 from typing import Any

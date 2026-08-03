@@ -1,3 +1,5 @@
+"""登记 OPM 示例案例及其本地数据位置。"""
+
 from __future__ import annotations
 
 DATASETS = {
@@ -14,4 +16,3 @@ DATASETS = {
         "license_note": "Follow the upstream repository license and notices.",
     },
 }
-

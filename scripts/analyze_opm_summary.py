@@ -1,3 +1,5 @@
+"""分析单个 OPM Summary 文件并输出基础统计与图表。"""
+
 from __future__ import annotations
 
 import argparse

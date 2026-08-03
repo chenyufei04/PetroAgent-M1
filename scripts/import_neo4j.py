@@ -1,4 +1,4 @@
-"""Import the versioned YAML knowledge graph into Neo4j."""
+"""把版本化 YAML 知识图谱导入 Neo4j。"""
 
 from __future__ import annotations
 

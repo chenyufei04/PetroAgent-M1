@@ -1,3 +1,5 @@
+"""验证端到端分析流水线及产物生成。"""
+
 from pathlib import Path
 
 from petro_agent.pipeline import analyze_csv
@@ -16,4 +18,3 @@ def test_demo_pipeline(tmp_path):
     assert (tmp_path / "reports/polymer_simple2d_demo.md").exists()
     assert (tmp_path / "runs/polymer_simple2d_demo_canonical.csv").exists()
     assert all(item.passed for item in result.findings if item.severity == "error")
-

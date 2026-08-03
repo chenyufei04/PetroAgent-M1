@@ -1,3 +1,5 @@
+"""生成参数组合、派生 Deck，并支持批量实验的安全断点续跑。"""
+
 from __future__ import annotations
 
 import hashlib
@@ -25,6 +27,7 @@ _DEFAULT_DECK_SUFFIXES = {
 
 @dataclass(frozen=True)
 class SweepParameter:
+    """定义一个参数占位符、候选值、单位及格式规则。"""
     name: str
     token: str
     values: tuple[float | int | str, ...]
@@ -35,12 +38,14 @@ class SweepParameter:
 
 @dataclass(frozen=True)
 class SweepCase:
+    """表示参数设计生成的一组不可变算例参数。"""
     case_id: str
     parameters: dict[str, float | int | str]
 
 
 @dataclass(frozen=True)
 class BatchExperimentResult:
+    """汇总批量实验的算例状态和数据集路径。"""
     experiment_id: str
     experiment_dir: str
     case_count: int
@@ -60,6 +65,7 @@ def _safe_identifier(value: str) -> str:
 
 
 def load_experiment_config(config_file: str | Path) -> dict[str, Any]:
+    """读取实验 YAML，并附加配置文件与项目根目录信息。"""
     source = Path(config_file).resolve()
     raw = yaml.safe_load(source.read_text(encoding="utf-8")) or {}
     if not isinstance(raw, dict):
@@ -69,6 +75,7 @@ def load_experiment_config(config_file: str | Path) -> dict[str, Any]:
 
 
 def parse_parameters(raw: Mapping[str, Any]) -> list[SweepParameter]:
+    """把配置中的参数声明转换为强类型参数列表。"""
     parameters: list[SweepParameter] = []
     for name, item in raw.items():
         if not isinstance(item, Mapping):
@@ -104,6 +111,7 @@ def build_cases(
     design: str = "cartesian",
     max_cases: int = 1000,
 ) -> list[SweepCase]:
+    """按笛卡尔积或 zip 设计生成具有稳定标识的算例。"""
     if design not in {"cartesian", "zip"}:
         raise ValueError("design 只能是 cartesian 或 zip")
     if max_cases <= 0:
@@ -142,6 +150,7 @@ def prepare_derived_deck(
     case: SweepCase,
     parameters: Sequence[SweepParameter],
 ) -> Path:
+    """复制基础 Deck 目录并替换当前算例的全部参数占位符。"""
     source = Path(base_deck).resolve()
     if not source.is_file() or source.suffix.upper() != ".DATA":
         raise ValueError(f"基础 Deck 不存在或不是 .DATA 文件：{source}")
@@ -253,6 +262,7 @@ def run_batch_experiment(
     flow_runner: Callable[..., FlowRunResult] = run_flow,
     summary_converter: Callable[..., SummaryConversionResult] = convert_esmry,
 ) -> BatchExperimentResult:
+    """执行参数实验；成功的 Flow 输出可复用，失败算例互不影响。"""
     config = load_experiment_config(config_file)
     config_path = Path(config["_config_file"])
     project_root = config_path.parents[2] if len(config_path.parents) >= 3 else config_path.parent
@@ -383,6 +393,8 @@ def run_batch_experiment(
                 "experiment_id": experiment_id,
                 "analysis_case_id": config.get("analysis_case_id"),
                 "data_nature": config.get("data_nature", "OPM数值模拟数据"),
+                "comparison_role": config.get("comparison_role", "scenario"),
+                "paired_experiment_id": config.get("paired_experiment_id"),
                 "config_file": str(config_path),
                 "base_deck": str(base_deck),
                 "design": config.get("design", "cartesian"),

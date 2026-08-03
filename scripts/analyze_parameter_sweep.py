@@ -1,3 +1,5 @@
+"""检查聚合物参数扫描数据并生成敏感性图表和技术报告。"""
+
 from __future__ import annotations
 
 import argparse

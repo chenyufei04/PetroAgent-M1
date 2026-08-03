@@ -1,3 +1,5 @@
+"""声明知识库读取、规则执行和图查询服务的接口契约。"""
+
 from __future__ import annotations
 from typing import Protocol
 from petro_agent.core.models import CanonicalDataset

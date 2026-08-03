@@ -1,3 +1,5 @@
+"""将领域分析结果序列化为前端稳定使用的 JSON 结构。"""
+
 from __future__ import annotations
 
 from dataclasses import asdict

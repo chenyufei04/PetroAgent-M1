@@ -1,3 +1,5 @@
+"""供人工快速检查环境变量和演示数据路径的辅助脚本。"""
+
 import os
 
 from dotenv import load_dotenv

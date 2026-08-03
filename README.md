@@ -185,11 +185,222 @@ OPM 时间序列直接拼接；两者的数据性质和溯源仍保持独立。
 6. **更新应用层**：FastAPI 返回基准—方案配对结果，Vue 增加增量指标和方案排序；
    验证稳定后再把实验、算例和汇总指标轻量写回 Neo4j。
 
+### 水驱基准 Deck 设计（已完成）
+
+原始 `2D_THREEPHASE_POLY_HETER.DATA` 通过 `INCLUDE 'POLY.inc'` 引入
+`PLYVISC`、`PLYROCK`、`PLYADS`、`PLMIXPAR`、`PLYMAX` 和 `PLYSHLOG`，并由
+RUNSPEC 的 `POLYMER` 与 SCHEDULE 中三段 `WPOLYMER` 启用化学驱。因此，仅把聚合物
+浓度改为 0 不能作为严格的水驱基准。
+
+独立生成器会移除上述激活项、`POLY.inc` 引用和 `RPTSCHED` 的聚合物输出请求，保留
+网格、PVT、相渗、初始条件、井位、三段注水/生产控制、时间步和注入速率占位符。
+生成时记录源文件与目标文件 SHA-256、移除计数和结构校验结果：
+
+```powershell
+.\.venv\Scripts\python.exe scripts\prepare_waterflood_baseline.py --check-only
+.\.venv\Scripts\python.exe scripts\prepare_waterflood_baseline.py
+```
+
+基准配置为 `config/experiments/waterflood_baseline.yaml`，实验 ID 是
+`waterflood_baseline_v1`，输出独立写入
+`outputs/experiments/waterflood_baseline_v1`。它只扫描 100、150、200 m³/day 三档
+注入速率，并通过 `paired_experiment_id` 与 `polymer_sensitivity_v1` 建立配对关系，
+不会覆盖已有聚合物实验。正式运行前可在 Windows/VS Code 仅准备并审查派生 Deck：
+
+```powershell
+.\.venv\Scripts\python.exe scripts\run_parameter_sweep.py config\experiments\waterflood_baseline.yaml --prepare-only
+```
+
+审查通过后，才在 WSL 中调用 native OPM Flow：
+
+```bash
+source .venv-wsl/bin/activate
+PYTHONPATH=src python scripts/run_parameter_sweep.py config/experiments/waterflood_baseline.yaml
+```
+
+水驱 3 个算例完成后，在 Windows/VS Code 中生成正式成对增量分析：
+
+```powershell
+.\.venv\Scripts\python.exe scripts\analyze_waterflood_increment.py
+```
+
+分析按注入速率把 9 个聚合物方案与 3 个水驱基准严格配对，输出位于
+`outputs/experiments/polymer_sensitivity_v1/analysis/waterflood_comparison/`：
+
+- `paired_case_metrics.csv`：9 行终值配对及累计油、累计水、含水率和压力增量；
+- `paired_time_series.csv`：动态配对序列；水驱自适应时间网格线性插值到聚合物时间点；
+- `figures/`：终值增量、绝对累计油和动态增油对比图；
+- `report.md` 与 `summary.json`：技术报告和 FastAPI/Vue 使用的结构化摘要。
+
+FastAPI 的实验详情接口会返回 `waterflood_comparison`，Vue 实验面板展示配对质量、
+正增油方案数、最大增量、图表、明细表和下载链接。该步骤不依赖 Neo4j，也不需要
+再次启动 WSL 或 OPM Flow。
+
 进入下一轮 Flow 前的验收门槛：基准 Deck 与聚合物 Deck 仅在声明的化学驱设置上
 存在差异；三个基准算例均成功；字段和单位完整；已有 9 个聚合物算例不被覆盖。
 
-当前批量阶段不自动写入 Neo4j；敏感性摘要、图表和报告已经接入 Web 页面。
-实例图谱写回仍按原计划属于后续版本。
+### 实验实例图谱写回（v0.9.3）
+
+当前已支持把验证后的实验摘要轻量、幂等地写回 Neo4j。图谱保存实验、12 个模拟
+算例、参数集、运行记录、终值指标、Deck、数据集、报告及 9 个水驱比较关系；完整
+时间序列、ESMRY、日志和图片仍保留在文件系统，只在图中登记路径、SHA-256 和行数。
+
+正式导入前必须先执行 dry-run：
+
+```powershell
+.\.venv\Scripts\python.exe scripts\import_experiment_graph.py --dry-run
+.\.venv\Scripts\python.exe scripts\import_experiment_graph.py
+```
+
+导入器为每类实例创建唯一约束，并使用 `MERGE`，因此重复执行不会创建重复节点。
+FastAPI 提供实验排名查询，Neo4j 图谱工作台新增“实验血缘”视图，可以追溯：
+
+```text
+AnalysisCase → Experiment → SimulationCase
+SimulationCase → ParameterSet / SimulatorRun / MetricResult
+Experiment → Deck / Dataset / Report
+Polymer SimulationCase → Comparison → Waterflood SimulationCase
+```
+
+方案排名接口：`GET /api/graph/experiments/{experiment_id}/rankings`。Neo4j 离线时，
+数值实验、CSV、报告和普通 Web 页面仍可独立使用。
+
+## 完整实验执行与启动顺序
+
+下面顺序覆盖从 Deck 准备、OPM Flow 模拟、增量分析、Neo4j 回写到 Web 查看。
+已经完成模拟、只需要查看现有结果时，可以直接跳到第 7 步。
+
+### 1. 启动 Neo4j 并检查环境配置
+
+启动 Neo4j Desktop 或对应虚拟机，确认项目根目录 `.env` 至少包含：
+
+```env
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=你的密码
+NEO4J_DATABASE=petro
+```
+
+### 2. 在 Windows/VS Code 中准备水驱 Deck
+
+该步骤不会运行 Flow，也不会改写已有聚合物实验：
+
+```powershell
+cd F:\Projects\petro-agent
+.\.venv\Scripts\python.exe scripts\prepare_waterflood_baseline.py --check-only
+.\.venv\Scripts\python.exe scripts\prepare_waterflood_baseline.py
+```
+
+### 3. 在 WSL 中检查 OPM Flow
+
+只有运行或重新运行数值模拟时才需要 WSL：
+
+```bash
+cd /mnt/f/Projects/petro-agent
+source .venv-wsl/bin/activate
+PYTHONPATH=src python scripts/check_opm_flow.py
+```
+
+检查结果应至少满足：
+
+```text
+execution_mode = native
+executable = /usr/bin/flow
+available = true
+```
+
+### 4. 在 WSL 中运行聚合物参数实验
+
+```bash
+PYTHONPATH=src python scripts/run_parameter_sweep.py \
+  config/experiments/polymer_sensitivity.yaml
+```
+
+输出目录为：
+
+```text
+outputs/experiments/polymer_sensitivity_v1
+```
+
+脚本支持复用已成功的 Flow 输出和断点续跑，不要手工删除已有算例目录。
+
+### 5. 在 WSL 中运行独立水驱基准
+
+```bash
+PYTHONPATH=src python scripts/run_parameter_sweep.py \
+  config/experiments/waterflood_baseline.yaml
+```
+
+输出目录为：
+
+```text
+outputs/experiments/waterflood_baseline_v1
+```
+
+水驱和聚合物驱使用不同实验 ID 与输出目录，不会相互覆盖。
+
+### 6. 回到 Windows 生成成对增量分析
+
+该步骤只读取现有模拟结果，不需要 WSL 或重新运行 Flow：
+
+```powershell
+cd F:\Projects\petro-agent
+.\.venv\Scripts\python.exe scripts\analyze_waterflood_increment.py
+```
+
+主要输出位于：
+
+```text
+outputs/experiments/polymer_sensitivity_v1/analysis/waterflood_comparison
+```
+
+### 7. 校验并回写 Neo4j
+
+先校验 YAML 知识基础层，再依次导入概念知识和实验实例。两个导入器均幂等：
+
+```powershell
+.\.venv\Scripts\python.exe scripts\validate_knowledge.py
+.\.venv\Scripts\python.exe scripts\import_neo4j.py --dry-run
+.\.venv\Scripts\python.exe scripts\import_neo4j.py
+.\.venv\Scripts\python.exe scripts\import_experiment_graph.py --dry-run
+.\.venv\Scripts\python.exe scripts\import_experiment_graph.py
+```
+
+如果只是重复启动页面且 YAML、实验结果均未变化，可以跳过本步骤。
+
+### 8. 启动 FastAPI 和已构建的 Vue 页面
+
+```powershell
+cd F:\Projects\petro-agent
+.\.venv\Scripts\python.exe scripts\run_web.py
+```
+
+浏览器打开：
+
+```text
+http://127.0.0.1:8000
+```
+
+正常查看已有结果时不需要单独启动 Vue 开发服务器。只有修改 `frontend/src` 后才需
+重新构建：
+
+```powershell
+cd F:\Projects\petro-agent\frontend
+npm.cmd run build
+```
+
+### 最简日常启动顺序
+
+当模拟、分析和图谱均已生成且没有变化时：
+
+```text
+启动 Neo4j
+→ 在项目根目录运行 .\.venv\Scripts\python.exe scripts\run_web.py
+→ 打开 http://127.0.0.1:8000
+```
+
+Neo4j 离线时，OPM 实验数据、增量报告和普通页面仍可使用，但知识图谱、实验血缘
+和 Neo4j 方案排名会显示离线状态。
 
 ## v0.7.0～v0.8.0：OPM Summary 自动分析闭环
 
@@ -261,11 +472,11 @@ wsl.exe -d Ubuntu-24.04 -- python3 -c "from opm.io.ecl import ESmry; print('OK')
 `PetroleumEngineeringCoreOntology v0.2`（石油工程核心本体 v0.2），并提供
 YAML 到 Neo4j 的可重复导入与查询适配层。
 
-> 当前版本：`PetroAgent v0.9.1（敏感性分析与 Web 展示） / Knowledge Foundation v0.2.0`
+> 当前版本：`PetroAgent v0.9.3（成对增量评价与实验血缘图谱） / Knowledge Foundation v0.2.0`
 > Python：`3.10+`  
 > 当前边界：确定性分析内核＋YAML知识源＋Neo4j存储/查询＋Web 演示展示；
 > 已支持从 Windows 调用 WSL2 Ubuntu 中的 OPM Flow、ESMRY 解析和参数化批量实验；
-> 不包含 LLM、RAG、算例实例自动写回 Neo4j 和批量结果页面展示。
+> 已支持实验摘要幂等写回 Neo4j 和批量结果页面展示；暂不包含 LLM、RAG、经济优化与完整时间序列入图。
 
 v0.4.2 在保留原始产物下载功能的基础上，增加图表、文档和表格三类在线
 预览；Neo4j“全部图谱”视图同步展示全部实体列表与全部关系列表，并支持

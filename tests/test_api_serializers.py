@@ -1,3 +1,5 @@
+"""验证分析结果面向前端的序列化结构。"""
+
 from pathlib import Path
 
 import pandas as pd

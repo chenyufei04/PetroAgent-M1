@@ -1,3 +1,5 @@
+"""定义知识实体、关系、规则和来源证据的数据模型。"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

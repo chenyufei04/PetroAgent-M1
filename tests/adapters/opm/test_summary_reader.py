@@ -1,3 +1,5 @@
+"""验证 OPM Summary 字段识别、单位转换和标准 CSV 输出。"""
+
 import json
 import sys
 import types

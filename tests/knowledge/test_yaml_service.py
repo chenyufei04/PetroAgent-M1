@@ -1,3 +1,5 @@
+"""验证 YAML 知识目录加载、索引和引用解析。"""
+
 from pathlib import Path
 
 import pandas as pd

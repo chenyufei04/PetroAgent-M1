@@ -82,6 +82,12 @@ h2 { margin: 3px 0 18px; font-size: 17px; }
 .experiment-table-wrap { max-height: 330px; margin-top: 14px; overflow: auto; border: 1px solid #e1e8e5; border-radius: 8px; }
 .experiment-links { display: flex; gap: 10px; margin-top: 12px; }
 .experiment-links a { padding: 9px 12px; border: 1px solid #cbd8d3; border-radius: 7px; color: #0f766e; text-decoration: none; }
+.comparison-section { margin-top: 28px; padding-top: 24px; border-top: 2px solid #d5e3de; }
+.comparison-kpis article { background: #f7fafc; }
+.comparison-figures { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.comparison-figures figure:nth-child(2) { grid-column: auto; }
+.delta-positive { color: #0f766e; font-weight: 700; }
+.delta-negative { color: #9a5411; font-weight: 700; }
 .outputs-panel h2 { margin-bottom: 18px; }
 .file-list { display: flex; flex-wrap: wrap; gap: 10px; }
 .file-list a { padding: 10px 13px; border: 1px solid #d5dfda; border-radius: 7px; color: #294d49; background: #f9fbfa; font-size: 12px; text-decoration: none; }

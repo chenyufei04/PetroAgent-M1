@@ -1,3 +1,5 @@
+"""探测并执行 OPM Flow，同时保存可复现的运行清单与日志。"""
+
 from __future__ import annotations
 
 import hashlib
@@ -13,6 +15,7 @@ from typing import Mapping, Sequence
 
 @dataclass(frozen=True)
 class FlowExecutionConfig:
+    """描述 Flow 可执行文件、运行模式、超时和额外参数。"""
     execution_mode: str = "wsl"
     wsl_distribution: str = "Ubuntu-24.04"
     flow_command: str = "flow"
@@ -45,6 +48,7 @@ class FlowExecutionConfig:
 
 @dataclass(frozen=True)
 class FlowEnvironment:
+    """记录探测到的 Flow 环境及不可用原因。"""
     execution_mode: str
     distribution: str | None
     executable: str | None
@@ -55,6 +59,7 @@ class FlowEnvironment:
 
 @dataclass(frozen=True)
 class FlowRunResult:
+    """保存一次 Flow 调用的命令、退出状态、日志和清单路径。"""
     command: list[str]
     return_code: int
     stdout_file: str
@@ -102,6 +107,7 @@ def _effective_execution_mode(
 
 
 def windows_path_to_wsl(path: str | Path) -> str:
+    """把 Windows 绝对路径转换为 WSL 可访问的挂载路径。"""
     """
     将 Windows 绝对路径转换为 WSL 挂载路径。
 
@@ -155,6 +161,7 @@ def _version_command(
 def inspect_flow_environment(
     config: FlowExecutionConfig | None = None,
 ) -> FlowEnvironment:
+    """探测指定执行模式下的 Flow 可用性和版本，且不启动模拟。"""
     cfg = _validated(config)
     mode = _effective_execution_mode(cfg)
 
@@ -245,6 +252,7 @@ def build_flow_command(
     config: FlowExecutionConfig,
     extra_args: Sequence[str] = (),
 ) -> list[str]:
+    """根据执行模式构造不经 shell 拼接的安全 Flow 命令列表。"""
     deck = Path(deck_file).expanduser().resolve()
     target = Path(output_dir).expanduser().resolve()
     mode = _effective_execution_mode(config)
@@ -292,6 +300,7 @@ def run_flow(
     extra_args: Sequence[str] = (),
     environment: Mapping[str, str] | None = None,
 ) -> FlowRunResult:
+    """运行单个 Deck，并把复现所需信息持久化到输出目录。"""
     deck = Path(deck_file).expanduser().resolve()
 
     if not deck.is_file() or deck.suffix.upper() != ".DATA":

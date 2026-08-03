@@ -1,3 +1,5 @@
+"""启动同时提供 FastAPI 接口与 Vue 静态页面的本地服务。"""
+
 from pathlib import Path
 import sys
 

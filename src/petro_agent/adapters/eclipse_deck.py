@@ -1,3 +1,5 @@
+"""解析 Eclipse/OPM Deck，并提取分析所需的关键字与引用关系。"""
+
 from __future__ import annotations
 
 import re
@@ -47,4 +49,3 @@ def inspect_deck(root: Path) -> DeckInspection:
         keywords=sorted(keywords),
         missing_includes=sorted(set(missing)),
     )
-

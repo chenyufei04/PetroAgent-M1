@@ -1,3 +1,5 @@
+"""声明适配器、领域包和分析流水线之间的抽象接口。"""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -16,4 +18,3 @@ class DomainPack(Protocol):
     def enrich(self, dataset: CanonicalDataset) -> CanonicalDataset: ...
 
     def validate(self, dataset: CanonicalDataset) -> list[ValidationFinding]: ...
-

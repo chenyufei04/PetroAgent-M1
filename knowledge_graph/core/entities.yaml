@@ -94,6 +94,38 @@ entities:
     concept_type: upper_entity
     name_zh: 科研任务
     name_en: Research Task
+  - concept_id: analysis_case
+    concept_type: research_entity
+    name_zh: 分析案例
+    name_en: Analysis Case
+  - concept_id: experiment
+    concept_type: research_entity
+    name_zh: 数值实验
+    name_en: Experiment
+  - concept_id: simulation_case
+    concept_type: research_entity
+    name_zh: 模拟算例
+    name_en: Simulation Case
+  - concept_id: parameter_set
+    concept_type: research_entity
+    name_zh: 参数集
+    name_en: Parameter Set
+  - concept_id: simulator_run
+    concept_type: research_entity
+    name_zh: 模拟器运行
+    name_en: Simulator Run
+  - concept_id: metric_result
+    concept_type: research_entity
+    name_zh: 指标结果
+    name_en: Metric Result
+  - concept_id: experiment_comparison
+    concept_type: research_entity
+    name_zh: 实验比较
+    name_en: Experiment Comparison
+  - concept_id: analysis_report
+    concept_type: research_entity
+    name_zh: 分析报告
+    name_en: Analysis Report
   - concept_id: polymer_flooding
     concept_type: method
     name_zh: 聚合物驱

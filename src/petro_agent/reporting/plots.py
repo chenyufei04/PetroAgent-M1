@@ -1,3 +1,5 @@
+"""生成生产动态等静态科研图表。"""
+
 from __future__ import annotations
 
 import os

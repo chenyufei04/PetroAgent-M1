@@ -1,3 +1,5 @@
+"""校验 YAML 知识目录的结构、引用和版本一致性。"""
+
 from __future__ import annotations
 
 from pathlib import Path

@@ -1,3 +1,5 @@
+"""定义案例、规则结果、指标和分析输出等核心数据模型。"""
+
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field

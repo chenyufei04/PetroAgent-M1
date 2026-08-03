@@ -1,3 +1,5 @@
+"""检查当前环境中 OPM Flow 的执行模式、路径和版本。"""
+
 from __future__ import annotations
 
 import argparse

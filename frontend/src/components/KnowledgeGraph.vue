@@ -51,6 +51,18 @@ async function render() {
         style: { "background-color": "#ea580c", shape: "hexagon" },
       },
       {
+        selector: 'node[type = "Experiment"]',
+        style: { "background-color": "#0f766e", shape: "round-rectangle", width: 54 },
+      },
+      {
+        selector: 'node[type = "SimulationCase"]',
+        style: { "background-color": "#2563eb", shape: "ellipse" },
+      },
+      {
+        selector: 'node[type = "Comparison"]',
+        style: { "background-color": "#d97706", shape: "diamond" },
+      },
+      {
         selector: "edge",
         style: {
           label: "data(label)",

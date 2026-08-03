@@ -1,3 +1,5 @@
+"""实现聚合物驱特有指标、规则和证据映射。"""
+
 from __future__ import annotations
 
 from petro_agent.core.models import CanonicalDataset, ValidationFinding
@@ -25,4 +27,3 @@ class PolymerFloodingPack:
             "POLYMER_CONCENTRATION_NONNEGATIVE", "error", nonnegative,
             "聚合物浓度非负" if nonnegative else "聚合物浓度存在负值",
         )]
-

@@ -2,6 +2,8 @@
 experiment_id: polymer_sensitivity_v1
 analysis_case_id: polymer_simple2d
 data_nature: OPM数值模拟数据
+comparison_role: scenario
+paired_experiment_id: waterflood_baseline_v1
 base_deck: data/raw/polymer_simple2D/2D_THREEPHASE_POLY_HETER.DATA
 output_root: outputs/experiments
 design: cartesian

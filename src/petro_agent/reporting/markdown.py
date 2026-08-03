@@ -1,3 +1,5 @@
+"""把结构化分析结果渲染为可追溯的 Markdown 报告。"""
+
 from __future__ import annotations
 
 import json

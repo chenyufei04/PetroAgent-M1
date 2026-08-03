@@ -1,3 +1,5 @@
+"""提供案例分析、实验结果、文件下载和知识图谱查询接口。"""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -40,16 +42,19 @@ app.add_middleware(
 
 
 class AnalysisRequest(BaseModel):
+    """指定待分析案例及可选的用户上传数据集。"""
     case_id: str = "polymer_simple2d"
     dataset_id: str | None = None
 
 
 class GraphRequest(BaseModel):
+    """限定知识子图查询的概念集合和返回规模。"""
     concept_ids: list[str] = Field(default_factory=list)
     limit: int = Field(default=100, ge=1, le=300)
 
 
 class GraphViewRequest(BaseModel):
+    """指定预定义图谱视图和最大返回规模。"""
     view: str = "all"
     limit: int = Field(default=200, ge=1, le=500)
 
@@ -134,6 +139,7 @@ def list_cases() -> list[dict]:
 
 @app.get("/api/experiments")
 def list_experiments() -> list[dict]:
+    """列出实验血缘、运行状态以及是否已有分析产物。"""
     experiments = []
     for directory in sorted(EXPERIMENT_ROOT.glob("*")):
         manifest = directory / "experiment_manifest.json"
@@ -146,6 +152,8 @@ def list_experiments() -> list[dict]:
             "data_nature": data.get("data_nature"),
             "case_count": data.get("case_count", 0),
             "status_counts": data.get("status_counts", {}),
+            "comparison_role": data.get("comparison_role", "scenario"),
+            "paired_experiment_id": data.get("paired_experiment_id"),
             "analyzed": (directory / "analysis" / "summary.json").is_file(),
             "updated_at": data.get("updated_at"),
         })
@@ -154,6 +162,7 @@ def list_experiments() -> list[dict]:
 
 @app.get("/api/experiments/{experiment_id}")
 def get_experiment(experiment_id: str) -> dict:
+    """返回单个实验摘要，并补齐安全的图表和数据下载 URL。"""
     directory = _experiment_dir(experiment_id)
     summary_file = directory / "analysis" / "summary.json"
     if not summary_file.is_file():
@@ -165,11 +174,21 @@ def get_experiment(experiment_id: str) -> dict:
     ]
     payload["report_url"] = base + payload["report"]
     payload["case_metrics_url"] = base + "case_metrics.csv"
+    comparison = payload.get("waterflood_comparison")
+    if comparison:
+        comparison["figures"] = [
+            {**item, "url": base + item["file"]}
+            for item in comparison.get("figures", [])
+        ]
+        comparison["report_url"] = base + comparison["report"]
+        comparison["paired_case_metrics_url"] = base + comparison["paired_case_metrics"]
+        comparison["paired_time_series_url"] = base + comparison["paired_time_series"]
     return payload
 
 
 @app.get("/api/experiments/{experiment_id}/files/{file_path:path}")
 def get_experiment_file(experiment_id: str, file_path: str):
+    """仅允许下载指定实验 analysis 目录内的文件。"""
     analysis_dir = (_experiment_dir(experiment_id) / "analysis").resolve()
     target = (analysis_dir / file_path).resolve()
     if analysis_dir not in target.parents or not target.is_file():
@@ -310,6 +329,25 @@ def graph_view(payload: GraphViewRequest) -> dict:
             "message": f"Neo4j 暂不可用：{exc}",
             "nodes": [],
             "edges": [],
+        }
+
+
+@app.get("/api/graph/experiments/{experiment_id}/rankings")
+def experiment_rankings(experiment_id: str) -> dict:
+    """返回 Neo4j 中的实验方案排名；数据库离线时保持页面其余功能可用。"""
+    _experiment_dir(experiment_id)
+    try:
+        settings = Neo4jSettings.from_env(ROOT / ".env")
+        with Neo4jClient(settings) as client:
+            client.verify()
+            rows = Neo4jQueryService(client).experiment_rankings(experiment_id)
+        return {"status": "online", "experiment_id": experiment_id, "rows": rows}
+    except Exception as exc:
+        return {
+            "status": "offline",
+            "experiment_id": experiment_id,
+            "message": f"Neo4j 暂不可用：{exc}",
+            "rows": [],
         }
 
 

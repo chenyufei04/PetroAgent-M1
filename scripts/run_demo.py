@@ -1,3 +1,5 @@
+"""运行内置演示案例并输出确定性分析产物。"""
+
 import argparse
 from pathlib import Path
 import sys

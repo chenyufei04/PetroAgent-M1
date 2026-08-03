@@ -45,5 +45,7 @@ export const getGraphView = (view = "all", limit = 200) =>
     method: "POST",
     body: JSON.stringify({ view, limit }),
   });
+export const getExperimentRankings = (experimentId) =>
+  request(`/api/graph/experiments/${experimentId}/rankings`);
 export const outputUrl = (path) => `${API_BASE}${path}`;
 export const getOutputPreview = (path) => request(path);

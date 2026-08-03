@@ -1,4 +1,4 @@
-"""Read-only graph queries used by scripts and the agent layer."""
+"""为脚本、智能体、API 和 Web 界面提供只读图查询。"""
 
 from __future__ import annotations
 
@@ -105,13 +105,14 @@ class Neo4jQueryService:
         return {"nodes": list(nodes.values()), "edges": edges}
 
     def graph_view(self, view: str = "all", limit: int = 200) -> dict:
-        """Return one of the predefined, read-only graph views for the UI."""
+        """返回前端允许使用的预定义只读图视图。"""
         patterns = {
             "all": "MATCH (a)-[r]->(b)",
             "concepts": "MATCH (a:Concept)-[r]->(b:Concept)",
             "rules": "MATCH (a:Rule)-[r]->(b:Concept)",
             "sources": "MATCH (a:Rule)-[r:SUPPORTED_BY]->(b:Source)",
             "stages": "MATCH (a:Rule)-[r:IN_STAGE]->(b:Stage)",
+            "experiments": "MATCH (a)-[r]->(b) WHERE a:AnalysisCase OR a:Experiment OR a:SimulationCase OR a:Comparison",
         }
         if view not in patterns:
             raise ValueError(f"不支持的图谱视图：{view}")
@@ -184,11 +185,54 @@ class Neo4jQueryService:
             })
         return {"nodes": list(nodes.values()), "edges": edges}
 
+    def experiment_rankings(self, experiment_id: str) -> list[dict]:
+        """按累计增油降序返回实验方案及其水驱基准，供 API 和智能体解释。"""
+        with self.client.session() as session:
+            rows = session.run(
+                """
+                MATCH (e:Experiment {experiment_id: $experiment_id})-[:HAS_CASE]->(c:SimulationCase)
+                MATCH (c)-[:HAS_PARAMETER_SET]->(p:ParameterSet)
+                MATCH (c)-[:HAS_RESULT]->(m:MetricResult)
+                OPTIONAL MATCH (c)-[:HAS_COMPARISON]->(cmp:Comparison)-[:USES_BASELINE]->(baseline:SimulationCase)
+                RETURN c.case_id AS case_id,
+                       p.polymer_concentration AS polymer_concentration,
+                       p.injection_rate AS injection_rate,
+                       m.final_cumulative_oil_m3 AS final_cumulative_oil_m3,
+                       cmp.incremental_cumulative_oil_m3 AS incremental_cumulative_oil_m3,
+                       cmp.incremental_oil_percent AS incremental_oil_percent,
+                       baseline.case_id AS baseline_case_id
+                ORDER BY incremental_cumulative_oil_m3 DESC, case_id
+                """,
+                experiment_id=experiment_id,
+            )
+            return [dict(record) for record in rows]
+
     @staticmethod
     def _ui_node(element_id: str, labels: list[str], properties: dict) -> dict:
         properties = properties or {}
-        stable_id = (
+        primary_keys = {
+            "AnalysisCase": "analysis_case_id", "Experiment": "experiment_id",
+            "SimulationCase": "case_id", "Comparison": "comparison_id",
+            "Deck": "deck_id", "ParameterSet": "parameter_set_id",
+            "SimulatorRun": "run_id", "MetricResult": "metric_result_id",
+            "Dataset": "dataset_id", "Report": "report_id",
+        }
+        # 实例节点常同时携带父级外键，优先按 Neo4j 标签选择自身主键。
+        stable_id = next(
+            (properties[key] for label, key in primary_keys.items() if label in labels and properties.get(key)),
+            None,
+        ) or (
             properties.get("concept_id")
+            or properties.get("analysis_case_id")
+            or properties.get("comparison_id")
+            or properties.get("deck_id")
+            or properties.get("parameter_set_id")
+            or properties.get("run_id")
+            or properties.get("metric_result_id")
+            or properties.get("dataset_id")
+            or properties.get("report_id")
+            or properties.get("case_id")
+            or properties.get("experiment_id")
             or properties.get("rule_id")
             or properties.get("source_id")
             or properties.get("stage_id")

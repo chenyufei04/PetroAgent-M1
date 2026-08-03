@@ -1,3 +1,5 @@
+"""读取表格数据并转换为 PetroAgent 统一数据契约。"""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -31,4 +33,3 @@ class CsvAdapter:
             ),
             metadata=config.get("metadata", {}),
         )
-

@@ -1,3 +1,5 @@
+"""验证参数组合、Deck 派生、批量执行及断点续跑。"""
+
 import json
 from pathlib import Path
 
@@ -63,6 +65,8 @@ def test_batch_experiment_builds_case_and_series_datasets(tmp_path: Path):
         """
 experiment_id: smoke
 analysis_case_id: polymer_simple2d
+comparison_role: baseline
+paired_experiment_id: polymer_sensitivity_v1
 data_nature: OPM数值模拟数据
 base_deck: data/case/MODEL.DATA
 output_root: outputs/experiments
@@ -115,6 +119,8 @@ parameters:
     assert "parameter_value" in series
     experiment_manifest = json.loads(Path(result.manifest_json).read_text(encoding="utf-8"))
     assert experiment_manifest["analysis_case_id"] == "polymer_simple2d"
+    assert experiment_manifest["comparison_role"] == "baseline"
+    assert experiment_manifest["paired_experiment_id"] == "polymer_sensitivity_v1"
     assert experiment_manifest["data_nature"] == "OPM数值模拟数据"
 
 

@@ -1,4 +1,4 @@
-"""OPM Flow execution integration."""
+"""对外汇总 OPM Flow 执行、参数扫描和结果转换能力。"""
 
 from .deck_runner import (
     FlowEnvironment,

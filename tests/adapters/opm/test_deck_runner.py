@@ -1,3 +1,5 @@
+"""验证 OPM Flow 探测、命令构造和运行清单记录。"""
+
 from pathlib import Path, PureWindowsPath
 
 import pytest

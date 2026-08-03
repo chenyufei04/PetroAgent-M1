@@ -1,3 +1,5 @@
+"""验证 YAML 知识图谱的幂等 Neo4j 导入。"""
+
 from pathlib import Path
 
 from petro_agent.knowledge.neo4j.importer import Neo4jKnowledgeImporter

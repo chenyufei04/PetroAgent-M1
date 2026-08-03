@@ -1,4 +1,4 @@
-"""Print Neo4j graph evidence as readable triples."""
+"""以可读三元组形式输出 Neo4j 图谱证据。"""
 
 from __future__ import annotations
 

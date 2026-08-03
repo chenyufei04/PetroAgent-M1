@@ -1,3 +1,5 @@
+"""提供跨领域复用的数据完整性与物理范围校验。"""
+
 from __future__ import annotations
 
 import numpy as np
@@ -43,4 +45,3 @@ def validate_common(dataset: CanonicalDataset) -> list[ValidationFinding]:
             ValidationFinding("RECOVERY_MONOTONIC", "warning", monotonic, "累计采收率单调不减" if monotonic else "累计采收率出现下降"),
         ])
     return findings
-

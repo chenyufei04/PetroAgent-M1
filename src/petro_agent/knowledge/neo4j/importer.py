@@ -1,4 +1,4 @@
-"""Idempotent YAML-to-Neo4j importer."""
+"""将 YAML 知识层以幂等、可重复的方式导入 Neo4j。"""
 
 from __future__ import annotations
 

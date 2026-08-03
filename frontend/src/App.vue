@@ -27,6 +27,7 @@ const graphViews = [
   { id: "rules", label: "规则概念" },
   { id: "sources", label: "规则证据" },
   { id: "stages", label: "阶段规则" },
+  { id: "experiments", label: "实验血缘" },
 ];
 
 const failedResults = computed(() =>

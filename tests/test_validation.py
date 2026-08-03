@@ -1,3 +1,5 @@
+"""验证通用数据质量规则及物理范围检查。"""
+
 import pandas as pd
 
 from petro_agent.core.models import CanonicalDataset, SourceInfo
@@ -26,4 +28,3 @@ def test_accepts_monotonic_recovery():
         "recovery_factor_fraction": [0.0, 0.1, 0.2],
     })))
     assert next(item for item in findings if item.rule_id == "RECOVERY_MONOTONIC").passed
-

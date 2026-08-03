@@ -1,3 +1,5 @@
+"""根据 YAML 实验配置运行或准备 OPM 参数扫描。"""
+
 from __future__ import annotations
 
 import argparse

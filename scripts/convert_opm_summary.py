@@ -1,3 +1,5 @@
+"""把 OPM Summary/ESMRY 文件转换为标准 CSV 数据集。"""
+
 from __future__ import annotations
 
 import argparse

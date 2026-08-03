@@ -1,3 +1,5 @@
+"""编排数据适配、指标计算、规则执行和报告生成全过程。"""
+
 from __future__ import annotations
 
 from dataclasses import asdict

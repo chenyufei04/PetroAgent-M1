@@ -19,7 +19,10 @@ class Neo4jSettings:
 
     @classmethod
     def from_env(cls, env_path: Path | None = None) -> "Neo4jSettings":
+        """读取统一连接变量；Docker 与原直接启动方式共用此配置入口。"""
         load_dotenv(dotenv_path=env_path)
+        # 兼容旧方式（保留）：直接启动的 Neo4j 仍可继续使用 localhost 或虚拟机地址。
+        # Docker 模式同样通过宿主机映射端口连接，因此不改变现有调用方。
         values = {
             "uri": os.getenv("NEO4J_URI"),
             "user": os.getenv("NEO4J_USER"),

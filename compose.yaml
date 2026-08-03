@@ -1,0 +1,38 @@
+name: petro-agent
+
+services:
+  neo4j:
+    # 固定版本，避免 latest 更新导致 Cypher、配置项或存储格式突然变化。
+    image: neo4j:2026.06.0
+    container_name: petro-agent-neo4j
+    restart: unless-stopped
+
+    ports:
+      # 仅绑定本机回环地址，供 Neo4j Browser 和宿主机 FastAPI 使用。
+      - "127.0.0.1:7474:7474"
+      - "127.0.0.1:7687:7687"
+
+    environment:
+      # NEO4J_PASSWORD 从项目根目录 .env 读取，真实密码不得写入本文件。
+      NEO4J_AUTH: "neo4j/${NEO4J_PASSWORD:?请先在 .env 中设置 NEO4J_PASSWORD}"
+      # 与 PetroAgent 现有 NEO4J_DATABASE=petro 保持一致；仅首次创建数据卷时生效。
+      NEO4J_initial_dbms_default__database: "${NEO4J_DATABASE:-petro}"
+
+    volumes:
+      # 使用 named volume，避免把活跃数据库文件写入 Git 工作区或 /mnt/f。
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+
+    healthcheck:
+      # 健康检查只确认 HTTP 服务已就绪，不在容器配置中重复暴露密码。
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:7474 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+volumes:
+  neo4j_data:
+    name: petro-agent-neo4j-data
+  neo4j_logs:
+    name: petro-agent-neo4j-logs

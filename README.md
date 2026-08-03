@@ -265,6 +265,121 @@ Polymer SimulationCase → Comparison → Waterflood SimulationCase
 方案排名接口：`GET /api/graph/experiments/{experiment_id}/rankings`。Neo4j 离线时，
 数值实验、CSV、报告和普通 Web 页面仍可独立使用。
 
+## Neo4j Docker 部署与迁移
+
+当前推荐使用项目根目录 `compose.yaml` 启动 Neo4j；FastAPI 仍运行在 Windows
+`.venv`，OPM Flow 仍运行在 WSL。Python 连接层继续统一读取 `NEO4J_URI`、
+`NEO4J_USER`、`NEO4J_PASSWORD` 和 `NEO4J_DATABASE`，因此保留原有直接启动方式，
+不会影响现有功能。
+
+### 1. 首次迁移前停止旧 Neo4j
+
+Neo4j Desktop、本机服务或旧虚拟机中的 Neo4j 必须先停止，否则会与 Docker 争用
+7474 和 7687 端口：
+
+```powershell
+Get-NetTCPConnection -LocalPort 7474,7687 -ErrorAction SilentlyContinue
+```
+
+如果命令仍显示监听进程，先在原 Neo4j 管理界面中正常停止数据库。不要直接复制
+Neo4j Desktop 的活动数据库目录；本项目图谱可由 YAML 和实验摘要幂等重建。
+
+### 2. 配置 `.env`
+
+```env
+# 推荐方式：Docker Compose
+NEO4J_DEPLOYMENT_MODE=docker
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=请替换为至少8位的强密码
+NEO4J_DATABASE=petro
+
+# 兼容旧方式（保留，不是默认推荐）：直接启动 Neo4j Desktop、本机服务或虚拟机。
+# 启用时把上面的 NEO4J_DEPLOYMENT_MODE 改为 direct，并按实际地址修改 URI。
+# NEO4J_DEPLOYMENT_MODE=direct
+# NEO4J_URI=bolt://localhost:7687
+```
+
+真实 `.env` 已被 Git 忽略；不要把密码写入 `compose.yaml` 或提交到仓库。
+
+### 3. 校验并启动容器
+
+确保 Docker Desktop 已启动，然后在项目根目录执行：
+
+```powershell
+cd F:\Projects\petro-agent
+docker compose config
+docker compose pull neo4j
+docker compose up -d neo4j
+docker compose ps
+```
+
+查看日志和等待健康状态：
+
+```powershell
+docker compose logs -f neo4j
+```
+
+日志稳定后按 `Ctrl+C` 只退出日志跟踪，不会停止容器。浏览器管理界面为
+`http://localhost:7474`，Bolt 地址为 `bolt://localhost:7687`。
+
+### 4. 检查连接并重建图谱
+
+```powershell
+.\.venv\Scripts\python.exe scripts\check_neo4j.py
+.\.venv\Scripts\python.exe scripts\validate_knowledge.py
+.\.venv\Scripts\python.exe scripts\import_neo4j.py --dry-run
+.\.venv\Scripts\python.exe scripts\import_neo4j.py
+.\.venv\Scripts\python.exe scripts\import_experiment_graph.py --dry-run
+.\.venv\Scripts\python.exe scripts\import_experiment_graph.py
+```
+
+概念知识与实验实例均使用唯一约束和 `MERGE`，重复执行不会创建重复节点。完整
+时间序列、Flow 二进制和图片仍保存在文件系统中，不会导入 Neo4j。
+
+### 5. 启动、停止与数据保留
+
+日常启动：
+
+```powershell
+docker compose up -d neo4j
+.\.venv\Scripts\python.exe scripts\run_web.py
+```
+
+只停止 Neo4j：
+
+```powershell
+docker compose stop neo4j
+```
+
+停止并删除容器但保留 named volume：
+
+```powershell
+docker compose down
+```
+
+以下命令会删除 Neo4j 数据卷，日常禁止执行：
+
+```powershell
+# 危险：只有确认可以从 YAML 和实验文件完整重建时才可执行。
+docker compose down -v
+```
+
+### 6. 兼容旧的直接启动方式（保留）
+
+如果暂时不使用 Docker，原方式仍有效：
+
+```text
+启动 Neo4j Desktop、本机 Neo4j 服务或虚拟机中的 Neo4j
+→ 保持 NEO4J_DEPLOYMENT_MODE=direct
+→ 按实际服务设置 NEO4J_URI
+→ 运行 scripts/check_neo4j.py
+→ 运行 scripts/run_web.py
+```
+
+这条兼容路径只通过注释和环境变量区分，没有删除任何直接连接代码。Docker 与直接
+启动方式不能同时占用同一组宿主机端口。
+
 ## 完整实验执行与启动顺序
 
 下面顺序覆盖从 Deck 准备、OPM Flow 模拟、增量分析、Neo4j 回写到 Web 查看。
@@ -272,7 +387,15 @@ Polymer SimulationCase → Comparison → Waterflood SimulationCase
 
 ### 1. 启动 Neo4j 并检查环境配置
 
-启动 Neo4j Desktop 或对应虚拟机，确认项目根目录 `.env` 至少包含：
+推荐先启动 Docker Neo4j：
+
+```powershell
+docker compose up -d neo4j
+docker compose ps
+.\.venv\Scripts\python.exe scripts\check_neo4j.py
+```
+
+确认项目根目录 `.env` 至少包含：
 
 ```env
 NEO4J_URI=bolt://localhost:7687
@@ -280,6 +403,9 @@ NEO4J_USER=neo4j
 NEO4J_PASSWORD=你的密码
 NEO4J_DATABASE=petro
 ```
+
+兼容旧方式（保留）：也可以直接启动 Neo4j Desktop、本机服务或虚拟机，并将
+`NEO4J_DEPLOYMENT_MODE=direct`；后续实验与 Web 命令完全相同。
 
 ### 2. 在 Windows/VS Code 中准备水驱 Deck
 

@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from "vue";
-import { outputUrl } from "../api";
+import { computed, ref } from "vue";
+import { getScenarioExplanation, outputUrl } from "../api";
 
 const props = defineProps({ experiment: { type: Object, required: true } });
 const oilEffect = computed(() => props.experiment.metric_effects.final_cumulative_oil_m3);
@@ -8,10 +8,27 @@ const pressureEffect = computed(() => props.experiment.metric_effects.final_fiel
 const best = computed(() => props.experiment.best_cumulative_oil_case);
 const comparison = computed(() => props.experiment.waterflood_comparison || null);
 const bestIncrement = computed(() => comparison.value?.best_incremental_oil_case || null);
+const economics = computed(() => props.experiment.techno_economics || null);
+const rankedCases = computed(() => economics.value?.cases || []);
+const bestEconomic = computed(() => rankedCases.value[0] || null);
+const explanation = ref(null);
+const explanationLoading = ref(false);
+const explanationError = ref("");
 const number = (value, digits = 0) => Number(value).toLocaleString("zh-CN", {
   maximumFractionDigits: digits,
   minimumFractionDigits: digits,
 });
+const loadExplanation = async (caseId) => {
+  explanationLoading.value = true;
+  explanationError.value = "";
+  try {
+    explanation.value = await getScenarioExplanation(props.experiment.experiment_id, caseId);
+  } catch (error) {
+    explanationError.value = error.message;
+  } finally {
+    explanationLoading.value = false;
+  }
+};
 </script>
 
 <template>
@@ -41,7 +58,7 @@ const number = (value, digits = 0) => Number(value).toLocaleString("zh-CN", {
       注入速率是本轮累计产油、含水率和压力响应的主导因素。最大累计产油
       <strong>{{ number(best.final_cumulative_oil_m3, 1) }} m³</strong>，对应
       {{ best.parameter_polymer_concentration }} kg/m³ 和 {{ best.parameter_injection_rate }} m³/day；
-      该结论尚未计入聚合物成本与压力约束。
+      该处展示纯产量敏感性，技术经济筛选见下方方案排名。
     </p>
 
     <div class="experiment-figures">
@@ -130,6 +147,95 @@ const number = (value, digits = 0) => Number(value).toLocaleString("zh-CN", {
         <a :href="outputUrl(comparison.paired_case_metrics_url)" target="_blank">下载终值增量 CSV</a>
         <a :href="outputUrl(comparison.paired_time_series_url)" target="_blank">下载动态增量 CSV</a>
       </div>
+    </section>
+
+    <section v-if="economics && bestEconomic" class="comparison-section economics-section">
+      <div class="panel-heading">
+        <div>
+          <p class="panel-label">TECHNO-ECONOMICS · CONSTRAINT SCREENING</p>
+          <h2>聚合物方案技术经济排名</h2>
+          <p class="experiment-lineage">
+            模型：<strong>{{ economics.model_id }}</strong>
+            · 假设状态 {{ economics.assumption_status }}
+          </p>
+        </div>
+        <span class="quality-badge" :class="economics.economically_positive ? 'passed' : 'warning'">
+          经济为正 {{ economics.economically_positive }} / {{ economics.case_count }}
+        </span>
+      </div>
+
+      <div class="experiment-kpis economics-kpis">
+        <article><span>技术可行</span><strong>{{ economics.technically_feasible }} / {{ economics.case_count }}</strong></article>
+        <article><span>排名第一浓度</span><strong>{{ number(bestEconomic.polymer_concentration_kg_m3, 1) }}</strong><small>kg/m³</small></article>
+        <article><span>排名第一注入率</span><strong>{{ number(bestEconomic.injection_rate_m3_day) }}</strong><small>m³/day</small></article>
+        <article><span>排名第一净增量价值</span><strong :class="bestEconomic.net_incremental_value >= 0 ? 'delta-positive' : 'delta-negative'">{{ number(bestEconomic.net_incremental_value, 0) }}</strong><small>{{ bestEconomic.currency }}</small></article>
+      </div>
+
+      <p class="experiment-takeaway economics-warning">
+        排名首先排除违反设施约束的方案，再优先选择经济为正方案，并按净增量价值排序。
+        当前价格与约束为 <strong>illustrative_unvalidated</strong>，排名只能用于验证筛选流程。
+      </p>
+
+      <div class="experiment-table-wrap">
+        <table>
+          <thead><tr><th>排名</th><th>浓度 kg/m³</th><th>注入率 m³/day</th><th>聚合物 t</th><th>增量油 m³</th><th>净增量价值</th><th>技术可行</th><th>建议</th><th>解释</th></tr></thead>
+          <tbody>
+            <tr v-for="item in rankedCases" :key="item.polymer_case_id">
+              <td><strong>#{{ item.scenario_rank }}</strong></td>
+              <td>{{ number(item.polymer_concentration_kg_m3, 1) }}</td>
+              <td>{{ number(item.injection_rate_m3_day) }}</td>
+              <td>{{ number(item.polymer_mass_tonnes, 1) }}</td>
+              <td :class="item.incremental_oil_m3 >= 0 ? 'delta-positive' : 'delta-negative'">{{ number(item.incremental_oil_m3, 1) }}</td>
+              <td :class="item.net_incremental_value >= 0 ? 'delta-positive' : 'delta-negative'">{{ number(item.net_incremental_value, 0) }} {{ item.currency }}</td>
+              <td>{{ item.technically_feasible ? '是' : '否' }}</td>
+              <td>{{ item.recommendation }}</td>
+              <td><button class="explanation-button" type="button" @click="loadExplanation(item.polymer_case_id)">查看依据</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="experiment-links">
+        <a :href="outputUrl(economics.ranking_report_url)" target="_blank">下载排名报告</a>
+        <a :href="outputUrl(economics.rankings_url)" target="_blank">下载排名 CSV</a>
+        <a :href="outputUrl(economics.constraints_url)" target="_blank">下载约束明细</a>
+        <a :href="outputUrl(economics.report_url)" target="_blank">下载经济报告</a>
+      </div>
+
+      <p v-if="explanationLoading" class="graph-message">正在加载规则解释链……</p>
+      <p v-if="explanationError" class="alert">{{ explanationError }}</p>
+      <section v-if="explanation" class="explanation-chain">
+        <div class="panel-heading">
+          <div>
+            <p class="panel-label">EXPLAINABLE RECOMMENDATION</p>
+            <h3>{{ explanation.case_id }}</h3>
+          </div>
+          <span class="quality-badge" :class="explanation.recommendation.decision === '优先候选' ? 'passed' : 'warning'">
+            {{ explanation.recommendation.decision }}
+          </span>
+        </div>
+        <p class="experiment-takeaway">{{ explanation.recommendation.rationale }}</p>
+        <div class="explanation-columns">
+          <article>
+            <h4>指标绑定</h4>
+            <ul>
+              <li v-for="item in explanation.observations" :key="item.observation_id">
+                <code>{{ item.concept_id }}</code><span>{{ number(item.value, 3) }} {{ item.unit }}</span>
+              </li>
+            </ul>
+          </article>
+          <article>
+            <h4>规则执行</h4>
+            <ul>
+              <li v-for="item in explanation.rule_executions" :key="item.rule_execution_id">
+                <span :class="item.passed ? 'delta-positive' : 'delta-negative'">{{ item.passed ? '通过' : '未通过' }}</span>
+                <code>{{ item.rule_id }}</code><span>{{ item.message }}</span>
+              </li>
+            </ul>
+          </article>
+        </div>
+        <p class="evidence-line">证据：{{ explanation.evidence.source_id }} · {{ explanation.evidence.assumption_status }}</p>
+      </section>
     </section>
   </section>
 </template>

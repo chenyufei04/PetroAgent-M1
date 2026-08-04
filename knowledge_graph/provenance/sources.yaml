@@ -1,5 +1,15 @@
 schema_version: "0.1"
 sources:
+  - source_id: petroagent_techno_economic_model_v1
+    source_type: project_internal_model
+    name_zh: PetroAgent 聚合物驱技术经济筛选模型 v1
+    name_en: PetroAgent Polymer Techno-Economic Screening Model v1
+    authority_level: illustrative_unvalidated
+    year: 2026
+    version: "1.0"
+    path: config/economics/polymer_economics.yaml
+    notes_zh: 公式和执行逻辑已测试；价格与设施阈值是未验证示例假设，正式决策前必须现场标定。
+    notes_en: Formulas are tested; prices and facility limits are illustrative and require field calibration.
   - source_id: petroagent_core
     source_type: software_definition
     name_zh: PetroAgent 核心数据质量规则

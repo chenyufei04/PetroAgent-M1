@@ -111,3 +111,24 @@ relations:
   - relation_id: USES_BASELINE
     name_zh: 使用基准算例
     name_en: Uses Baseline
+  - relation_id: EXECUTED_RULE
+    name_zh: 执行规则
+    name_en: Executed Rule
+  - relation_id: EXECUTES
+    name_zh: 执行知识规则
+    name_en: Executes Knowledge Rule
+  - relation_id: HAS_OBSERVATION
+    name_zh: 具有指标观测
+    name_en: Has Observation
+  - relation_id: OBSERVES
+    name_zh: 观测领域概念
+    name_en: Observes Concept
+  - relation_id: USES_OBSERVATION
+    name_zh: 使用指标观测
+    name_en: Uses Observation
+  - relation_id: PRODUCES_RECOMMENDATION
+    name_zh: 产生推荐
+    name_en: Produces Recommendation
+  - relation_id: JUSTIFIED_BY
+    name_zh: 由其解释
+    name_en: Justified By

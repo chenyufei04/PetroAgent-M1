@@ -54,13 +54,19 @@ def test_convert_esmry_writes_standard_catalog_and_metadata(tmp_path: Path):
         payload_loader=lambda *_: payload,
     )
     frame = pd.read_csv(result.standard_csv)
-    assert list(frame) == ["time_days", "oil_rate_m3_day", "water_rate_m3_day"]
+    assert list(frame) == [
+        "time_days",
+        "oil_rate_m3_day",
+        "water_rate_m3_day",
+        "prod1_well_oil_rate_m3_day",
+    ]
     assert result.vector_count == 5
-    assert result.mapped_vector_count == 3
+    assert result.mapped_vector_count == 4
     catalog = pd.read_csv(result.vector_catalog_csv)
     assert set(catalog["key"]) == set(payload["vectors"])
     metadata = json.loads(Path(result.metadata_json).read_text(encoding="utf-8"))
     assert metadata["source_vectors"]["oil_rate_m3_day"] == "FOPR"
+    assert metadata["source_vectors"]["prod1_well_oil_rate_m3_day"] == "WOPR:PROD1"
 
 
 def test_convert_rejects_mismatched_vector_lengths(tmp_path: Path):

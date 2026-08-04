@@ -37,6 +37,16 @@ def _write_experiment(root: Path) -> None:
                 "paired_case_metrics": "waterflood_comparison/paired_case_metrics.csv",
                 "paired_time_series": "waterflood_comparison/paired_time_series.csv",
             },
+            "techno_economics": {
+                "best_case_id": "case-1",
+                "cases": [{"scenario_rank": 1, "polymer_case_id": "case-1"}],
+                "case_economics": "techno_economics/case_economics.csv",
+                "constraints": "techno_economics/constraint_evaluations.csv",
+                "rankings": "techno_economics/scenario_rankings.csv",
+                "report": "techno_economics/report.md",
+                "ranking_report": "techno_economics/ranking_report.md",
+                "explanation_chains": "techno_economics/explanation_chains.json",
+            },
         }),
         encoding="utf-8",
     )
@@ -48,6 +58,19 @@ def _write_experiment(root: Path) -> None:
     (comparison / "paired_case_metrics.csv").write_text("a\n1\n", encoding="utf-8")
     (comparison / "paired_time_series.csv").write_text("a\n1\n", encoding="utf-8")
     (experiment / "analysis" / "report.md").write_text("report", encoding="utf-8")
+    economics = experiment / "analysis" / "techno_economics"
+    economics.mkdir()
+    for name in ("case_economics.csv", "constraint_evaluations.csv", "scenario_rankings.csv"):
+        (economics / name).write_text("a\n1\n", encoding="utf-8")
+    (economics / "report.md").write_text("economics", encoding="utf-8")
+    (economics / "ranking_report.md").write_text("ranking", encoding="utf-8")
+    (economics / "summary.json").write_text(
+        json.dumps({"case_count": 1, "best_case_id": "case-1"}), encoding="utf-8"
+    )
+    (economics / "explanation_chains.json").write_text(
+        json.dumps({"model_id": "model-1", "cases": [{"case_id": "case-1", "observations": [], "rule_executions": [], "recommendation": {"decision": "候选"}}]}),
+        encoding="utf-8",
+    )
 
 
 def test_experiment_summary_adds_download_urls(tmp_path: Path, monkeypatch) -> None:
@@ -65,6 +88,17 @@ def test_experiment_summary_adds_download_urls(tmp_path: Path, monkeypatch) -> N
     comparison = payload["waterflood_comparison"]
     assert comparison["figures"][0]["url"].endswith("increment.png")
     assert comparison["paired_case_metrics_url"].endswith("paired_case_metrics.csv")
+    economics = payload["techno_economics"]
+    assert economics["rankings_url"].endswith("scenario_rankings.csv")
+    assert economics["ranking_report_url"].endswith("ranking_report.md")
+    assert economics["rankings_api_url"].endswith("techno-economic-rankings")
+
+    ranking_payload = main.get_techno_economic_rankings("sweep_a")
+    assert ranking_payload["case_count"] == 1
+    assert ranking_payload["rows"] == [{"a": 1}]
+    explanation = main.get_scenario_explanation("sweep_a", "case-1")
+    assert explanation["model_id"] == "model-1"
+    assert explanation["recommendation"]["decision"] == "候选"
 
 
 def test_case_list_exposes_related_experiment(tmp_path: Path, monkeypatch) -> None:

@@ -1,0 +1,28 @@
+# 本文件仅用于打通计算链路；价格和设施上限尚未经过现场或商务标定。
+schema_version: "1.0"
+model_id: polymer_incremental_economics_v1
+assumption_status: illustrative_unvalidated
+currency: USD
+
+conversion:
+  barrels_per_m3: 6.28981077
+
+# 原始 Deck：前 460 天清水，随后 1,650 天注聚合物，至第 2,110 天结束。
+polymer_slug:
+  start_day: 460
+  end_day: 2110
+
+prices:
+  oil_per_bbl: 75.0
+  polymer_per_kg: 2.5
+  injection_water_per_m3: 0.10
+  produced_water_per_m3: 0.50
+
+# 以下上限是演示性筛选门槛，不代表现场破裂压力或已核定设施能力。
+constraints:
+  injector_bhp_field: inje01_well_bhp_bar
+  max_injector_bhp_bar: 380.0
+  max_water_injection_rate_m3_day: 200.0
+  max_water_production_rate_m3_day: 100.0
+  max_daily_polymer_kg: 300.0
+  max_total_polymer_kg: 500000.0

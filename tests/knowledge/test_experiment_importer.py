@@ -47,12 +47,20 @@ def test_experiment_plan_contains_paired_runs_without_time_points():
         "parameter_sets": 12,
         "simulator_runs": 12,
         "metric_results": 12,
-        "datasets": 4,
-        "reports": 2,
+        "datasets": 10,
+        "reports": 4,
         "comparisons": 9,
+        "economic_evaluations": 9,
+        "metric_observations": 81,
+        "rule_executions": 99,
+        "recommendations": 9,
     }
     assert {item["row_count"] for item in plan.datasets} >= {3, 9, 693, 2098}
     assert max(item["incremental_cumulative_oil_m3"] for item in plan.comparisons) > 1400
+    assert plan.economic_evaluations[0]["scenario_rank"] == 1
+    assert plan.economic_evaluations[0]["case_id"] == "polymer_sensitivity_v1-0003-8cd10086"
+    assert plan.rule_executions[0]["rule_id"] == "PF-DESIGN-003"
+    assert plan.metric_observations[0]["concept_id"] == "polymer_concentration_kg_m3"
 
 
 def test_import_uses_constraints_and_merge_statements():
@@ -65,3 +73,7 @@ def test_import_uses_constraints_and_merge_statements():
     assert "CREATE CONSTRAINT" in queries
     assert "MERGE (n:Experiment" in queries
     assert "MERGE (p)-[:HAS_COMPARISON]->(c)" in queries
+    assert "HAS_ECONOMIC_EVALUATION" in queries
+    assert "EXECUTED_RULE" in queries
+    assert "PRODUCES_RECOMMENDATION" in queries
+    assert "USES_OBSERVATION" in queries

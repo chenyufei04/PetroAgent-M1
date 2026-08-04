@@ -47,5 +47,7 @@ export const getGraphView = (view = "all", limit = 200) =>
   });
 export const getExperimentRankings = (experimentId) =>
   request(`/api/graph/experiments/${experimentId}/rankings`);
+export const getScenarioExplanation = (experimentId, caseId) =>
+  request(`/api/experiments/${experimentId}/cases/${caseId}/explanation`);
 export const outputUrl = (path) => `${API_BASE}${path}`;
 export const getOutputPreview = (path) => request(path);

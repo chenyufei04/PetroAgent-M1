@@ -5,7 +5,7 @@
     "injection_rate": 150
   },
   "status": "succeeded",
-  "derived_deck": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0005-d0a64fb5/2D_THREEPHASE_POLY_HETER.DATA",
+  "derived_deck": "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\derived_decks\\polymer_sensitivity_v1-0005-d0a64fb5\\2D_THREEPHASE_POLY_HETER.DATA",
   "flow_reused": true,
   "flow": {
     "command": [
@@ -15,18 +15,18 @@
       "--enable-esmry=true"
     ],
     "return_code": 0,
-    "stdout_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0005-d0a64fb5/flow/flow.stdout.log",
-    "stderr_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0005-d0a64fb5/flow/flow.stderr.log",
-    "manifest_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0005-d0a64fb5/flow/run_manifest.json"
+    "stdout_file": "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0005-d0a64fb5\\flow\\flow.stdout.log",
+    "stderr_file": "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0005-d0a64fb5\\flow\\flow.stderr.log",
+    "manifest_file": "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0005-d0a64fb5\\flow\\run_manifest.json"
   },
   "conversion": {
-    "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0005-d0a64fb5/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
-    "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0005-d0a64fb5/converted/polymer_sensitivity_v1-0005-d0a64fb5_summary_standard.csv",
-    "vector_catalog_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0005-d0a64fb5/converted/polymer_sensitivity_v1-0005-d0a64fb5_summary_vectors.csv",
-    "metadata_json": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0005-d0a64fb5/converted/polymer_sensitivity_v1-0005-d0a64fb5_summary_metadata.json",
+    "summary_file": "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0005-d0a64fb5\\flow\\2D_THREEPHASE_POLY_HETER.ESMRY",
+    "standard_csv": "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0005-d0a64fb5\\converted\\polymer_sensitivity_v1-0005-d0a64fb5_summary_standard.csv",
+    "vector_catalog_csv": "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0005-d0a64fb5\\converted\\polymer_sensitivity_v1-0005-d0a64fb5_summary_vectors.csv",
+    "metadata_json": "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0005-d0a64fb5\\converted\\polymer_sensitivity_v1-0005-d0a64fb5_summary_metadata.json",
     "row_count": 233,
     "vector_count": 112,
-    "mapped_vector_count": 11
+    "mapped_vector_count": 23
   },
   "labels": {
     "time_steps": 233,
@@ -51,9 +51,9 @@
     "peak_oil_rate_m3_day": 438.47698974609375,
     "mean_oil_rate_m3_day": 23.37071667464506,
     "status": "succeeded",
-    "deck_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/derived_decks/polymer_sensitivity_v1-0005-d0a64fb5/2D_THREEPHASE_POLY_HETER.DATA",
-    "summary_file": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0005-d0a64fb5/flow/2D_THREEPHASE_POLY_HETER.ESMRY",
-    "standard_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0005-d0a64fb5/converted/polymer_sensitivity_v1-0005-d0a64fb5_summary_standard.csv"
+    "deck_file": "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\derived_decks\\polymer_sensitivity_v1-0005-d0a64fb5\\2D_THREEPHASE_POLY_HETER.DATA",
+    "summary_file": "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0005-d0a64fb5\\flow\\2D_THREEPHASE_POLY_HETER.ESMRY",
+    "standard_csv": "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0005-d0a64fb5\\converted\\polymer_sensitivity_v1-0005-d0a64fb5_summary_standard.csv"
   },
-  "finished_at": "2026-08-01T01:56:42.737705+00:00"
+  "finished_at": "2026-08-04T05:36:29.012860+00:00"
 }

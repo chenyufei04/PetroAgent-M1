@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import hashlib
 import itertools
 import json
@@ -380,11 +381,16 @@ def run_batch_experiment(
         case_manifests.append(manifest)
 
     summary_csv = dataset_dir / "cases.csv"
-    pd.DataFrame(rows).to_csv(summary_csv, index=False)
+    # 显式启用最小引号规则，确保异常信息或路径中含逗号、换行时仍能生成合法 CSV。
+    pd.DataFrame(rows).to_csv(
+        summary_csv, index=False, quoting=csv.QUOTE_MINIMAL, escapechar="\\"
+    )
     series_csv: Path | None = None
     if series_frames:
         series_csv = dataset_dir / "time_series.csv"
-        pd.concat(series_frames, ignore_index=True).to_csv(series_csv, index=False)
+        pd.concat(series_frames, ignore_index=True).to_csv(
+            series_csv, index=False, quoting=csv.QUOTE_MINIMAL, escapechar="\\"
+        )
     counts = pd.Series([row["status"] for row in rows]).value_counts().to_dict()
     manifest_json = experiment_dir / "experiment_manifest.json"
     manifest_json.write_text(

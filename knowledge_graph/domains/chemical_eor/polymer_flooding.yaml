@@ -64,6 +64,17 @@ concepts:
   - {concept_id: actual_oil, concept_type: parameter, name_zh: 实际产油量, name_en: Actual Oil Production}
   - {concept_id: baseline_oil, concept_type: parameter, name_zh: 水驱基线产油量, name_en: Baseline Oil Production}
   - {concept_id: incremental_oil_m3, concept_type: parameter, name_zh: 聚合物增油量, name_en: Incremental Oil}
+  - {concept_id: incremental_oil_revenue, concept_type: economic_metric, name_zh: 增量产油收入, name_en: Incremental Oil Revenue}
+  - {concept_id: polymer_cost, concept_type: economic_metric, name_zh: 聚合物成本, name_en: Polymer Cost}
+  - {concept_id: net_incremental_value, concept_type: economic_metric, name_zh: 净增量价值, name_en: Net Incremental Value}
+  - {concept_id: injector_bhp_limit_bar, concept_type: constraint, name_zh: 注入井井底压力上限, name_en: Injector BHP Limit}
+  - {concept_id: water_injection_capacity, concept_type: constraint, name_zh: 注水设施能力, name_en: Water Injection Capacity}
+  - {concept_id: water_production_capacity, concept_type: constraint, name_zh: 产水处理能力, name_en: Water Production Capacity}
+  - {concept_id: daily_polymer_capacity, concept_type: constraint, name_zh: 日配聚能力, name_en: Daily Polymer Capacity}
+  - {concept_id: peak_daily_polymer_rate, concept_type: parameter, name_zh: 日配聚峰值, name_en: Peak Daily Polymer Rate}
+  - {concept_id: total_polymer_capacity, concept_type: constraint, name_zh: 总聚合物供应上限, name_en: Total Polymer Capacity}
+  - {concept_id: scenario_rank, concept_type: decision_metric, name_zh: 方案排名, name_en: Scenario Rank}
+  - {concept_id: scenario_recommendation, concept_type: decision, name_zh: 方案推荐结论, name_en: Scenario Recommendation}
   - {concept_id: forecast_series, concept_type: dataset, name_zh: 预测时间序列, name_en: Forecast Time Series}
   - {concept_id: observed_series, concept_type: dataset, name_zh: 实测时间序列, name_en: Observed Time Series}
 triples:
@@ -316,6 +327,38 @@ rule_catalog:
       logic: relative_difference <= project_tolerance
       decision: surveillance
       source_id: petroleum_engineering_core
+    - rule_id: PF-OPS-004
+      stage: operation
+      name_zh: 注水峰值不得超过设施能力
+      name_en: Peak Water Injection Within Facility Capacity
+      inputs: [polymer_injection_rate, water_injection_capacity]
+      logic: peak_water_injection_rate <= water_injection_capacity
+      decision: hard_constraint
+      source_id: petroagent_techno_economic_model_v1
+    - rule_id: PF-OPS-005
+      stage: operation
+      name_zh: 产水峰值不得超过处理能力
+      name_en: Peak Water Production Within Handling Capacity
+      inputs: [water_production_rate, water_production_capacity]
+      logic: peak_water_production_rate <= water_production_capacity
+      decision: hard_constraint
+      source_id: petroagent_techno_economic_model_v1
+    - rule_id: PF-OPS-006
+      stage: operation
+      name_zh: 日配聚峰值不得超过配制能力
+      name_en: Peak Daily Polymer Within Preparation Capacity
+      inputs: [polymer_mass_kg, daily_polymer_capacity]
+      logic: peak_daily_polymer_kg_day <= daily_polymer_capacity
+      decision: hard_constraint
+      source_id: petroagent_techno_economic_model_v1
+    - rule_id: PF-OPS-007
+      stage: operation
+      name_zh: 聚合物总用量不得超过供应上限
+      name_en: Total Polymer Within Supply Limit
+      inputs: [polymer_mass_kg, total_polymer_capacity]
+      logic: polymer_mass_kg <= total_polymer_capacity
+      decision: hard_constraint
+      source_id: petroagent_techno_economic_model_v1
 
     - rule_id: PF-PERF-001
       stage: surveillance
@@ -341,3 +384,28 @@ rule_catalog:
       logic: report_error_metrics_and_bias
       decision: required_evidence
       source_id: petroagent_core
+    - rule_id: PF-ECO-001
+      stage: surveillance
+      name_zh: 净增量价值必须采用水驱配对增量口径
+      name_en: Net Incremental Value Uses Paired-Waterflood Convention
+      inputs: [incremental_oil_revenue, polymer_cost, net_incremental_value]
+      logic: net_incremental_value == incremental_oil_revenue - total_incremental_cost
+      decision: derived_metric
+      source_id: petroagent_techno_economic_model_v1
+    - rule_id: PF-ECO-002
+      stage: surveillance
+      name_zh: 经济候选方案净增量价值应为正
+      name_en: Economic Candidate Requires Positive Net Incremental Value
+      inputs: [net_incremental_value]
+      logic: net_incremental_value > 0
+      unit: USD
+      decision: screening_gate
+      source_id: petroagent_techno_economic_model_v1
+    - rule_id: PF-RANK-001
+      stage: surveillance
+      name_zh: 方案排名必须优先技术可行性与经济正值
+      name_en: Ranking Prioritizes Technical Feasibility and Positive Economics
+      inputs: [scenario_rank, scenario_recommendation, net_incremental_value]
+      logic: feasible_and_positive_first_then_net_value_descending
+      decision: ranking
+      source_id: petroagent_techno_economic_model_v1

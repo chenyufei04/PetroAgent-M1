@@ -95,6 +95,8 @@ outputs/experiments/*
 *.DBG
 
 # Node、npm 和 Vite 生成内容
+# 根目录没有 Node 项目；忽略误在根目录执行 npm 后生成的空锁文件。
+/package-lock.json
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/

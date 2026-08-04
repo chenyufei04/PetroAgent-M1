@@ -186,7 +186,7 @@ class Neo4jQueryService:
         return {"nodes": list(nodes.values()), "edges": edges}
 
     def experiment_rankings(self, experiment_id: str) -> list[dict]:
-        """按累计增油降序返回实验方案及其水驱基准，供 API 和智能体解释。"""
+        """优先返回技术经济排名，并保留水驱基准供 API 和智能体解释。"""
         with self.client.session() as session:
             rows = session.run(
                 """
@@ -194,6 +194,7 @@ class Neo4jQueryService:
                 MATCH (c)-[:HAS_PARAMETER_SET]->(p:ParameterSet)
                 MATCH (c)-[:HAS_RESULT]->(m:MetricResult)
                 OPTIONAL MATCH (c)-[:HAS_COMPARISON]->(cmp:Comparison)-[:USES_BASELINE]->(baseline:SimulationCase)
+                OPTIONAL MATCH (c)-[:HAS_ECONOMIC_EVALUATION]->(x:EconomicEvaluation)
                 RETURN c.case_id AS case_id,
                        p.polymer_concentration AS polymer_concentration,
                        p.injection_rate AS injection_rate,
@@ -201,11 +202,49 @@ class Neo4jQueryService:
                        cmp.incremental_cumulative_oil_m3 AS incremental_cumulative_oil_m3,
                        cmp.incremental_oil_percent AS incremental_oil_percent,
                        baseline.case_id AS baseline_case_id
-                ORDER BY incremental_cumulative_oil_m3 DESC, case_id
+                       ,x.scenario_rank AS scenario_rank,
+                       x.net_incremental_value AS net_incremental_value,
+                       x.technically_feasible AS technically_feasible,
+                       x.economically_positive AS economically_positive,
+                       x.recommendation AS recommendation
+                ORDER BY coalesce(x.scenario_rank, 999999), incremental_cumulative_oil_m3 DESC, case_id
                 """,
                 experiment_id=experiment_id,
             )
             return [dict(record) for record in rows]
+
+    def scenario_explanation(self, case_id: str) -> dict | None:
+        """沿指标概念、规则执行、推荐和来源关系返回单方案解释链。"""
+        with self.client.session() as session:
+            record = session.run(
+                """
+                MATCH (c:SimulationCase {case_id: $case_id})
+                OPTIONAL MATCH (c)-[:HAS_OBSERVATION]->(o:MetricObservation)-[:OBSERVES]->(concept:Concept)
+                WITH c, collect(DISTINCT {observation_id: o.observation_id, concept_id: concept.concept_id,
+                     concept_name: coalesce(concept.name_zh, concept.name_en), value: o.value, unit: o.unit}) AS observations
+                OPTIONAL MATCH (c)-[:EXECUTED_RULE]->(x:RuleExecution)-[:EXECUTES]->(rule:Rule)
+                OPTIONAL MATCH (x)-[:SUPPORTED_BY]->(rule_source:Source)
+                WITH c, observations, collect(DISTINCT {rule_execution_id: x.rule_execution_id,
+                     rule_id: rule.rule_id, rule_name: coalesce(rule.name_zh, rule.name_en), passed: x.passed,
+                     actual: x.actual, expected: x.expected, operator: x.operator, message: x.message,
+                     evidence_source_id: rule_source.source_id, evidence_name: coalesce(rule_source.name_zh, rule_source.name_en)}) AS rule_executions
+                OPTIONAL MATCH (c)-[:PRODUCES_RECOMMENDATION]->(r:Recommendation)-[:SUPPORTED_BY]->(source:Source)
+                RETURN c.case_id AS case_id, observations, rule_executions,
+                       head(collect(DISTINCT {recommendation_id: r.recommendation_id, decision: r.decision,
+                            scenario_rank: r.scenario_rank, rationale: r.rationale,
+                            assumption_status: r.assumption_status})) AS recommendation,
+                       head(collect(DISTINCT {source_id: source.source_id,
+                            source_name: coalesce(source.name_zh, source.name_en),
+                            authority_level: source.authority_level})) AS evidence
+                """,
+                case_id=case_id,
+            ).single()
+            if record is None:
+                return None
+            payload = dict(record)
+            payload["observations"] = [item for item in payload["observations"] if item.get("observation_id")]
+            payload["rule_executions"] = [item for item in payload["rule_executions"] if item.get("rule_execution_id")]
+            return payload
 
     @staticmethod
     def _ui_node(element_id: str, labels: list[str], properties: dict) -> dict:
@@ -215,6 +254,9 @@ class Neo4jQueryService:
             "SimulationCase": "case_id", "Comparison": "comparison_id",
             "Deck": "deck_id", "ParameterSet": "parameter_set_id",
             "SimulatorRun": "run_id", "MetricResult": "metric_result_id",
+            "EconomicEvaluation": "economic_evaluation_id",
+            "MetricObservation": "observation_id", "RuleExecution": "rule_execution_id",
+            "Recommendation": "recommendation_id",
             "Dataset": "dataset_id", "Report": "report_id",
         }
         # 实例节点常同时携带父级外键，优先按 Neo4j 标签选择自身主键。

@@ -12,7 +12,7 @@ def test_build_plan_contains_domain_graph_and_rules():
     plan = Neo4jKnowledgeImporter(ROOT / "knowledge_graph").build_plan()
 
     assert len(plan.triples) == 17
-    assert len(plan.rules) == 25
+    assert len(plan.rules) == 32
     assert plan.domain["domain_id"] == "chemical_eor"
     assert all(item["concept_id"] for item in plan.concepts)
 
@@ -25,3 +25,4 @@ def test_all_referenced_concepts_have_chinese_names():
     assert all(item.get("name_zh") for item in plan.concepts)
     assert all(item["placeholder"] is False for item in plan.concepts)
     assert concepts["polymer_flooding"]["placeholder"] is False
+    assert concepts["net_incremental_value"]["name_zh"] == "净增量价值"

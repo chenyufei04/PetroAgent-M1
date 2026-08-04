@@ -1,7 +1,7 @@
 {
   "name": "petro-agent-web-demo",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.9.6",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -88,6 +88,17 @@ h2 { margin: 3px 0 18px; font-size: 17px; }
 .comparison-figures figure:nth-child(2) { grid-column: auto; }
 .delta-positive { color: #0f766e; font-weight: 700; }
 .delta-negative { color: #9a5411; font-weight: 700; }
+.economics-kpis article { background: #fffaf0; }
+.economics-warning { border-left-color: #d97706; background: #fffaf0; }
+.explanation-button { padding: 6px 9px; border: 1px solid #9fb9b1; border-radius: 6px; color: #0f766e; background: #fff; cursor: pointer; }
+.explanation-chain { margin-top: 18px; padding: 16px; border: 1px solid #d5e3de; border-radius: 9px; background: #fbfdfc; }
+.explanation-chain h3, .explanation-chain h4 { margin: 0 0 10px; }
+.explanation-columns { display: grid; grid-template-columns: 1fr 1.5fr; gap: 16px; }
+.explanation-columns article { min-width: 0; }
+.explanation-columns ul { display: grid; gap: 7px; max-height: 310px; margin: 0; padding: 0; overflow: auto; list-style: none; }
+.explanation-columns li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 8px; border-bottom: 1px solid #e5ece9; font-size: 12px; }
+.explanation-columns code { color: #315e57; }
+.evidence-line { margin: 14px 0 0; color: #72827e; font-size: 11px; }
 .outputs-panel h2 { margin-bottom: 18px; }
 .file-list { display: flex; flex-wrap: wrap; gap: 10px; }
 .file-list a { padding: 10px 13px; border: 1px solid #d5dfda; border-radius: 7px; color: #294d49; background: #f9fbfa; font-size: 12px; text-decoration: none; }

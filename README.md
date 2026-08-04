@@ -1,6 +1,9 @@
 # PetroAgent M1
 
-> 当前版本：`v0.9.1`（参数敏感性分析与 Web 展示）
+> 当前版本：`v0.9.6`（知识—实验语义桥与可解释推荐）
+
+> README 维护约定：正文只描述功能、数据、公式和设计；所有可执行命令只维护在文末
+> “执行命令手册”。后续修改 README 时不得在正文新增 PowerShell、bash 或 Docker 命令块。
 
 ## v0.9.1：polymer_sensitivity_v1 已完成
 
@@ -15,9 +18,7 @@
 
 重新生成分析产物：
 
-```powershell
-python scripts\analyze_parameter_sweep.py polymer_sensitivity_v1
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 分析结果位于：
 
@@ -107,29 +108,18 @@ parameters:
 
 ### 3. 先只生成派生 Deck
 
-```powershell
-python scripts\run_parameter_sweep.py `
-  "config\experiments\polymer_sensitivity.yaml" `
-  --prepare-only
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 检查 `outputs\experiments\<experiment_id>\derived_decks` 中的数值和 INCLUDE
 路径无误后，再进行真实批量模拟。
 
 ### 4. 批量运行并生成数据集
 
-```powershell
-python scripts\run_parameter_sweep.py `
-  "config\experiments\polymer_sensitivity.yaml"
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 默认会跳过已经成功的算例。需要强制重新运行全部算例时：
 
-```powershell
-python scripts\run_parameter_sweep.py `
-  "config\experiments\polymer_sensitivity.yaml" `
-  --no-resume
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 主要输出：
 
@@ -196,10 +186,7 @@ RUNSPEC 的 `POLYMER` 与 SCHEDULE 中三段 `WPOLYMER` 启用化学驱。因此
 网格、PVT、相渗、初始条件、井位、三段注水/生产控制、时间步和注入速率占位符。
 生成时记录源文件与目标文件 SHA-256、移除计数和结构校验结果：
 
-```powershell
-.\.venv\Scripts\python.exe scripts\prepare_waterflood_baseline.py --check-only
-.\.venv\Scripts\python.exe scripts\prepare_waterflood_baseline.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 基准配置为 `config/experiments/waterflood_baseline.yaml`，实验 ID 是
 `waterflood_baseline_v1`，输出独立写入
@@ -207,22 +194,15 @@ RUNSPEC 的 `POLYMER` 与 SCHEDULE 中三段 `WPOLYMER` 启用化学驱。因此
 注入速率，并通过 `paired_experiment_id` 与 `polymer_sensitivity_v1` 建立配对关系，
 不会覆盖已有聚合物实验。正式运行前可在 Windows/VS Code 仅准备并审查派生 Deck：
 
-```powershell
-.\.venv\Scripts\python.exe scripts\run_parameter_sweep.py config\experiments\waterflood_baseline.yaml --prepare-only
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 审查通过后，才在 WSL 中调用 native OPM Flow：
 
-```bash
-source .venv-wsl/bin/activate
-PYTHONPATH=src python scripts/run_parameter_sweep.py config/experiments/waterflood_baseline.yaml
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 水驱 3 个算例完成后，在 Windows/VS Code 中生成正式成对增量分析：
 
-```powershell
-.\.venv\Scripts\python.exe scripts\analyze_waterflood_increment.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 分析按注入速率把 9 个聚合物方案与 3 个水驱基准严格配对，输出位于
 `outputs/experiments/polymer_sensitivity_v1/analysis/waterflood_comparison/`：
@@ -247,10 +227,7 @@ FastAPI 的实验详情接口会返回 `waterflood_comparison`，Vue 实验面�
 
 正式导入前必须先执行 dry-run：
 
-```powershell
-.\.venv\Scripts\python.exe scripts\import_experiment_graph.py --dry-run
-.\.venv\Scripts\python.exe scripts\import_experiment_graph.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 导入器为每类实例创建唯一约束，并使用 `MERGE`，因此重复执行不会创建重复节点。
 FastAPI 提供实验排名查询，Neo4j 图谱工作台新增“实验血缘”视图，可以追溯：
@@ -265,6 +242,180 @@ Polymer SimulationCase → Comparison → Waterflood SimulationCase
 方案排名接口：`GET /api/graph/experiments/{experiment_id}/rankings`。Neo4j 离线时，
 数值实验、CSV、报告和普通 Web 页面仍可独立使用。
 
+## 聚合物质量、增量经济与工程约束（v0.9.4）
+
+### 版本备注（v0.9.4，2026-08-04）
+
+`v0.9.4` 在 `v0.9.3` 的水驱—聚合物驱成对增量数据和实验血缘基础上，新增：
+
+- 从 ESMRY 标准化输出井级向量，以 `inje01_well_bhp_bar` 参与真实注入井压力约束；
+- 按实际注入曲线和聚合物段塞时间窗进行质量衡算；
+- 采用可配置价格计算未折现增量收入、成本、净值和盈亏平衡价格；
+- 检查压力、注水、产水、日配聚量和总用量五类约束；
+- 输出算例经济宽表、逐项约束长表、机器可读摘要和 Markdown 报告。
+
+本版没有改变或覆盖 `polymer_sensitivity_v1` 与 `waterflood_baseline_v1` 的 Flow
+原始结果。新增计算属于后处理层；修改经济 YAML 后可以重复执行，不需要重新运行 Flow。
+
+### 完整运行过程
+
+运行经济分析前，必须已经存在以下两个输入：
+
+```text
+outputs/experiments/polymer_sensitivity_v1/dataset/time_series.csv
+outputs/experiments/polymer_sensitivity_v1/analysis/waterflood_comparison/paired_case_metrics.csv
+```
+
+如果两组 Flow 实验和成对分析已经完成，直接从步骤 3 开始，不需要启动 WSL 或虚拟机。
+
+1. 仅当原始实验尚未完成或 Deck/参数发生变化时，在 WSL 中运行 Flow：
+
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
+
+2. 在 Windows/VS Code 终端重新生成严格配对的增量数据：
+
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
+
+3. 在同一个 Windows/VS Code 终端生成质量、经济和约束结果：
+
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
+
+4. 检查机器可读摘要和报告：
+
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
+
+如需使用另一套价格或约束配置，可以显式传入路径：
+
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
+
+默认读取 `config/economics/polymer_economics.yaml`。其中油价、聚合物价格和设施上限均标记为
+`illustrative_unvalidated`，只用于验证计算链路，正式评价前必须替换为现场与商务标定值。
+
+### 计算公式与字段含义
+
+#### 1. 聚合物段塞注水量
+
+设实际注入水率为 `q_w(t)`，单位为 m³/day；段塞起止时间分别为 `t₀=460 day`、
+`t₁=2110 day`：
+
+```text
+V_slug = ∫[t₀,t₁] q_w(t) dt
+```
+
+程序先在 `t₀`、`t₁` 处线性插值，再用梯形法积分。`V_slug` 对应
+`polymer_slug_injected_water_m3`。这样只统计聚合物段，不把前后清水段计入聚合物用量。
+
+#### 2. 聚合物质量和日配聚峰值
+
+设聚合物浓度 `C_p` 的单位为 kg/m³：
+
+```text
+M_p = C_p × V_slug
+M_p,tonne = M_p / 1000
+M_daily,peak = C_p × max(q_w(t)),  t ∈ [t₀,t₁]
+```
+
+分别对应 `polymer_mass_kg`、`polymer_mass_tonnes` 和
+`peak_daily_polymer_kg_day`。这里假设 Deck 浓度代表配注质量浓度，尚未额外扣除
+吸附、剪切降解或地面配制损失。
+
+#### 3. 水驱配对增量
+
+所有增量都采用同一符号约定：
+
+```text
+ΔX = X_polymer − X_waterflood
+```
+
+因此 `incremental_cumulative_oil_m3 > 0` 表示相对同速率水驱增油；增量产水为负表示
+减少产水。两个方案必须具有相同的 `parameter_injection_rate`，否则不能直接比较。
+
+#### 4. 增量收入与成本
+
+```text
+ΔN_oil,bbl = ΔN_oil,m3 × barrels_per_m3
+R_oil = ΔN_oil,bbl × P_oil
+C_polymer = M_p × P_polymer
+C_injection = ΔV_injection × P_injection_water
+C_water = ΔV_produced_water × P_produced_water
+C_incremental = C_polymer + C_injection + C_water
+V_net = R_oil − C_incremental
+```
+
+其中价格来自经济 YAML。`C_water` 保留增量符号：若聚合物驱少产水，
+`ΔV_produced_water < 0`，它会表现为处理成本节省。`net_incremental_value > 0` 时，
+`economically_positive=true`。当前没有进行时间折现，所以不能替代完整 NPV。
+
+#### 5. 盈亏平衡与利用率
+
+```text
+P_polymer,BE = (R_oil − C_injection − C_water) / M_p
+P_oil,BE = C_incremental / ΔN_oil,bbl       仅当 ΔN_oil,bbl > 0
+U_polymer = ΔN_oil,m3 / (M_p / 1000)
+```
+
+对应 `break_even_polymer_price_per_kg`、`break_even_oil_price_per_bbl` 和
+`incremental_oil_m3_per_tonne_polymer`。增量油不为正时油价盈亏平衡字段留空，避免产生
+没有工程意义的价格。
+
+#### 6. 压力与设施约束
+
+每条上限约束统一使用：
+
+```text
+margin = limit − actual
+passed = margin >= 0
+technically_feasible = 所有约束均 passed
+```
+
+当前检查注入井峰值 BHP、峰值注水率、峰值产水率、峰值日配聚量和总聚合物量。
+井底压力来自 `INJE01` 的 ESMRY `WBHP`，不会使用 `field_pressure_bar` 代替。
+
+### 关键计算约定
+
+- 聚合物段为第 460–2,110 天；对该窗口内的实际 `FWIR` 做边界插值与梯形积分，段塞水量乘浓度得到聚合物质量，不能用全周期累计注水量代替。
+- 增量指标统一定义为“聚合物驱减同注入速率水驱”。未折现净增量价值等于增量油收入，减去聚合物成本、增量注水成本和带符号的增量产水处理成本。
+- 约束层检查注入井 BHP、注水峰值、产水峰值、日配聚量和总聚合物量；余量统一为“上限减实际值”。井级 BHP 来源为 `INJE01` 的 ESMRY `WBHP`，不会用平均地层压力替代。
+
+结果写入 `outputs/experiments/polymer_sensitivity_v1/analysis/techno_economics/`：
+
+- `case_economics.csv`：每个方案的质量字段、经济字段和总体可行性；
+- `constraint_evaluations.csv`：每个算例、每条约束的实际值、上限、余量和通过状态；
+- `summary.json`：算例数、技术/经济筛选计数和最优净值算例；
+- `report.md`：算法、结果及适用边界说明。
+
+当前模型是方案筛选模型，尚未包含折现、税费、CAPEX、泵功耗、剪切降解、吸附损失和价格不确定性。
+
+## 技术经济排名、Web 展示与图谱回写（v0.9.5）
+
+### 版本备注（v0.9.5，2026-08-04）
+
+本版在 v0.9.4 的质量、经济和约束计算基础上完成后续闭环：
+
+- 生成 `scenario_rankings.csv` 和 `ranking_report.md`；排名先判断技术可行性和经济正值，再按净增量价值、增量油及稳定参数键排序；
+- 增加排名优先级、稳定排序、API 文件映射和 Neo4j 经济节点的自动化测试；
+- FastAPI 实验详情返回完整技术经济摘要，并新增 `GET /api/experiments/{experiment_id}/techno-economic-rankings`；该接口读取本地分析文件，不依赖 Neo4j 在线；
+- Vue 实验页面新增技术经济 KPI、完整排名表、假设状态提示，以及排名 CSV、约束明细和报告下载入口；
+- Neo4j 新增 `EconomicEvaluation` 节点和 `SimulationCase-[:HAS_ECONOMIC_EVALUATION]->EconomicEvaluation` 血缘，同时登记技术经济 CSV 和报告文件摘要；
+- 图谱方案排名查询优先使用 `scenario_rank`，并返回净增量价值、技术可行性、经济正值及推荐状态。
+
+排名仍使用 `illustrative_unvalidated` 示例价格与设施上限。排名第一表示“在当前假设和排序规则下相对最优”，不表示方案已经达到商业实施条件。
+
+## 知识—实验语义桥与可解释推荐（v0.9.6）
+
+### 版本备注（v0.9.6，2026-08-04）
+
+本版消除领域知识图谱与数值实验流水线之间的主要断点：
+
+- Knowledge Foundation 升级至 `v0.3.0`，补充净增量价值、设施能力、方案排名等领域概念，并将质量、经济、设施和排名逻辑登记为 32 条正式领域规则；
+- 技术经济分析为 9 个方案生成 81 条 `MetricObservation`、99 条 `RuleExecution` 和 9 条 `Recommendation`，并输出 CSV 与 `explanation_chains.json`；
+- 实验指标通过 `OBSERVES` 绑定领域 `Concept`，规则执行通过 `EXECUTES` 绑定 YAML `Rule`，推荐通过 `JUSTIFIED_BY` 追溯所有执行记录，并通过 `SUPPORTED_BY` 关联来源；
+- Neo4j 形成 `SimulationCase → MetricObservation → Concept`、`SimulationCase → RuleExecution → Rule → Source`、`SimulationCase → Recommendation → RuleExecution` 三条解释链；
+- FastAPI 新增 `GET /api/experiments/{experiment_id}/cases/{case_id}/explanation`，图谱在线时优先查询 Neo4j，离线时回退至同源解释 JSON；
+- Vue 排名表新增“查看依据”，展示领域指标、逐条规则通过状态、推荐理由和证据假设等级。
+
+这一版本使 Neo4j 从结果存档层进入解释主链，但当前技术经济来源仍是项目内部未验证模型；正式现场决策仍需替换价格、设施阈值并补充外部标准或项目证据。
+
 ## Neo4j Docker 部署与迁移
 
 当前推荐使用项目根目录 `compose.yaml` 启动 Neo4j；FastAPI 仍运行在 Windows
@@ -277,9 +428,7 @@ Polymer SimulationCase → Comparison → Waterflood SimulationCase
 Neo4j Desktop、本机服务或旧虚拟机中的 Neo4j 必须先停止，否则会与 Docker 争用
 7474 和 7687 端口：
 
-```powershell
-Get-NetTCPConnection -LocalPort 7474,7687 -ErrorAction SilentlyContinue
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 如果命令仍显示监听进程，先在原 Neo4j 管理界面中正常停止数据库。不要直接复制
 Neo4j Desktop 的活动数据库目录；本项目图谱可由 YAML 和实验摘要幂等重建。
@@ -306,33 +455,18 @@ NEO4J_DATABASE=petro
 
 确保 Docker Desktop 已启动，然后在项目根目录执行：
 
-```powershell
-cd F:\Projects\petro-agent
-docker compose config
-docker compose pull neo4j
-docker compose up -d neo4j
-docker compose ps
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 查看日志和等待健康状态：
 
-```powershell
-docker compose logs -f neo4j
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 日志稳定后按 `Ctrl+C` 只退出日志跟踪，不会停止容器。浏览器管理界面为
 `http://localhost:7474`，Bolt 地址为 `bolt://localhost:7687`。
 
 ### 4. 检查连接并重建图谱
 
-```powershell
-.\.venv\Scripts\python.exe scripts\check_neo4j.py
-.\.venv\Scripts\python.exe scripts\validate_knowledge.py
-.\.venv\Scripts\python.exe scripts\import_neo4j.py --dry-run
-.\.venv\Scripts\python.exe scripts\import_neo4j.py
-.\.venv\Scripts\python.exe scripts\import_experiment_graph.py --dry-run
-.\.venv\Scripts\python.exe scripts\import_experiment_graph.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 概念知识与实验实例均使用唯一约束和 `MERGE`，重复执行不会创建重复节点。完整
 时间序列、Flow 二进制和图片仍保存在文件系统中，不会导入 Neo4j。
@@ -341,29 +475,19 @@ docker compose logs -f neo4j
 
 日常启动：
 
-```powershell
-docker compose up -d neo4j
-.\.venv\Scripts\python.exe scripts\run_web.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 只停止 Neo4j：
 
-```powershell
-docker compose stop neo4j
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 停止并删除容器但保留 named volume：
 
-```powershell
-docker compose down
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 以下命令会删除 Neo4j 数据卷，日常禁止执行：
 
-```powershell
-# 危险：只有确认可以从 YAML 和实验文件完整重建时才可执行。
-docker compose down -v
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 ### 6. 兼容旧的直接启动方式（保留）
 
@@ -389,11 +513,7 @@ docker compose down -v
 
 推荐先启动 Docker Neo4j：
 
-```powershell
-docker compose up -d neo4j
-docker compose ps
-.\.venv\Scripts\python.exe scripts\check_neo4j.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 确认项目根目录 `.env` 至少包含：
 
@@ -411,21 +531,13 @@ NEO4J_DATABASE=petro
 
 该步骤不会运行 Flow，也不会改写已有聚合物实验：
 
-```powershell
-cd F:\Projects\petro-agent
-.\.venv\Scripts\python.exe scripts\prepare_waterflood_baseline.py --check-only
-.\.venv\Scripts\python.exe scripts\prepare_waterflood_baseline.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 ### 3. 在 WSL 中检查 OPM Flow
 
 只有运行或重新运行数值模拟时才需要 WSL：
 
-```bash
-cd /mnt/f/Projects/petro-agent
-source .venv-wsl/bin/activate
-PYTHONPATH=src python scripts/check_opm_flow.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 检查结果应至少满足：
 
@@ -437,10 +549,7 @@ available = true
 
 ### 4. 在 WSL 中运行聚合物参数实验
 
-```bash
-PYTHONPATH=src python scripts/run_parameter_sweep.py \
-  config/experiments/polymer_sensitivity.yaml
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 输出目录为：
 
@@ -452,10 +561,7 @@ outputs/experiments/polymer_sensitivity_v1
 
 ### 5. 在 WSL 中运行独立水驱基准
 
-```bash
-PYTHONPATH=src python scripts/run_parameter_sweep.py \
-  config/experiments/waterflood_baseline.yaml
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 输出目录为：
 
@@ -469,10 +575,7 @@ outputs/experiments/waterflood_baseline_v1
 
 该步骤只读取现有模拟结果，不需要 WSL 或重新运行 Flow：
 
-```powershell
-cd F:\Projects\petro-agent
-.\.venv\Scripts\python.exe scripts\analyze_waterflood_increment.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 主要输出位于：
 
@@ -484,22 +587,13 @@ outputs/experiments/polymer_sensitivity_v1/analysis/waterflood_comparison
 
 先校验 YAML 知识基础层，再依次导入概念知识和实验实例。两个导入器均幂等：
 
-```powershell
-.\.venv\Scripts\python.exe scripts\validate_knowledge.py
-.\.venv\Scripts\python.exe scripts\import_neo4j.py --dry-run
-.\.venv\Scripts\python.exe scripts\import_neo4j.py
-.\.venv\Scripts\python.exe scripts\import_experiment_graph.py --dry-run
-.\.venv\Scripts\python.exe scripts\import_experiment_graph.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 如果只是重复启动页面且 YAML、实验结果均未变化，可以跳过本步骤。
 
 ### 8. 启动 FastAPI 和已构建的 Vue 页面
 
-```powershell
-cd F:\Projects\petro-agent
-.\.venv\Scripts\python.exe scripts\run_web.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 浏览器打开：
 
@@ -510,10 +604,7 @@ http://127.0.0.1:8000
 正常查看已有结果时不需要单独启动 Vue 开发服务器。只有修改 `frontend/src` 后才需
 重新构建：
 
-```powershell
-cd F:\Projects\petro-agent\frontend
-npm.cmd run build
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 ### 最简日常启动顺序
 
@@ -539,12 +630,7 @@ Neo4j 离线时，OPM 实验数据、增量报告和普通页面仍可使用，�
 
 只转换并检查向量：
 
-```powershell
-python scripts\convert_opm_summary.py `
-  "outputs\opm\polymer_simple2D\2D_THREEPHASE_POLY_HETER.ESMRY" `
-  --output-dir "outputs\converted" `
-  --case-id "polymer_simple2d"
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 主要输出：
 
@@ -556,12 +642,7 @@ outputs/converted/polymer_simple2d_summary_metadata.json
 
 `v0.8.0` 新增完整入口，将标准 CSV 自动交给现有 `analyze_csv()`：
 
-```powershell
-python scripts\analyze_opm_summary.py `
-  "outputs\opm\polymer_simple2D\2D_THREEPHASE_POLY_HETER.ESMRY" `
-  --output-root "outputs" `
-  --case-id "polymer_simple2d"
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 完整链路：
 
@@ -585,9 +666,7 @@ outputs/reports/polymer_simple2d.md
 如果提示无法导入 `opm.io.ecl.ESmry`，先在 PowerShell 中确认 WSL Python
 绑定是否存在：
 
-```powershell
-wsl.exe -d Ubuntu-24.04 -- python3 -c "from opm.io.ecl import ESmry; print('OK')"
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 当前优先读取 `ESMRY`；`SMSPEC + UNSMRY` 兼容读取属于后续增强项，不在
 本次两个版本的完成范围内。
@@ -598,11 +677,11 @@ wsl.exe -d Ubuntu-24.04 -- python3 -c "from opm.io.ecl import ESmry; print('OK')
 `PetroleumEngineeringCoreOntology v0.2`（石油工程核心本体 v0.2），并提供
 YAML 到 Neo4j 的可重复导入与查询适配层。
 
-> 当前版本：`PetroAgent v0.9.3（成对增量评价与实验血缘图谱） / Knowledge Foundation v0.2.0`
+> 当前版本：`PetroAgent v0.9.6（知识—实验语义桥与可解释推荐） / Knowledge Foundation v0.3.0`
 > Python：`3.10+`  
 > 当前边界：确定性分析内核＋YAML知识源＋Neo4j存储/查询＋Web 演示展示；
 > 已支持从 Windows 调用 WSL2 Ubuntu 中的 OPM Flow、ESMRY 解析和参数化批量实验；
-> 已支持实验摘要幂等写回 Neo4j 和批量结果页面展示；暂不包含 LLM、RAG、经济优化与完整时间序列入图。
+> 已支持实验摘要幂等写回 Neo4j、批量结果页面展示和未折现经济筛选；暂不包含 LLM、RAG、完整经济优化与完整时间序列入图。
 
 v0.4.2 在保留原始产物下载功能的基础上，增加图表、文档和表格三类在线
 预览；Neo4j“全部图谱”视图同步展示全部实体列表与全部关系列表，并支持
@@ -668,6 +747,12 @@ PetroAgent 程序版本与 Knowledge Foundation 知识库版本分别管理：�
 | `v0.7.0` | OPM Summary 转换 | ESMRY 读取、向量与单位枚举、标准 CSV、向量目录和转换元数据 | 自动分析与统一报告 |
 | `v0.8.0` | OPM 自动分析闭环 | ESMRY 接入 `analyze_csv()`，生成规则结果、图表和科研报告 | 参数化批量实验 |
 | `v0.9.0` | 参数实验与数据集 | 显式占位符参数化 Deck、多算例 Flow、断点续跑、标签和数据集汇总 | Neo4j 实例写回、页面自动展示、LLM 解释 |
+| `v0.9.1` | 敏感性分析与 Web 展示 | 校验 3×3 参数实验，生成敏感性图表和报告，并接入 FastAPI/Vue | 严格水驱基线、经济评价 |
+| `v0.9.2` | 水驱配对增量评价 | 建立独立水驱基准，按注入速率生成成对终值、动态增量数据、图表和报告 | 经济与设施约束 |
+| `v0.9.3` | 实验血缘图谱 | 将实验、算例、参数、运行、指标、数据集、报告和水驱比较关系幂等写入 Neo4j | 聚合物质量和经济筛选 |
+| `v0.9.4` | 技术经济筛选 | 增加井级 BHP、聚合物质量衡算、未折现增量经济、盈亏平衡指标和五类设施约束 | 折现现金流、CAPEX、能耗、风险与不确定性优化 |
+| `v0.9.5` | 排名与应用闭环 | 生成技术经济排名和报告，接入 FastAPI/Vue，并以 EconomicEvaluation 节点幂等写回 Neo4j | 折现现金流、概率风险、自动优化与现场标定 |
+| `v0.9.6` | 知识—实验语义桥 | 规则实体化、执行实例化、指标绑定概念、推荐绑定规则和证据，并在 API/Vue 展开完整解释链 | 外部标准条款、现场证据审批、LLM 编排与概率推理 |
 
 ### v0.1.0：确定性分析内核
 
@@ -1023,34 +1108,17 @@ petro-agent-m1/
 
 ### 4.1 Windows PowerShell
 
-```powershell
-cd F:\Projects\petro-agent-m1
-py -3.10 -m pip install -e ".[dev]"
-pytest
-python scripts\validate_knowledge.py
-python scripts\run_demo.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 以上命令直接使用本机 Python 3.10，不创建或激活 Python 虚拟环境。
 
 如需使用清华镜像：
 
-```powershell
-python -m pip install -e ".[dev]" -i https://pypi.tuna.tsinghua.edu.cn/simple
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 ### 4.2 macOS / Linux
 
-```bash
-cd petro-agent-m1
-python3.10 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e ".[dev]"
-pytest
-python scripts/validate_knowledge.py
-python scripts/run_demo.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 成功后会生成：
 
@@ -1077,22 +1145,15 @@ NEO4J_DATABASE=petro
 
 先只校验 YAML 和统计导入计划，不连接数据库：
 
-```powershell
-python scripts\import_neo4j.py --dry-run
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 确认无误后执行幂等导入；重复运行不会重复创建同一节点和关系：
 
-```powershell
-python scripts\import_neo4j.py
-python scripts\query_neo4j.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 也可以让聚合物驱 Demo 直接从 Neo4j 输出关系佐证：
 
-```powershell
-python scripts\run_demo.py --graph-source neo4j
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 默认 `python scripts\run_demo.py` 仍读取 YAML；这便于比较 YAML 事实来源与
 Neo4j 派生存储是否一致。
@@ -1102,18 +1163,12 @@ Neo4j 派生存储是否一致。
 如果已经运行过中文化之前的 `v0.3.0` 导入脚本，无需删除数据库。拉取新代码后
 重新执行：
 
-```powershell
-python scripts\import_neo4j.py --dry-run
-python scripts\import_neo4j.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 导入器会通过稳定 ID 命中原节点和关系，并补写 `name_zh`、`name_en` 等属性。
 随后验证：
 
-```powershell
-python scripts\query_neo4j.py
-python scripts\run_demo.py --graph-source neo4j
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 预期关系输出形式：
 
@@ -1216,9 +1271,7 @@ LIMIT 200;
 
 机器需安装 Git，并能够访问 GitHub。
 
-```bash
-python scripts/fetch_opm_data.py polymer_simple2D spe9
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 结果默认写入：
 
@@ -1237,18 +1290,13 @@ data/raw/spe9/
 
 也可分别下载：
 
-```bash
-python scripts/fetch_opm_data.py polymer_simple2D
-python scripts/fetch_opm_data.py spe9
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 ## 6. 检查 OPM/Eclipse Deck
 
 找到案例主 `.DATA` 文件后运行：
 
-```bash
-petro-agent inspect-deck --input data/raw/polymer_simple2D/CASE.DATA
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 将 `CASE.DATA` 替换成该目录中实际主文件名。命令输出：
 
@@ -1268,26 +1316,15 @@ PetroAgent 和 Python 仍在 Windows 本机运行；OPM Flow 安装在 WSL2 的
 
 复制配置：
 
-```powershell
-Copy-Item .env.example .env
-$env:PYTHONPATH = "src"
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 检查 WSL 中的 Flow：
 
-```powershell
-python scripts\check_opm_flow.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 环境检查通过后运行 Deck：
 
-```powershell
-python scripts\run_opm_case.py `
-  "data\raw\polymer_simple2D\POLYMER_SIMPLE2D.DATA" `
-  --output-dir "outputs\opm\polymer_simple2D" `
-  --mode wsl `
-  --distribution Ubuntu-24.04
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 运行后保存标准输出、错误输出、Flow 版本和 `run_manifest.json`。命令退出码为
 `0` 才表示 Flow 进程成功结束；仍需检查 `.ESMRY`、`.SMSPEC`、`.UNSMRY` 等结果。
@@ -1326,21 +1363,11 @@ column_mapping:
 
 准备好 CSV 后运行：
 
-```bash
-petro-agent analyze \
-  --input data/processed/polymer_simple2d_result.csv \
-  --config config/cases/polymer_simple2d.yaml \
-  --output outputs
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 SPE9 使用：
 
-```bash
-petro-agent analyze \
-  --input data/processed/spe9_result.csv \
-  --config config/cases/spe9.yaml \
-  --output outputs
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 ## 8. 统一数据协议
 
@@ -1750,9 +1777,7 @@ domain_packs:
 
 运行全部测试：
 
-```bash
-pytest -q
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 当前覆盖：
 
@@ -1914,10 +1939,7 @@ outputs/runs/*_result.json        页面使用的结构化分析结果
 
 ### 启动后端
 
-```powershell
-python -m pip install -r requirements.txt
-python scripts\run_web.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 API 文档：
 
@@ -1929,11 +1951,7 @@ http://127.0.0.1:8000/docs
 
 要求 Node.js 20.19+ 或 22.12+：
 
-```powershell
-cd frontend
-npm install
-npm run dev
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 页面地址：
 
@@ -1943,11 +1961,7 @@ http://127.0.0.1:5173
 
 生产构建：
 
-```powershell
-npm run build
-cd ..
-python scripts\run_web.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 当 `frontend/dist` 存在时，FastAPI 会同时托管构建后的页面，可直接访问
 `http://127.0.0.1:8000`。
@@ -1985,10 +1999,7 @@ python scripts\run_web.py
 
 至少验证：
 
-```powershell
-python scripts\run_demo.py
-pytest
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 正式科研数据还应保存数据来源、下载日期、上游版本或提交哈希、处理脚本及参数，
 避免最终报告无法复现。
@@ -2002,11 +2013,7 @@ pytest
 4. 新增条件运算符或计算方式时，应扩展规则执行器并增加单元测试。
 5. 修改 YAML 后先校验，再重新导入 Neo4j：
 
-```powershell
-python scripts\validate_knowledge.py
-python scripts\import_neo4j.py --dry-run
-python scripts\import_neo4j.py
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 6. 对比 `knowledge`、`legacy` 或 `hybrid` 模式下的规则数量、执行数、跳过数和结果，
    防止规则加载成功但因输入字段缺失而未执行。
@@ -2027,12 +2034,7 @@ python scripts\import_neo4j.py
 
 推荐执行：
 
-```powershell
-python scripts\import_neo4j.py --dry-run
-python scripts\import_neo4j.py
-python scripts\query_neo4j.py
-python scripts\run_demo.py --graph-source neo4j
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 如果修改了节点或关系的稳定 ID，`MERGE` 不会自动删除旧 ID 对应的数据。此类迁移
 必须先编写迁移脚本或明确清理目标，备份数据库后再执行，不要直接清空整个库。
@@ -2139,14 +2141,7 @@ outputs/
 
 建议验证命令：
 
-```powershell
-python scripts\validate_knowledge.py
-python scripts\import_neo4j.py --dry-run
-pytest
-python scripts\run_demo.py
-cd frontend
-npm run build
-```
+> 执行命令统一见文末[“执行命令手册”](#执行命令手册固定置于-readme-末尾)。
 
 替换完成后建议先创建功能分支并提交 Pull Request，不要直接覆盖稳定版本。版本升级
 时同时记录数据版本、知识库版本、Neo4j 导入版本、API 版本和前端版本，保证历史
@@ -2271,4 +2266,219 @@ sheet_name  可选，仅 XLSX 使用
   "case_id": "polymer_simple2d",
   "dataset_id": "ds_xxxxxxxxxxxx"
 }
+```
+
+## 执行命令手册（固定置于 README 末尾）
+
+> 维护规则：本节必须始终是 README 的最后一节。新增或修改运行命令时，只更新本节；
+> 正文仅引用本节，不复制命令。除 OPM Flow 明确在 WSL 中执行外，其余命令默认在
+> Windows PowerShell、项目根目录 `F:\Projects\petro-agent` 中执行。
+
+### A. 首次准备 Windows 环境
+
+```powershell
+cd F:\Projects\petro-agent
+py -3.10 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev]"
+Copy-Item .env.example .env
+```
+
+无法访问默认 Python 软件源时，可临时使用镜像：
+
+```powershell
+python -m pip install -e ".[dev]" -i https://pypi.tuna.tsinghua.edu.cn/simple
+```
+
+### B. 首次准备 WSL 与 OPM Flow 环境
+
+```bash
+cd /mnt/f/Projects/petro-agent
+python3.10 -m venv .venv-wsl
+source .venv-wsl/bin/activate
+python -m pip install -e ".[dev]"
+PYTHONPATH=src python scripts/check_opm_flow.py
+```
+
+从 Windows 验证 WSL 的 ESMRY Python 绑定：
+
+```powershell
+wsl.exe -d Ubuntu-24.04 -- python3 -c "from opm.io.ecl import ESmry; print('OK')"
+```
+
+### C. 日常启动（推荐顺序）
+
+启动 Docker Neo4j、检查连接，再启动包含已构建 Vue 静态页面的 FastAPI：
+
+```powershell
+cd F:\Projects\petro-agent
+.\.venv\Scripts\Activate.ps1
+docker compose up -d neo4j
+docker compose ps
+.\.venv\Scripts\python.exe scripts\check_neo4j.py
+.\.venv\Scripts\python.exe scripts\run_web.py
+```
+
+启动后访问：
+
+- Web 工作台：`http://127.0.0.1:8000`
+- FastAPI 文档：`http://127.0.0.1:8000/docs`
+- Neo4j Browser：`http://localhost:7474`
+
+### D. 前端开发与构建
+
+日常查看已构建页面不需要单独启动前端。只有修改 Vue 源码时才运行开发服务器：
+
+```powershell
+cd F:\Projects\petro-agent\frontend
+npm install
+npm run dev
+```
+
+完成前端修改后重新构建，并回到根目录启动 Web：
+
+```powershell
+cd F:\Projects\petro-agent\frontend
+npm run build
+cd ..
+.\.venv\Scripts\python.exe scripts\run_web.py
+```
+
+### E. 获取与检查 OPM 案例
+
+```powershell
+cd F:\Projects\petro-agent
+.\.venv\Scripts\python.exe scripts\fetch_opm_data.py polymer_simple2D spe9
+petro-agent inspect-deck --input data/raw/polymer_simple2D/CASE.DATA
+.\.venv\Scripts\python.exe scripts\check_opm_flow.py
+```
+
+### F. 聚合物驱与水驱实验执行
+
+先在 Windows 中检查并生成独立水驱 Deck：
+
+```powershell
+cd F:\Projects\petro-agent
+.\.venv\Scripts\python.exe scripts\prepare_waterflood_baseline.py --check-only
+.\.venv\Scripts\python.exe scripts\prepare_waterflood_baseline.py
+.\.venv\Scripts\python.exe scripts\run_parameter_sweep.py config\experiments\waterflood_baseline.yaml --prepare-only
+```
+
+再进入 WSL。脚本默认复用成功算例；不要在已有结果上使用 `--no-resume`，除非确认需要全部重跑：
+
+```bash
+cd /mnt/f/Projects/petro-agent
+source .venv-wsl/bin/activate
+PYTHONPATH=src python scripts/check_opm_flow.py
+PYTHONPATH=src python scripts/run_parameter_sweep.py config/experiments/polymer_sensitivity.yaml
+PYTHONPATH=src python scripts/run_parameter_sweep.py config/experiments/waterflood_baseline.yaml
+```
+
+仅生成聚合物派生 Deck、不运行 Flow：
+
+```bash
+cd /mnt/f/Projects/petro-agent
+source .venv-wsl/bin/activate
+PYTHONPATH=src python scripts/run_parameter_sweep.py config/experiments/polymer_sensitivity.yaml --prepare-only
+```
+
+### G. 实验后处理（推荐顺序）
+
+已有成功的 Flow 输出后，以下步骤全部在 Windows 中执行，不需要启动 WSL：
+
+```powershell
+cd F:\Projects\petro-agent
+.\.venv\Scripts\Activate.ps1
+.\.venv\Scripts\python.exe scripts\analyze_parameter_sweep.py polymer_sensitivity_v1
+.\.venv\Scripts\python.exe scripts\analyze_waterflood_increment.py
+.\.venv\Scripts\python.exe scripts\analyze_polymer_economics.py
+Get-Content outputs\experiments\polymer_sensitivity_v1\analysis\techno_economics\summary.json
+Get-Content outputs\experiments\polymer_sensitivity_v1\analysis\techno_economics\report.md
+```
+
+使用指定经济参数文件：
+
+```powershell
+.\.venv\Scripts\python.exe scripts\analyze_polymer_economics.py --config config\economics\polymer_economics.yaml
+```
+
+### H. 单算例 Flow、Summary 转换与分析
+
+```powershell
+cd F:\Projects\petro-agent
+.\.venv\Scripts\python.exe scripts\run_opm_case.py data\raw\polymer_simple2D\POLYMER_SIMPLE2D.DATA --output-dir outputs\opm\polymer_simple2D
+.\.venv\Scripts\python.exe scripts\convert_opm_summary.py outputs\opm\polymer_simple2D\2D_THREEPHASE_POLY_HETER.ESMRY --output-dir outputs\converted --case-id polymer_simple2d
+.\.venv\Scripts\python.exe scripts\analyze_opm_summary.py outputs\opm\polymer_simple2D\2D_THREEPHASE_POLY_HETER.ESMRY --output-root outputs --case-id polymer_simple2d
+```
+
+### I. Neo4j 初始化、校验与实验写回
+
+首次启动或知识 YAML 发生变化时按顺序执行。导入器使用唯一约束和 `MERGE`，可以幂等重跑：
+
+```powershell
+cd F:\Projects\petro-agent
+docker compose config
+docker compose up -d neo4j
+.\.venv\Scripts\python.exe scripts\check_neo4j.py
+.\.venv\Scripts\python.exe scripts\validate_knowledge.py
+.\.venv\Scripts\python.exe scripts\import_neo4j.py --dry-run
+.\.venv\Scripts\python.exe scripts\import_neo4j.py
+.\.venv\Scripts\python.exe scripts\import_experiment_graph.py --dry-run
+.\.venv\Scripts\python.exe scripts\import_experiment_graph.py
+.\.venv\Scripts\python.exe scripts\query_neo4j.py
+```
+
+### J. Demo、数据分析与测试
+
+```powershell
+cd F:\Projects\petro-agent
+.\.venv\Scripts\python.exe scripts\run_demo.py
+.\.venv\Scripts\python.exe scripts\run_demo.py --graph-source neo4j
+petro-agent analyze --input data/processed/polymer_simple2d_result.csv --config config/cases/polymer_simple2d.yaml --output outputs
+petro-agent analyze --input data/processed/spe9_result.csv --config config/cases/spe9.yaml --output outputs
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+如果当前开发环境仍缺少数据上传测试所需的可选依赖，可先运行其余回归：
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest --ignore=tests/test_dataset_upload.py -q
+```
+
+### K. 状态监控与日志
+
+监控 WSL 中的参数扫描和 Flow 进程：
+
+```bash
+watch -n 2 "ps -eo pid,ppid,etime,%cpu,%mem,cmd | grep -E '[f]low|[r]un_parameter_sweep'"
+```
+
+查看 Neo4j 容器状态和持续日志：
+
+```powershell
+docker compose ps
+docker compose logs -f neo4j
+```
+
+日志跟踪窗口中按 `Ctrl+C` 只会退出查看，不会停止容器。
+
+### L. 日常停止与数据保留
+
+先在运行 FastAPI 的终端按 `Ctrl+C`，然后按需要停止 Neo4j：
+
+```powershell
+docker compose stop neo4j
+```
+
+停止并删除容器、网络，但保留 Neo4j named volume 数据：
+
+```powershell
+docker compose down
+```
+
+以下命令会删除 Neo4j 数据卷，不属于日常操作；只有确认图谱可从 YAML 和实验文件完整重建时才能执行：
+
+```powershell
+# 危险：永久删除 Docker Neo4j 数据卷。
+docker compose down -v
 ```

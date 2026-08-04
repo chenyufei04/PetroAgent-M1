@@ -31,7 +31,7 @@ OUTPUT_ROOT = ROOT / "outputs"
 EXPERIMENT_ROOT = OUTPUT_ROOT / "experiments"
 FRONTEND_DIST = ROOT / "frontend" / "dist"
 
-app = FastAPI(title="PetroAgent Web Demo API", version="0.5.0")
+app = FastAPI(title="PetroAgent Web Demo API", version="0.9.6")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -183,7 +183,60 @@ def get_experiment(experiment_id: str) -> dict:
         comparison["report_url"] = base + comparison["report"]
         comparison["paired_case_metrics_url"] = base + comparison["paired_case_metrics"]
         comparison["paired_time_series_url"] = base + comparison["paired_time_series"]
+    economics = payload.get("techno_economics")
+    if economics:
+        # 只拼接 analysis 目录内的受控相对路径，实际下载仍由安全文件接口校验。
+        for field in (
+            "case_economics", "constraints", "rankings", "report", "ranking_report",
+            "metric_observations", "rule_executions", "recommendations", "explanation_chains",
+        ):
+            if economics.get(field):
+                economics[f"{field}_url"] = base + economics[field]
+        economics["rankings_api_url"] = f"/api/experiments/{experiment_id}/techno-economic-rankings"
+        economics["explanation_api_template"] = f"/api/experiments/{experiment_id}/cases/{{case_id}}/explanation"
     return payload
+
+
+@app.get("/api/experiments/{experiment_id}/techno-economic-rankings")
+def get_techno_economic_rankings(experiment_id: str) -> dict:
+    """返回文件系统中的技术经济排名；该接口不依赖 Neo4j 在线状态。"""
+    directory = _experiment_dir(experiment_id)
+    analysis = directory / "analysis" / "techno_economics"
+    summary_path = analysis / "summary.json"
+    rankings_path = analysis / "scenario_rankings.csv"
+    if not summary_path.is_file() or not rankings_path.is_file():
+        raise HTTPException(409, "实验尚未生成技术经济排名")
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    frame = pd.read_csv(rankings_path)
+    # 通过 JSON 转换把 CSV 中的 NaN 变为 null，保证 FastAPI 返回严格 JSON。
+    rows = json.loads(frame.to_json(orient="records"))
+    return {**summary, "rows": rows}
+
+
+@app.get("/api/experiments/{experiment_id}/cases/{case_id}/explanation")
+def get_scenario_explanation(experiment_id: str, case_id: str) -> dict:
+    """返回单方案从指标观测、规则执行到推荐证据的完整解释链。"""
+    directory = _experiment_dir(experiment_id)
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+", case_id):
+        raise HTTPException(400, "非法算例编号")
+    # 在线时优先走知识图谱关系链；连接失败时回退到同一分析阶段生成的可审计 JSON。
+    try:
+        settings = Neo4jSettings.from_env(ROOT / ".env")
+        with Neo4jClient(settings) as client:
+            client.verify()
+            graph_chain = Neo4jQueryService(client).scenario_explanation(case_id)
+        if graph_chain and graph_chain.get("recommendation"):
+            return {"source": "neo4j", **graph_chain}
+    except Exception:
+        pass
+    path = directory / "analysis" / "techno_economics" / "explanation_chains.json"
+    if not path.is_file():
+        raise HTTPException(409, "实验尚未生成语义解释链")
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    chain = next((item for item in payload.get("cases", []) if item.get("case_id") == case_id), None)
+    if chain is None:
+        raise HTTPException(404, "算例解释链不存在")
+    return {"source": "file", "model_id": payload.get("model_id"), **chain}
 
 
 @app.get("/api/experiments/{experiment_id}/files/{file_path:path}")

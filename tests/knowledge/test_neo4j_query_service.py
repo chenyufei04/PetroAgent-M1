@@ -69,3 +69,34 @@ def test_experiment_rankings_returns_traceable_baseline():
 
     assert rows[0]["incremental_cumulative_oil_m3"] == 1474.3
     assert rows[0]["baseline_case_id"] == "water-200"
+
+
+class ExplanationResult:
+    def single(self):
+        return FakeRecord(
+            case_id="polymer-1",
+            observations=[{"observation_id": "o1", "concept_id": "net_incremental_value"}],
+            rule_executions=[{"rule_execution_id": "x1", "rule_id": "PF-ECO-002", "passed": False}],
+            recommendation={"decision": "技术可行但经济未通过"},
+            evidence={"source_id": "petroagent_techno_economic_model_v1"},
+        )
+
+
+class ExplanationSession(FakeSession):
+    def run(self, *_args, **_kwargs):
+        return ExplanationResult()
+
+
+class ExplanationClient:
+    def session(self):
+        return ExplanationSession()
+
+
+def test_scenario_explanation_maps_complete_chain():
+    from petro_agent.knowledge.neo4j.query_service import Neo4jQueryService
+
+    payload = Neo4jQueryService(ExplanationClient()).scenario_explanation("polymer-1")
+
+    assert payload["observations"][0]["concept_id"] == "net_incremental_value"
+    assert payload["rule_executions"][0]["rule_id"] == "PF-ECO-002"
+    assert payload["recommendation"]["decision"] == "技术可行但经济未通过"

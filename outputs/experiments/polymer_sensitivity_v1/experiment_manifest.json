@@ -2,8 +2,10 @@
   "experiment_id": "polymer_sensitivity_v1",
   "analysis_case_id": "polymer_simple2d",
   "data_nature": "OPM数值模拟数据",
-  "config_file": "/mnt/f/Projects/petro-agent/config/experiments/polymer_sensitivity.yaml",
-  "base_deck": "/mnt/f/Projects/petro-agent/data/raw/polymer_simple2D/2D_THREEPHASE_POLY_HETER.DATA",
+  "comparison_role": "scenario",
+  "paired_experiment_id": "waterflood_baseline_v1",
+  "config_file": "F:\\Projects\\petro-agent\\config\\experiments\\polymer_sensitivity.yaml",
+  "base_deck": "F:\\Projects\\petro-agent\\data\\raw\\polymer_simple2D\\2D_THREEPHASE_POLY_HETER.DATA",
   "design": "cartesian",
   "case_count": 9,
   "status_counts": {
@@ -13,18 +15,18 @@
     "polymer_concentration": "kg/m3",
     "injection_rate": "m3/day"
   },
-  "summary_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/dataset/cases.csv",
-  "series_csv": "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/dataset/time_series.csv",
+  "summary_csv": "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\dataset\\cases.csv",
+  "series_csv": "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\dataset\\time_series.csv",
   "cases": [
-    "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0001-16d0f364/case_manifest.json",
-    "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0002-5e32fee9/case_manifest.json",
-    "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0003-8cd10086/case_manifest.json",
-    "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0004-737bf45b/case_manifest.json",
-    "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0005-d0a64fb5/case_manifest.json",
-    "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0006-b9353855/case_manifest.json",
-    "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0007-ee90198c/case_manifest.json",
-    "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0008-5f63a4ec/case_manifest.json",
-    "/mnt/f/Projects/petro-agent/outputs/experiments/polymer_sensitivity_v1/cases/polymer_sensitivity_v1-0009-9c30f23a/case_manifest.json"
+    "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0001-16d0f364\\case_manifest.json",
+    "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0002-5e32fee9\\case_manifest.json",
+    "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0003-8cd10086\\case_manifest.json",
+    "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0004-737bf45b\\case_manifest.json",
+    "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0005-d0a64fb5\\case_manifest.json",
+    "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0006-b9353855\\case_manifest.json",
+    "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0007-ee90198c\\case_manifest.json",
+    "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0008-5f63a4ec\\case_manifest.json",
+    "F:\\Projects\\petro-agent\\outputs\\experiments\\polymer_sensitivity_v1\\cases\\polymer_sensitivity_v1-0009-9c30f23a\\case_manifest.json"
   ],
-  "updated_at": "2026-08-02T03:16:41.779464+00:00"
+  "updated_at": "2026-08-04T05:36:33.127936+00:00"
 }

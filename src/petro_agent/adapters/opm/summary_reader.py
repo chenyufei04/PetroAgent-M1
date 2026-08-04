@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import tempfile
 from dataclasses import asdict, dataclass
@@ -59,6 +60,14 @@ WELL_MAPPINGS: dict[str, tuple[str, str]] = {
     "WBHP": ("well_bhp_bar", "bar"),
     "WWCT": ("well_water_cut_fraction", "fraction"),
 }
+
+
+def _object_column_name(object_name: str, canonical_field: str) -> str:
+    """生成稳定的井级列名，保留井名以避免多个井的同类向量互相覆盖。"""
+    normalized = re.sub(r"[^0-9a-zA-Z]+", "_", object_name).strip("_").lower()
+    if not normalized:
+        raise ValueError("井级 Summary 向量缺少可用的对象名称")
+    return f"{normalized}_{canonical_field}"
 
 
 def _split_key(key: str) -> tuple[str, str | None]:
@@ -279,11 +288,20 @@ def convert_esmry(
     canonical_units: dict[str, str] = {}
     source_vectors: dict[str, str] = {}
     for item in descriptions:
-        if item.scope != "field" or not item.canonical_field:
+        if not item.canonical_field:
             continue
-        frame[item.canonical_field] = vectors[item.key]
-        canonical_units[item.canonical_field] = FIELD_MAPPINGS[item.keyword][1]
-        source_vectors[item.canonical_field] = item.key
+        if item.scope == "field":
+            output_field = item.canonical_field
+            output_unit = FIELD_MAPPINGS[item.keyword][1]
+        elif item.scope == "well" and item.object_name:
+            # 井级向量必须带井名前缀，否则多口井的 WBHP、WOPR 等字段会发生覆盖。
+            output_field = _object_column_name(item.object_name, item.canonical_field)
+            output_unit = WELL_MAPPINGS[item.keyword][1]
+        else:
+            continue
+        frame[output_field] = vectors[item.key]
+        canonical_units[output_field] = output_unit
+        source_vectors[output_field] = item.key
     if "time_days" not in frame:
         raise ValueError("ESMRY 中缺少 TIME 向量，无法生成标准时间序列")
 

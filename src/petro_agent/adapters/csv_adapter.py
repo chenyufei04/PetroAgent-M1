@@ -11,6 +11,8 @@ from petro_agent.core.models import CanonicalDataset, SourceInfo
 
 class CsvAdapter:
     def load(self, source: Path, config: dict) -> CanonicalDataset:
+        # 多领域适配说明：通用 CSV 只依赖案例 YAML 的映射和单位。若新领域需要多表关联、
+        # 特殊二进制格式或按井/层/作业段重塑数据，应新增适配器，不要在这里判断领域名称。
         frame = pd.read_csv(source)
         mapping = config.get("column_mapping", {})
         frame = frame.rename(columns=mapping)

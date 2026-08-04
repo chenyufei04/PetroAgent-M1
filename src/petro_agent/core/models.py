@@ -20,6 +20,8 @@ class SourceInfo:
 
 @dataclass
 class CanonicalDataset:
+    # 多领域适配说明：这是跨领域稳定契约。新领域优先通过 frame、units、source 和
+    # metadata 表达差异；只有多个领域共同需要新语义时才扩展核心字段。
     case_id: str
     domain: str
     process: str

@@ -33,6 +33,10 @@ class EconomicAssumptions:
     max_total_polymer_kg: float
 
 
+# 多领域适配说明：本模块的段塞、药剂质量和配聚约束属于聚合物驱专用算法。
+# 接入气驱、热采、人工举升、压裂或钻井时应新建领域模块，并复用结果契约而非改写这些公式。
+
+
 @dataclass(frozen=True)
 class ConstraintEvaluation:
     """一条可审计的约束判断；margin 大于等于零表示满足约束。"""

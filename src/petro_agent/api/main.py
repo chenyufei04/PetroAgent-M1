@@ -216,6 +216,8 @@ def get_techno_economic_rankings(experiment_id: str) -> dict:
 @app.get("/api/experiments/{experiment_id}/cases/{case_id}/explanation")
 def get_scenario_explanation(experiment_id: str, case_id: str) -> dict:
     """返回单方案从指标观测、规则执行到推荐证据的完整解释链。"""
+    # 多领域适配说明：解释链结构是跨领域契约，可以直接复用；新领域只需生成同结构数据。
+    # 领域专用 KPI、曲线或作业层级应增加独立接口，不要改变本接口的通用返回语义。
     directory = _experiment_dir(experiment_id)
     if not re.fullmatch(r"[A-Za-z0-9_.-]+", case_id):
         raise HTTPException(400, "非法算例编号")

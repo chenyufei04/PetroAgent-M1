@@ -18,11 +18,15 @@ from petro_agent.reporting.markdown import write_report
 from petro_agent.reporting.plots import create_figures
 
 
+# 多领域适配说明：新增领域包后必须在此注册稳定名称；案例 YAML 通过该名称选择领域逻辑。
+# 若领域持续增加，应把此静态表升级为受控插件注册器，而不是继续堆叠条件分支。
 PACKS = {
     "common_reservoir": CommonReservoirPack,
     "polymer_flooding": PolymerFloodingPack,
 }
 
+# 多领域适配说明：此集合只用于旧 Python 校验迁移期去重。新领域的成熟规则应直接写入
+# knowledge_graph 的领域规则目录，不应长期把新规则 ID 添加到这里。
 MIGRATED_LEGACY_RULES = {
     "DATA_NOT_EMPTY",
     "TIME_MONOTONIC",

@@ -20,6 +20,8 @@ from petro_agent.economics import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+# 多领域适配说明：以下默认路径和水驱配对关系是聚合物驱专用入口。新领域应新增自己的
+# workflow/脚本并输出相同的语义结果契约，不要继续向本脚本加入领域 ID 条件分支。
 DEFAULT_CONFIG = ROOT / "config" / "economics" / "polymer_economics.yaml"
 DEFAULT_PAIRED = ROOT / "outputs" / "experiments" / "polymer_sensitivity_v1" / "analysis" / "waterflood_comparison" / "paired_case_metrics.csv"
 DEFAULT_SERIES = ROOT / "outputs" / "experiments" / "polymer_sensitivity_v1" / "dataset" / "time_series.csv"

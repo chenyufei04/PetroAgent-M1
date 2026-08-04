@@ -9,6 +9,8 @@ const best = computed(() => props.experiment.best_cumulative_oil_case);
 const comparison = computed(() => props.experiment.waterflood_comparison || null);
 const bestIncrement = computed(() => comparison.value?.best_incremental_oil_case || null);
 const economics = computed(() => props.experiment.techno_economics || null);
+// 多领域适配说明：本组件仍是聚合物实验专用视图。接入第二领域时应新增领域组件，
+// 或引入 ui_schema 动态渲染器，不要继续在本组件中按 domain 添加大量条件分支。
 const rankedCases = computed(() => economics.value?.cases || []);
 const bestEconomic = computed(() => rankedCases.value[0] || null);
 const explanation = ref(null);

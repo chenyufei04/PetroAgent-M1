@@ -215,6 +215,8 @@ class Neo4jQueryService:
 
     def scenario_explanation(self, case_id: str) -> dict | None:
         """沿指标概念、规则执行、推荐和来源关系返回单方案解释链。"""
+        # 多领域适配说明：查询只依赖通用语义关系，不含 PF-* 或聚合物字段；新领域只要按
+        # 相同节点契约写回图谱即可复用，无需增加领域专用 Cypher。
         with self.client.session() as session:
             record = session.run(
                 """

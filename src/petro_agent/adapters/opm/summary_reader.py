@@ -38,6 +38,8 @@ class SummaryConversionResult:
     mapped_vector_count: int
 
 
+# 多领域适配说明：这里只维护 OPM Summary 到通用油藏字段的版本化映射。新增 OPM 向量
+# 需要同时补单位与测试；CMG、钻井或生产系统字段应放入独立适配器，不能混入本表。
 FIELD_MAPPINGS: dict[str, tuple[str, str]] = {
     "TIME": ("time_days", "day"),
     "FOPR": ("oil_rate_m3_day", "m3/day"),
@@ -52,6 +54,8 @@ FIELD_MAPPINGS: dict[str, tuple[str, str]] = {
     "FPR": ("field_pressure_bar", "bar"),
 }
 
+# 多领域适配说明：井级字段会自动附加井名前缀。新增对象粒度（组、区域、网格）时，
+# 需要设计自己的稳定列名和冲突规则，不能直接复用井级命名逻辑。
 WELL_MAPPINGS: dict[str, tuple[str, str]] = {
     "WOPR": ("well_oil_rate_m3_day", "m3/day"),
     "WWPR": ("well_water_rate_m3_day", "m3/day"),

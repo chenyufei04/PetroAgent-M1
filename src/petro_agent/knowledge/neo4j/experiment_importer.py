@@ -54,7 +54,11 @@ def _sha256(path: Path) -> str | None:
 
 
 class Neo4jExperimentImporter:
-    """从实验文件系统构建并写入轻量、可追溯的实例图谱。"""
+    """从实验文件系统构建并写入轻量、可追溯的实例图谱。
+
+    多领域适配说明：通用节点和关系可以复用，但当前技术经济文件发现仍绑定聚合物实验。
+    第二个领域接入后应改为读取标准 analysis_manifest.json，而不是新增更多固定目录判断。
+    """
 
     def __init__(self, project_root: Path):
         self.project_root = project_root.resolve()
@@ -239,6 +243,8 @@ class Neo4jExperimentImporter:
         }
 
     def _comparison_nodes(self, experiment_ids: list[str]) -> list[dict]:
+        # 多领域适配说明：此处是“聚合物驱—水驱”专用配对读取器。其他领域应通过标准
+        # 比较清单声明基准角色、匹配键和增量指标，不能假设所有基准都是 waterflood。
         path = self.experiment_root / "polymer_sensitivity_v1" / "analysis" / "waterflood_comparison" / "paired_case_metrics.csv"
         if not path.is_file() or not {"polymer_sensitivity_v1", "waterflood_baseline_v1"} <= set(experiment_ids):
             return []
@@ -256,6 +262,8 @@ class Neo4jExperimentImporter:
 
     def _economic_evaluation_nodes(self, experiment_ids: list[str]) -> list[dict]:
         """把方案级排名摘要转换为轻量节点，完整计算列仍保留在 CSV。"""
+        # 多领域适配说明：字段子集目前是聚合物经济模型契约。新领域形成稳定契约后，
+        # 应由分析清单声明要写入的属性，避免导入器了解每个领域的业务字段。
         path = self.experiment_root / "polymer_sensitivity_v1" / "analysis" / "techno_economics" / "scenario_rankings.csv"
         if not path.is_file() or "polymer_sensitivity_v1" not in experiment_ids:
             return []

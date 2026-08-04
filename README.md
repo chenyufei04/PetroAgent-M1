@@ -919,7 +919,7 @@ Summary 二进制解析与标准 CSV 转换留给 v0.6.x 后续阶段。
 | 能力 | 前一版（M1.1 / v0.1.x） | v0.2.0 |
 |---|---|---|
 | 规则来源 | Python 硬编码规则 | 8 条 YAML 基础规则已接入执行管线 |
-| 聚合物驱知识 | 仅有领域包与少量校验 | 25 条分阶段领域决策规则 |
+| 聚合物驱知识 | 仅有领域包与少量校验 | 当前已扩展为 32 条分阶段领域决策规则 |
 | 关系表达 | 程序结构中的隐式关系 | 17 条可审查的实体—参数—约束关系 |
 | 执行模式 | 仅旧规则 | `knowledge`、`legacy`、`hybrid` |
 | 规则追溯 | 主要记录程序结果 | 记录规则来源、适用条件和证据元数据 |
@@ -1705,54 +1705,195 @@ decision + rule_id + observed_value + expected_value
 
 ## 11. 如何扩展到其他石油工程方向
 
-### 新增数据源
+### 当前能力边界
 
-实现 `DatasetAdapter` 协议：
+当前项目不是“新增一个 YAML 即可零代码切换到任意石油工程领域”。更准确的定位是：
 
-```python
-class DatasetAdapter(Protocol):
-    def load(self, source: Path, config: dict) -> CanonicalDataset:
-        ...
-```
+> 通用数据对象、知识图谱、实验血缘、API 和文件治理可以复用；完整分析、规则执行、
+> 经济评价、排名和页面目前以聚合物驱为首个领域实现。接入新领域通常需要新增领域包，
+> 并按数据源和工作流差异修改少量注册、适配、API 与 UI 代码。
 
-适合新增：
+只有当第二个差异明显的领域能够在不修改核心数据模型的前提下接入，才可以进一步把
+项目描述为“可插拔多领域平台”。推荐优先用钻井、人工举升或压裂进行验证，而不是只用
+另一个油藏驱替案例，因为后者与现有字段和流程过于接近。
 
-- `OpmSummaryAdapter`
-- `CmgResultAdapter`
-- `ExperimentalExcelAdapter`
-- `VolveProductionAdapter`
+### 适配工作总览
 
-### 新增领域包
+| 层级 | 新领域需要完成的工作 | 主要文件位置 |
+|---|---|---|
+| 案例契约 | 定义领域、过程、必需字段、单位和数据来源 | `config/cases/<case_id>.yaml` |
+| 数据适配 | 把原始文件或软件结果转换为 `CanonicalDataset` | `src/petro_agent/adapters/` |
+| 领域计算 | 补充该领域的派生指标和确定性校验 | `src/petro_agent/domain_packs/<domain>/pack.py` |
+| 管线注册 | 让通用分析管线能够按名称加载领域包 | `src/petro_agent/pipeline.py` 中的 `PACKS` |
+| 概念与参数 | 登记稳定概念 ID、中英文名称和标准单位 | `knowledge_graph/core/`、`knowledge_graph/domains/` |
+| 规则与证据 | 定义适用条件、输入、逻辑、决策级别和来源 | 领域 YAML、`knowledge_graph/provenance/sources.yaml` |
+| 字段语义 | 把输入字段映射到领域概念和单位 | `knowledge_graph/mappings/canonical_fields.yaml` 及软件映射文件 |
+| 专用算法 | 实现不能由通用规则运算符表达的公式、优化或经济模型 | 新增领域服务模块，避免写入聚合物专用模块 |
+| 语义桥 | 生成指标观测、规则执行、推荐和证据链 | 参考 `src/petro_agent/economics/semantic_bridge.py`，新领域应建立自己的 builder |
+| 图谱写回 | 把标准分析清单转换为 Neo4j 节点和关系 | `src/petro_agent/knowledge/neo4j/experiment_importer.py` |
+| API | 暴露领域摘要、明细和解释链 | `src/petro_agent/api/main.py` |
+| Vue | 根据新领域 KPI、表格、图形和解释链增加展示 | `frontend/src/components/`、`frontend/src/api.js`、`frontend/src/style.css` |
+| 测试 | 覆盖数据、算法、规则、API、图谱和前端构建 | `tests/`、`tests/knowledge/` |
 
-实现 `DomainPack` 的 `enrich` 和 `validate`：
+### 一、必须新增的文件
 
-```python
-class DrillingPack:
-    name = "drilling"
+#### 1. 案例配置
 
-    def enrich(self, dataset):
-        return dataset
+在 `config/cases/` 新增案例 YAML，至少声明：
 
-    def validate(self, dataset):
-        return []
-```
+- 稳定的 `case_id`；
+- `domain` 与 `process`；
+- 原始数据来源及版本；
+- `required_columns`；
+- 原字段到标准字段的映射；
+- 每个标准字段的单位；
+- 需要启用的 `domain_packs`；
+- 知识执行模式和适用上下文。
 
-然后在 `pipeline.py` 注册，并在案例 YAML 中声明：
+案例配置描述的是输入契约，不应在其中隐藏复杂计算代码，也不能通过默认填零绕过缺失字段。
 
-```yaml
-domain_packs:
-  - drilling
-```
+#### 2. 领域包
 
-可以按同一方式加入：
+在 `src/petro_agent/domain_packs/<domain>/` 新增 `pack.py` 和包初始化文件。领域包实现：
 
-- 水驱；
-- 气驱和 CO₂-EOR；
-- CO₂ 地质封存；
-- 生产工程；
-- 钻井工程；
-- 完井工程；
-- 井网优化。
+- `enrich(dataset)`：计算可确定、可测试的派生指标；
+- `validate(dataset)`：执行仍未迁移到知识 YAML 的领域校验；
+- 稳定的 `name`：供案例配置和管线注册使用。
+
+随后在 `src/petro_agent/pipeline.py` 的 `PACKS` 注册。新增领域不得把逻辑塞进
+`PolymerFloodingPack`，也不要继续扩大 `MIGRATED_LEGACY_RULES` 作为长期方案；成熟规则应迁移到知识层。
+
+#### 3. 领域知识目录
+
+在 `knowledge_graph/domains/` 下新增领域 YAML，或在确实属于同一领域时扩展现有文件。需要包括：
+
+- `domain_graph`：领域 ID 和中英文名称；
+- `concepts`：领域对象、参数、过程、设备、数据集和决策；
+- `triples`：稳定的领域关系；
+- `rule_catalog`：筛选、设计、运行、监测和评价规则。
+
+引用的文献、标准、软件手册或项目内部模型必须登记到
+`knowledge_graph/provenance/sources.yaml`。正式标准及版本应登记到
+`knowledge_graph/standards/catalog.yaml`，不能把经验阈值描述成行业强制标准。
+
+#### 4. 字段与软件映射
+
+新指标需要加入 `knowledge_graph/mappings/canonical_fields.yaml`。如果来自特定模拟器或软件，
+同时扩展相应映射，例如 `knowledge_graph/mappings/opm.yaml` 或 `cmg.yaml`。
+
+每个映射需要明确：原字段、标准字段、领域概念、标准单位、对象粒度和适用软件版本。
+井级、油藏级、网格级和作业级数据不得只因名称相似而映射到同一个字段。
+
+#### 5. 专用算法与语义桥
+
+复杂领域公式应新增独立模块。例如钻井可放在 `src/petro_agent/drilling/`，人工举升可放在
+`src/petro_agent/production/`。不要把非聚合物逻辑加入 `src/petro_agent/economics/polymer.py`。
+
+专用算法需要输出统一语义对象：
+
+- `MetricObservation`：数值、单位、来源字段和 `concept_id`；
+- `RuleExecution`：规则 ID、实际值、期望值、运算符、通过状态和消息；
+- `Recommendation`：决策、排序或优先级、推荐理由和证据状态；
+- `Evidence`：来源 ID、版本、权威等级和假设状态。
+
+`semantic_bridge.py` 是聚合物驱参考实现，不是所有领域共用的硬编码入口。新领域应复用输出契约，
+而不是复用聚合物字段表和 `PF-*` 规则 ID。
+
+### 二、根据领域差异通常需要修改的代码
+
+#### 数据适配器
+
+以下情况需要在 `src/petro_agent/adapters/` 新增适配器：
+
+- 数据不是现有 CSV/XLSX；
+- 使用 CMG、Eclipse、钻井实时系统、测井格式或生产数据库；
+- 字段需要按井、层、时间、作业段或网格重新组织；
+- 单位、缺失值或枚举语义需要受控转换。
+
+适配器只负责读取、映射、单位转换和来源记录，不负责给出工程推荐。
+
+#### 模拟器执行与结果读取
+
+若新领域继续使用 OPM Flow，可扩展 `src/petro_agent/adapters/opm/summary_reader.py` 的版本化向量映射。
+若使用其他模拟器，应新增独立目录和执行配置，不要在 OPM 执行器中堆叠其他软件的命令参数。
+
+#### 分析工作流
+
+当前 `scripts/analyze_polymer_economics.py`、水驱配对脚本和固定实验 ID 都是聚合物驱专用入口。
+新领域应新增自己的工作流脚本或领域 workflow，并明确：
+
+- 输入数据集与对照方案；
+- 指标计算顺序；
+- 适用规则集合；
+- 约束和排名策略；
+- 输出清单和失败条件。
+
+当两个以上领域形成相同结构后，再把共同部分提取成通用 workflow registry，避免提前抽象出无法验证的接口。
+
+#### Neo4j 实验导入
+
+当前 `experiment_importer.py` 仍识别聚合物实验目录和技术经济文件名。短期接入新领域时需要扩展读取逻辑；
+长期应让每个分析目录生成标准 `analysis_manifest.json`，由通用导入器读取节点类型、文件摘要和语义链，
+避免继续添加领域 ID 条件分支。
+
+#### FastAPI 与 Vue
+
+如果新领域只使用通用解释链，API 可复用现有方案解释接口；若需要新的聚合、曲线或作业结构，则需增加受控接口。
+Vue 当前的 `ExperimentResults.vue` 明确绑定聚合物浓度、水驱基线和配聚经济。新领域不应继续向该组件追加条件分支，
+应新增领域组件，或在形成第二个领域后实现基于 `ui_schema` 的 KPI、表格和图形配置渲染器。
+
+### 三、原则上不应修改的核心代码
+
+新领域接入不应为了迁就字段而频繁修改：
+
+- `src/petro_agent/core/models.py` 中的通用数据和结果对象；
+- `src/petro_agent/core/contracts.py` 中的协议；
+- Neo4j 客户端连接和会话管理；
+- 文件路径安全检查；
+- 上传大小、类型和目录穿越防护；
+- 通用来源、哈希和运行留痕机制。
+
+如果每新增一个领域都必须修改这些文件，说明领域协议仍不完整，应先调整扩展接口，而不是直接加入特殊判断。
+
+### 四、测试最低要求
+
+每个新领域至少需要：
+
+1. 数据适配器正常、缺列、单位错误和非法数据测试；
+2. 每个关键算法的正常值、边界值和失败值测试；
+3. 知识 YAML Schema、概念引用、规则来源和单位校验；
+4. `MetricObservation → Concept` 绑定测试；
+5. `RuleExecution → Rule → Source` 解释链测试；
+6. 推荐结果与实际失败规则一致性测试；
+7. Neo4j dry-run 节点计数和幂等 `MERGE` 测试；
+8. FastAPI 成功、缺失结果、非法 ID 和离线回退测试；
+9. Vue 生产构建和关键字段缺失时的降级展示检查。
+
+### 五、领域适配完成判定
+
+新领域只有同时满足以下条件，才算完成适配：
+
+- 原始数据能够转换成有单位、有粒度、有来源的标准数据；
+- 关键指标由经过测试的确定性算法生成；
+- 适用规则来自版本化知识目录，而不是只存在于页面或报告文字中；
+- 每次规则执行都能追溯实际观测、规则实体和证据来源；
+- 推荐能够解释“为什么通过、为什么失败、缺少什么证据”；
+- API、Vue 和 Neo4j 使用同一套语义结果，不各自重新计算；
+- 删除或禁用新领域包后，不影响聚合物驱及其他领域运行；
+- README 文末执行命令手册补充该领域流程，正文不复制执行命令。
+
+### 六、建议的适配优先级
+
+| 候选领域 | 预计复用程度 | 主要新增内容 |
+|---|---|---|
+| 水驱或气驱 | 高 | 流体/注入参数、基线与经济规则、对应页面字段 |
+| CO₂-EOR/封存 | 中高 | 组分与相态、泄漏/封存指标、监管和安全证据 |
+| 人工举升 | 中 | 井筒与设备数据、泵效/扬程/气锁规则、设备经济性 |
+| 压裂 | 中低 | 施工阶段、排量砂比、裂缝指标、作业约束和风险 |
+| 钻井 | 低但验证价值最高 | 实时序列、井深域数据、井控/水力/机械规则和专用 UI |
+
+建议用“人工举升”或“钻井”作为第二个完整领域验证包。若其接入主要通过新增文件而非修改核心代码，
+才能证明当前架构真正具备跨石油工程领域的可替换性。
 
 ### 新增实体、关系或规则
 
@@ -1761,7 +1902,7 @@ domain_packs:
 3. 参数需声明标准单位，并加入 `canonical_fields.yaml` 映射；
 4. 规则必须声明唯一 ID、类型、目标概念、运算符、级别和来源；
 5. 有适用前提时，同时写入 `conditions` 和中英文适用范围；
-6. 运行 `python scripts/validate_knowledge.py` 和 `pytest -q`；
+6. 按文末执行命令手册完成知识校验和自动化测试；
 7. 正式标准必须在 `standards/catalog.yaml` 中记录版本与发布机构。
 
 第一版规则引擎支持：
@@ -1828,14 +1969,14 @@ domain_packs:
 - 规则校验；
 - 图表和报告。
 
-### M1.2（当前：知识基础层 v0.2）
+### M1.2（已完成并演进至 Knowledge Foundation v0.3）
 
 - 石油工程上层实体与中英双语关系；
 - 参数、单位、来源和规则格式；
 - YAML知识服务与规则执行器；
 - 标准字段概念映射；
 - 聚合物驱首个验证子图谱；
-- 聚合物驱 25 条分阶段领域规则目录；
+- 聚合物驱 32 条分阶段领域规则目录；
 - 聚合物驱六类受控 Agent 职责图谱；
 - 报告证据追溯。
 
@@ -1854,7 +1995,7 @@ domain_packs:
 - 已生成 Deck 哈希、实际命令、版本、时间与退出码运行清单；
 - 已直接读取 ESMRY 并转换标准 CSV；
 - 已完成 9 算例聚合物浓度—注入速率参数扫描、质量检查、敏感性报告和 Web 展示；
-- 下一步建立水驱与聚合物驱成对运行配置并补充经济指标。
+- 已建立水驱配对、技术经济排名、规则执行实例和可解释推荐链。
 
 ### M1.5
 

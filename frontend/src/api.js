@@ -48,6 +48,7 @@ export const getGraphView = (view = "all", limit = 200) =>
 export const getExperimentRankings = (experimentId) =>
   request(`/api/graph/experiments/${experimentId}/rankings`);
 export const getScenarioExplanation = (experimentId, caseId) =>
+  // 多领域适配说明：解释链接口是通用契约，新领域应保持该路径和响应结构不变。
   request(`/api/experiments/${experimentId}/cases/${caseId}/explanation`);
 export const outputUrl = (path) => `${API_BASE}${path}`;
 export const getOutputPreview = (path) => request(path);

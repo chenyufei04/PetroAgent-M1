@@ -9,6 +9,8 @@ import numpy as np
 import pandas as pd
 
 
+# 多领域适配说明：该表只描述聚合物技术经济输出到领域概念的绑定。新领域应提供自己的
+# 字段—概念映射 builder；concept_id 必须先在 knowledge_graph 中登记并声明单位。
 OBSERVATION_FIELDS: dict[str, tuple[str, str]] = {
     "polymer_concentration_kg_m3": ("polymer_concentration_kg_m3", "kg/m3"),
     "injection_rate_m3_day": ("polymer_injection_rate", "m3/day"),
@@ -21,6 +23,8 @@ OBSERVATION_FIELDS: dict[str, tuple[str, str]] = {
     "scenario_rank": ("scenario_rank", "rank"),
 }
 
+# 多领域适配说明：这些约束名称来自 polymer_economics.yaml，规则 ID 来自聚合物规则目录。
+# 新领域不能复用 PF-* ID 表示不同含义，应建立独立命名空间和证据来源。
 CONSTRAINT_RULES = {
     "injector_bhp": ("PF-OPS-001", "注入井压力不超过配置上限"),
     "water_injection_rate": ("PF-OPS-004", "注水峰值不超过设施能力"),

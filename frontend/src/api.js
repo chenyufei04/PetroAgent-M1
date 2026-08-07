@@ -50,5 +50,13 @@ export const getExperimentRankings = (experimentId) =>
 export const getScenarioExplanation = (experimentId, caseId) =>
   // 多领域适配说明：解释链接口是通用契约，新领域应保持该路径和响应结构不变。
   request(`/api/experiments/${experimentId}/cases/${caseId}/explanation`);
+export const getScenarioContext = (experimentId, caseId) =>
+  request(`/api/experiments/${experimentId}/cases/${caseId}/context`);
+export const getAssistantStatus = () => request("/api/assistant/status");
+export const chatWithAssistant = (experimentId, caseId, question) =>
+  request("/api/assistant/chat", {
+    method: "POST",
+    body: JSON.stringify({ experiment_id: experimentId, case_id: caseId, question }),
+  });
 export const outputUrl = (path) => `${API_BASE}${path}`;
 export const getOutputPreview = (path) => request(path);

@@ -4,7 +4,7 @@ import { getCases, getExperiment, getExperiments, getGraphView, getSubgraph, run
 import KnowledgeGraph from "./components/KnowledgeGraph.vue";
 import GraphInventory from "./components/GraphInventory.vue";
 import OutputViewer from "./components/OutputViewer.vue";
-import ExperimentResults from "./components/ExperimentResults.vue";
+import ScenarioWorkspace from "./components/ScenarioWorkspace.vue";
 
 const cases = ref([]);
 const selectedCase = ref("");
@@ -118,11 +118,14 @@ onMounted(async () => {
 
     <p v-if="error" class="alert">{{ error }}</p>
 
-    <ExperimentResults
+    <ScenarioWorkspace
       v-if="experiment && selectedCase === experiment.analysis_case_id"
       :experiment="experiment"
     />
 
+    <details class="legacy-tools">
+      <summary>数据导入、通用规则分析与完整知识库管理</summary>
+      <p>这些是跨领域基础工具，不参与当前实验方案的决策上下文；仅在需要导入数据或维护知识库时展开。</p>
     <section class="workspace">
       <aside class="panel case-panel">
         <p class="panel-label">01 · 案例输入</p>
@@ -250,5 +253,6 @@ onMounted(async () => {
       </div>
       <OutputViewer :files="result.output_files" />
     </section>
+    </details>
   </main>
 </template>

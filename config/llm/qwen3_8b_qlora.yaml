@@ -1,0 +1,31 @@
+base_model: Qwen/Qwen3-8B
+method: qlora
+quantization:
+  bits: 4
+  quant_type: nf4
+  double_quant: true
+  compute_dtype: bfloat16
+lora:
+  target_modules: all-linear
+  rank: 16
+  alpha: 32
+  dropout: 0.05
+training:
+  dataset: data/training/petro_agent_instructions.jsonl
+  output_dir: models/adapters/petro-agent-qwen3-8b-qlora
+  epochs: 3
+  learning_rate: 0.0002
+  per_device_batch_size: 1
+  gradient_accumulation_steps: 16
+  max_sequence_length: 4096
+  seed: 42
+scope:
+  train_for:
+    - 石油工程术语与意图识别
+    - 受控工具选择
+    - 结构化页面展示指令
+    - 证据引用与不确定性表达
+  never_train_as_fact:
+    - 模拟结果数值
+    - 经济价格参数
+    - 工程约束阈值

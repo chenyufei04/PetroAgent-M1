@@ -119,3 +119,46 @@ def test_experiment_file_rejects_parent_traversal(tmp_path: Path, monkeypatch) -
         main.get_experiment_file("sweep_a", "../experiment_manifest.json")
 
     assert exc.value.status_code == 404
+
+
+def test_scenario_context_joins_metrics_rules_recommendation_and_graph(tmp_path: Path, monkeypatch) -> None:
+    """方案工作台契约应保持领域无关，并用同一个 case_id 串起全部证据。"""
+    _write_experiment(tmp_path)
+    monkeypatch.setattr(main, "EXPERIMENT_ROOT", tmp_path)
+    economics = tmp_path / "sweep_a" / "analysis" / "techno_economics"
+    (economics / "scenario_rankings.csv").write_text(
+        "scenario_rank,case_id,net_value,recommendation\n1,case-1,12.5,候选\n",
+        encoding="utf-8",
+    )
+    (economics / "explanation_chains.json").write_text(
+        json.dumps({
+            "model_id": "model-1",
+            "cases": [{
+                "case_id": "case-1",
+                "observations": [{
+                    "observation_id": "o-1", "concept_id": "injection_rate",
+                    "source_field": "injection_rate", "value": 100, "unit": "m3/day",
+                }],
+                "rule_executions": [{
+                    "rule_execution_id": "r-1", "rule_id": "RULE-1", "passed": False,
+                    "message": "超过约束",
+                }],
+                "recommendation": {
+                    "recommendation_id": "rec-1", "decision": "需调整",
+                    "justifying_execution_ids": ["r-1"],
+                },
+                "evidence": {"source_id": "source-1"},
+            }],
+        }, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    payload = main.get_scenario_context("sweep_a", "case-1")
+
+    assert payload["contract_version"] == "scenario-context/v1"
+    assert payload["scenario"]["net_value"] == 12.5
+    assert payload["parameters"][0]["concept_id"] == "injection_rate"
+    assert payload["rule_summary"] == {"total": 1, "passed": 0, "failed": 1}
+    assert {node["type"] for node in payload["graph"]["nodes"]} == {
+        "SimulationCase", "MetricObservation", "RuleExecution", "Recommendation", "Source",
+    }

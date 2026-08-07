@@ -108,6 +108,11 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# 本地大模型、QLoRA 适配器与训练语料可能体积大或包含未公开工程数据
+models/
+data/training/*
+!data/training/.gitkeep
+
 # Neo4j 本地数据库、事务日志、插件和导入暂存目录
 .neo4j/
 neo4j-data/

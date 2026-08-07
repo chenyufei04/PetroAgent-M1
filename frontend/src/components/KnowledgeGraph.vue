@@ -6,6 +6,7 @@ const props = defineProps({
   graph: { type: Object, required: true },
   highlighted: { type: String, default: "" },
 });
+const emit = defineEmits(["node-select"]);
 const container = ref(null);
 let cy;
 let resizeObserver;
@@ -59,6 +60,22 @@ async function render() {
         style: { "background-color": "#2563eb", shape: "ellipse" },
       },
       {
+        selector: 'node[type = "MetricObservation"]',
+        style: { "background-color": "#0891b2", shape: "round-rectangle" },
+      },
+      {
+        selector: 'node[type = "RuleExecution"]',
+        style: { "background-color": "#16a34a", shape: "round-rectangle" },
+      },
+      {
+        selector: 'node[type = "RuleExecution"][passed = 0]',
+        style: { "background-color": "#dc2626", "border-width": 3, "border-color": "#fecaca" },
+      },
+      {
+        selector: 'node[type = "Recommendation"]',
+        style: { "background-color": "#d97706", shape: "hexagon", width: 48, height: 48 },
+      },
+      {
         selector: 'node[type = "Comparison"]',
         style: { "background-color": "#d97706", shape: "diamond" },
       },
@@ -92,6 +109,8 @@ async function render() {
     cy.resize();
     cy.fit(undefined, 36);
   });
+  // 将节点选择抛给方案工作台，让图谱与指标、规则详情共享同一上下文。
+  cy.on("tap", "node", (event) => emit("node-select", event.target.data()));
   highlight();
 }
 

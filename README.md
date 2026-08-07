@@ -1,6 +1,6 @@
 # PetroAgent M1
 
-> 当前版本：`v0.9.6`（知识—实验语义桥与可解释推荐）
+> 当前版本：`v0.10.0`（Qwen + RAG 交互式分析助手）
 
 > README 维护约定：正文只描述功能、数据、公式和设计；所有可执行命令只维护在文末
 > “执行命令手册”。后续修改 README 时不得在正文新增 PowerShell、bash 或 Docker 命令块。
@@ -677,11 +677,13 @@ outputs/reports/polymer_simple2d.md
 `PetroleumEngineeringCoreOntology v0.2`（石油工程核心本体 v0.2），并提供
 YAML 到 Neo4j 的可重复导入与查询适配层。
 
-> 当前版本：`PetroAgent v0.9.6（知识—实验语义桥与可解释推荐） / Knowledge Foundation v0.3.0`
+> 当前版本：`PetroAgent v0.10.0（Qwen + RAG 交互式分析助手） / Knowledge Foundation v0.3.0`
 > Python：`3.10+`  
 > 当前边界：确定性分析内核＋YAML知识源＋Neo4j存储/查询＋Web 演示展示；
 > 已支持从 Windows 调用 WSL2 Ubuntu 中的 OPM Flow、ESMRY 解析和参数化批量实验；
-> 已支持实验摘要幂等写回 Neo4j、批量结果页面展示和未折现经济筛选；暂不包含 LLM、RAG、完整经济优化与完整时间序列入图。
+> 已支持实验摘要幂等写回 Neo4j、批量结果页面展示、未折现经济筛选，以及
+> Qwen/Mock 只读交互助手和 Neo4j/实验文件混合 RAG；暂不包含文献向量索引、
+> 已训练 QLoRA 适配器、写操作型 Agent、完整经济优化与完整时间序列入图。
 
 v0.4.2 在保留原始产物下载功能的基础上，增加图表、文档和表格三类在线
 预览；Neo4j“全部图谱”视图同步展示全部实体列表与全部关系列表，并支持
@@ -753,6 +755,8 @@ PetroAgent 程序版本与 Knowledge Foundation 知识库版本分别管理：�
 | `v0.9.4` | 技术经济筛选 | 增加井级 BHP、聚合物质量衡算、未折现增量经济、盈亏平衡指标和五类设施约束 | 折现现金流、CAPEX、能耗、风险与不确定性优化 |
 | `v0.9.5` | 排名与应用闭环 | 生成技术经济排名和报告，接入 FastAPI/Vue，并以 EconomicEvaluation 节点幂等写回 Neo4j | 折现现金流、概率风险、自动优化与现场标定 |
 | `v0.9.6` | 知识—实验语义桥 | 规则实体化、执行实例化、指标绑定概念、推荐绑定规则和证据，并在 API/Vue 展开完整解释链 | 外部标准条款、现场证据审批、LLM 编排与概率推理 |
+| `v0.9.7` | 统一方案上下文工作台 | 当前方案统一驱动参数、指标、规则、推荐、证据和精简解释子图；完整图谱转为维护入口 | 领域 UI Schema、动态图表按方案过滤、LLM 解释编排 |
+| `v0.10.0` | Qwen + RAG 交互助手 | Qwen3-8B/Mock 可切换提供器、Neo4j/实验文件混合检索、只读 Agent、对话驱动页面展示及 QLoRA 配置 | 现场语料审核、向量文档索引、写操作审批与模型评测 |
 
 ### v0.1.0：确定性分析内核
 
@@ -2409,6 +2413,96 @@ sheet_name  可选，仅 XLSX 使用
 }
 ```
 
+## v0.9.7：统一方案上下文工作台
+
+### 版本备注（2026-08-07）
+
+本版解决实验分析与知识图谱在页面上彼此割裂的问题。页面不再默认并列展示
+“整套实验结果”和“完整知识库”，而是将当前实验方案作为唯一交互上下文：
+
+- 切换方案时同步更新参数、工程指标、规则执行、推荐结论、证据来源和解释子图；
+- 默认解释子图只包含当前方案的观测、规则执行、推荐与证据，不再加载整库节点；
+- 点击指标、规则或图谱节点，可在同一详情面板查看实际值、阈值、来源及关系；
+- 全部方案排名与实验图表保留为当前方案的支撑分析；
+- 数据上传、通用规则分析和完整知识库浏览移入折叠的维护入口。
+
+后端新增稳定契约 `scenario-context/v1`。该契约只定义方案、参数、指标、规则、
+推荐、证据和图谱等语义角色，不要求前端识别聚合物浓度等特定字段。
+未来更换人工举升、钻井、压裂或其他石油工程方向时，应由新的领域包生成相同
+角色的数据；通用工作台无需按领域继续增加条件分支。领域专用曲线、字段中文名和
+格式规则后续可通过领域 `ui_schema` 扩展，不应写死在通用组件中。
+
+## v0.10.0：Qwen + RAG 交互式分析助手
+
+### 版本备注（2026-08-07）
+
+本版在 `scenario-context/v1` 之上增加只读大模型编排层。基础模型按既定方案采用
+`Qwen/Qwen3-8B`，推理服务采用 vLLM 的 OpenAI-compatible API；页面和后端默认使用
+Mock 提供器，因此未安装模型或没有 GPU 时也可以完成全部接口与交互调试。
+
+交互链路为：用户问题 → 当前实验/方案上下文 → Neo4j 优先、实验文件回退的混合检索
+→ Qwen 组织有依据的回答 → 受控展示指令 → Vue 显示相应指标、规则、图谱、图表、
+排名或证据。模型不直接生成工程数值，也不能通过展示指令注入组件、执行命令或启动
+OPM Flow。
+
+新增 QLoRA 配置采用 4-bit NF4、双重量化及 `all-linear` LoRA 目标。微调范围限定为
+术语和意图识别、工具选择、结构化展示指令、证据引用与不确定性表达；模拟结果、价格
+和约束阈值不得作为模型事实固化。训练脚本只在数据集存在且训练依赖已安装时运行，
+不会自动下载模型，也不会自动使用未审核工程数据。
+
+跨领域扩展时，通用 LLM 提供器、Agent 和 Vue 交互组件保持不变；新领域需要提供相同
+结构的方案上下文、领域规则与证据。领域术语样本可进入经审核的 QLoRA 训练集，但具体
+计算公式和阈值仍应保留在确定性代码、配置文件和知识图谱中。
+
+### 当前可用的交互指令
+
+交互助手始终以页面顶部选中的“当前实验方案”为上下文。用户不需要记忆固定命令格式，
+可以直接用中文描述希望查看或解释的内容。当前版本支持以下展示意图：
+
+| 用户意图 | 可识别的常用词 | 页面联动结果 |
+|---|---|---|
+| 方案概览 | 概览、当前方案、结论 | 保留推荐结论、排名、净增量价值和规则通过情况 |
+| 工程指标 | 指标、产油、含水、压力、成本、价值、参数 | 展示当前方案的参数和工程指标卡片 |
+| 规则验证 | 规则、约束、通过、失败、为什么、原因 | 展示规则执行列表及未通过原因 |
+| 解释图谱 | 图谱、关系、解释链、知识 | 展示当前方案的精简知识解释子图 |
+| 实验图表 | 图、曲线、趋势、敏感性、对比 | 展示敏感性图、动态曲线和参数响应图 |
+| 方案排名 | 排名、最优、方案、推荐 | 打开全部方案排名表 |
+| 证据依据 | 证据、来源、依据、可信 | 展示解释子图及证据详情面板 |
+
+页面内置四条可直接点击的快捷指令：
+
+- “为什么推荐当前方案？”：展示推荐、规则、排名和证据，并解释当前结论；
+- “只看未通过规则和证据”：隐藏指标与实验图表，聚焦失败规则和证据链；
+- “展示关键指标和图谱”：显示工程指标以及当前方案解释子图；
+- “查看全部方案排名”：切换到方案排名表，当前方案行仍保持上下文关联。
+
+还可以直接输入下列自然语言问题：
+
+- “为什么这个方案技术可行但经济没有通过？”
+- “当前方案有哪些约束没有通过，实际值和阈值分别是多少？”
+- “展示累计产油、聚合物成本和净增量价值。”
+- “查看压力与设施约束，并给出规则依据。”
+- “展示敏感性曲线和方案对比。”
+- “当前方案排第几，为什么优先于其他方案？”
+- “这些结论来自 Neo4j 还是实验文件？”
+- “只显示指标、规则和知识图谱。”
+
+多个意图可以组合在一句话中，系统会合并对应页面区域。例如，“展示压力指标、未通过
+规则和证据”会同时保留概览、指标、规则以及证据图谱。若问题中没有识别到明确关键词，
+系统默认展示概览、指标、规则和图谱。
+
+Mock 与真实 Qwen 模式存在以下区别：
+
+- Mock 模式用于无 GPU 联调，回答由检索到的方案排名、净增量价值和失败规则组成；
+- Qwen 模式会读取同一组受控事实，以更自然的语言回答并返回页面展示指令；
+- 两种模式都不能修改工程结果，页面中的数值仍来自 OPM、确定性算法和规则执行记录；
+- 当前自然语言指令只能控制展示和解释，不能切换到任意指定方案、修改参数、启动模拟、
+  回写 Neo4j 或执行系统命令；方案切换仍通过页面“当前方案”下拉框完成；
+- 当前未建立文献 PDF 向量索引，因此不能要求助手检索尚未导入的论文或外部标准全文。
+
+当前边界：已实现图谱/实验产物的混合上下文检索，但尚未建立文献 PDF 的向量索引；
+QLoRA 为可运行训练入口，尚未在本仓库中实际下载模型、训练适配器或完成模型效果评测。
+
 ## 执行命令手册（固定置于 README 末尾）
 
 > 维护规则：本节必须始终是 README 的最后一节。新增或修改运行命令时，只更新本节；
@@ -2622,4 +2716,61 @@ docker compose down
 ```powershell
 # 危险：永久删除 Docker Neo4j 数据卷。
 docker compose down -v
+```
+
+### M. Qwen、RAG 交互页面与 QLoRA
+
+默认 Mock 模式不需要启动大模型，按常规方式启动 FastAPI 后即可调试交互页面：
+
+```powershell
+cd F:\Projects\petro-agent
+$env:PETRO_AGENT_LLM_PROVIDER="mock"
+.\.venv\Scripts\python.exe scripts\run_web.py
+```
+
+在独立 WSL/GPU 环境启动 Qwen3-8B vLLM 服务。端口使用 `8001`，避免与 FastAPI 的
+`8000` 冲突：
+
+```bash
+source .venv-llm/bin/activate
+vllm serve Qwen/Qwen3-8B --host 0.0.0.0 --port 8001 --enable-auto-tool-choice --tool-call-parser hermes
+```
+
+回到 Windows PowerShell，切换 PetroAgent 到本地 Qwen 服务并启动页面：
+
+```powershell
+cd F:\Projects\petro-agent
+$env:PETRO_AGENT_LLM_PROVIDER="qwen"
+$env:PETRO_AGENT_LLM_MODEL="Qwen/Qwen3-8B"
+$env:PETRO_AGENT_LLM_BASE_URL="http://127.0.0.1:8001/v1"
+$env:PETRO_AGENT_LLM_API_KEY="EMPTY"
+.\.venv\Scripts\python.exe scripts\run_web.py
+```
+
+检查当前助手配置状态：
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8000/api/assistant/status
+```
+
+QLoRA 必须在独立 GPU 环境安装训练依赖，并在训练语料完成人工审核后执行：
+
+```bash
+source .venv-llm/bin/activate
+pip install transformers peft trl datasets bitsandbytes accelerate
+cd /mnt/f/Projects/petro-agent
+PYTHONPATH=src python scripts/train_qwen_qlora.py --config config/llm/qwen3_8b_qlora.yaml
+```
+
+训练完成后，以 LoRA 名称 `petro-agent` 启动服务，并让 PetroAgent 请求该适配器：
+
+```bash
+vllm serve Qwen/Qwen3-8B --host 0.0.0.0 --port 8001 --enable-lora --lora-modules petro-agent=/mnt/f/Projects/petro-agent/models/adapters/petro-agent-qwen3-8b-qlora --enable-auto-tool-choice --tool-call-parser hermes
+```
+
+```powershell
+$env:PETRO_AGENT_LLM_PROVIDER="qwen"
+$env:PETRO_AGENT_LLM_MODEL="petro-agent"
+$env:PETRO_AGENT_LLM_BASE_URL="http://127.0.0.1:8001/v1"
+.\.venv\Scripts\python.exe scripts\run_web.py
 ```

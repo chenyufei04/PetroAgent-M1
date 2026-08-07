@@ -1,0 +1,20 @@
+provider: qwen
+model: Qwen/Qwen3-8B
+api_protocol: openai-compatible
+base_url: http://127.0.0.1:8001/v1
+generation:
+  temperature: 0.2
+  max_tokens: 1200
+  enable_thinking: false
+agent:
+  mode: read_only
+  allowed_tools:
+    - scenario_context
+    - scenario_rankings
+    - scenario_explanation
+  require_user_approval_for_writes: true
+retrieval:
+  strategy: graph_file_hybrid
+  graph_source: neo4j
+  fallback_source: experiment_artifacts
+  include_rule_evidence: true

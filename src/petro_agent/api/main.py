@@ -16,8 +16,10 @@ from pydantic import BaseModel, Field
 import yaml
 import pandas as pd
 
+from petro_agent.agents import AnalysisAssistant
 from petro_agent.knowledge.neo4j.client import Neo4jClient, Neo4jSettings
 from petro_agent.knowledge.neo4j.query_service import Neo4jQueryService
+from petro_agent.llm import LlmSettings, create_provider
 from petro_agent.pipeline import analyze_csv
 
 from .serializers import serialize_result
@@ -31,7 +33,7 @@ OUTPUT_ROOT = ROOT / "outputs"
 EXPERIMENT_ROOT = OUTPUT_ROOT / "experiments"
 FRONTEND_DIST = ROOT / "frontend" / "dist"
 
-app = FastAPI(title="PetroAgent Web Demo API", version="0.9.6")
+app = FastAPI(title="PetroAgent Web Demo API", version="0.10.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -57,6 +59,14 @@ class GraphViewRequest(BaseModel):
     """指定预定义图谱视图和最大返回规模。"""
     view: str = "all"
     limit: int = Field(default=200, ge=1, le=500)
+
+
+class AssistantChatRequest(BaseModel):
+    """只读分析助手请求；当前实验与方案必须由页面显式传入。"""
+
+    experiment_id: str = Field(min_length=1, max_length=120)
+    case_id: str = Field(min_length=1, max_length=160)
+    question: str = Field(min_length=1, max_length=4000)
 
 
 def _case_config(case_id: str) -> Path:
@@ -239,6 +249,106 @@ def get_scenario_explanation(experiment_id: str, case_id: str) -> dict:
     if chain is None:
         raise HTTPException(404, "算例解释链不存在")
     return {"source": "file", "model_id": payload.get("model_id"), **chain}
+
+
+def _scenario_graph(chain: dict) -> dict:
+    """把通用解释链转换成前端可直接渲染的方案子图。
+
+    多领域适配说明：这里只识别稳定的语义角色，不识别聚合物浓度、井筒压力等
+    领域字段。新领域只要继续产出 observation/rule/recommendation/evidence 四类对象，
+    就能复用同一个工作台和图谱组件。
+    """
+    case_id = str(chain["case_id"])
+    recommendation = chain.get("recommendation") or {}
+    evidence = chain.get("evidence") or {}
+    nodes = [{"id": case_id, "label": case_id, "type": "SimulationCase", "properties": {"case_id": case_id}}]
+    edges: list[dict] = []
+
+    for item in chain.get("observations", []):
+        node_id = str(item["observation_id"])
+        nodes.append({
+            "id": node_id,
+            "label": str(item.get("concept_id") or item.get("source_field") or node_id),
+            "type": "MetricObservation",
+            "properties": item,
+        })
+        edges.append({"id": f"{case_id}:observation:{node_id}", "source": case_id, "target": node_id, "label": "观测"})
+
+    for item in chain.get("rule_executions", []):
+        node_id = str(item["rule_execution_id"])
+        nodes.append({
+            "id": node_id,
+            "label": str(item.get("rule_id") or node_id),
+            "type": "RuleExecution",
+            "properties": item,
+            "passed": bool(item.get("passed")),
+        })
+        edges.append({"id": f"{case_id}:rule:{node_id}", "source": case_id, "target": node_id, "label": "执行"})
+
+    recommendation_id = recommendation.get("recommendation_id")
+    if recommendation_id:
+        nodes.append({
+            "id": str(recommendation_id),
+            "label": str(recommendation.get("decision") or "推荐结论"),
+            "type": "Recommendation",
+            "properties": recommendation,
+        })
+        edges.append({"id": f"{case_id}:recommendation", "source": case_id, "target": str(recommendation_id), "label": "形成推荐"})
+        for execution_id in recommendation.get("justifying_execution_ids", []):
+            edges.append({
+                "id": f"{recommendation_id}:justified:{execution_id}",
+                "source": str(recommendation_id),
+                "target": str(execution_id),
+                "label": "依据",
+            })
+
+    source_id = evidence.get("source_id")
+    if source_id:
+        evidence_node_id = f"source:{source_id}"
+        nodes.append({"id": evidence_node_id, "label": str(source_id), "type": "Source", "properties": evidence})
+        if recommendation_id:
+            edges.append({"id": f"{recommendation_id}:source", "source": str(recommendation_id), "target": evidence_node_id, "label": "证据"})
+    return {"status": "online" if chain.get("source") == "neo4j" else "file", "nodes": nodes, "edges": edges}
+
+
+@app.get("/api/experiments/{experiment_id}/cases/{case_id}/context")
+def get_scenario_context(experiment_id: str, case_id: str) -> dict:
+    """返回以当前实验方案为唯一上下文的领域无关工作台契约。"""
+    directory = _experiment_dir(experiment_id)
+    chain = get_scenario_explanation(experiment_id, case_id)
+    rankings_path = directory / "analysis" / "techno_economics" / "scenario_rankings.csv"
+    scenario: dict = {"case_id": case_id}
+    if rankings_path.is_file():
+        rows = json.loads(pd.read_csv(rankings_path).to_json(orient="records"))
+        # 不假设主键列名；只要一行中有字段值等于 case_id，就认为它是当前方案。
+        scenario = next((row for row in rows if case_id in row.values()), scenario)
+
+    observations = chain.get("observations", [])
+    parameters = [
+        item for item in observations
+        if any(token in str(item.get("source_field", "")).lower() for token in ("concentration", "rate", "duration", "parameter"))
+    ]
+    parameter_ids = {item.get("observation_id") for item in parameters}
+    metrics = [item for item in observations if item.get("observation_id") not in parameter_ids]
+    rules = chain.get("rule_executions", [])
+    return {
+        "contract_version": "scenario-context/v1",
+        "experiment_id": experiment_id,
+        "case_id": case_id,
+        "scenario": scenario,
+        "parameters": parameters,
+        "metrics": metrics,
+        "rules": rules,
+        "rule_summary": {
+            "total": len(rules),
+            "passed": sum(bool(item.get("passed")) for item in rules),
+            "failed": sum(not bool(item.get("passed")) for item in rules),
+        },
+        "recommendation": chain.get("recommendation") or {},
+        "evidence": chain.get("evidence") or {},
+        "provenance": {"source": chain.get("source"), "model_id": chain.get("model_id")},
+        "graph": _scenario_graph(chain),
+    }
 
 
 @app.get("/api/experiments/{experiment_id}/files/{file_path:path}")
@@ -457,6 +567,29 @@ def preview_output(category: str, filename: str) -> dict:
             "truncated": len(content) > limit,
         }
     raise HTTPException(415, "该文件类型不支持结构化预览")
+
+
+@app.get("/api/assistant/status")
+def assistant_status() -> dict:
+    """报告大模型配置状态，但不返回 API Key 等敏感信息。"""
+    settings = LlmSettings.from_env()
+    return {
+        "provider": settings.provider,
+        "model": settings.model,
+        "base_url": settings.base_url,
+        "mode": "offline-debug" if settings.provider == "mock" else "local-qwen",
+        "read_only": True,
+    }
+
+
+@app.post("/api/assistant/chat")
+def assistant_chat(payload: AssistantChatRequest) -> dict:
+    """让 Qwen 基于当前方案事实回答，并返回受控页面展示指令。"""
+    try:
+        assistant = AnalysisAssistant(create_provider(), get_scenario_context)
+        return assistant.chat(payload.experiment_id, payload.case_id, payload.question.strip())
+    except (RuntimeError, ValueError) as exc:
+        raise HTTPException(503, str(exc)) from exc
 
 
 if FRONTEND_DIST.is_dir():

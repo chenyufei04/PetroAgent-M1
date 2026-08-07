@@ -160,3 +160,77 @@ th { position: sticky; top: 0; z-index: 1; color: #536763; background: #f4f7f5; 
 .inventory-toolbar input { min-width: 180px; padding: 7px 9px; border: 1px solid #d5dfda; border-radius: 6px; }
 .inventory-table { max-height: 310px; }
 .inventory-table code { font-size: 10px; white-space: normal; overflow-wrap: anywhere; }
+
+/* 方案工作台：所有区域均由 selectedCaseId 驱动，完整知识库退居维护入口。 */
+.scenario-workbench { display: grid; gap: 18px; margin-bottom: 20px; }
+.workbench-header { display: flex; justify-content: space-between; gap: 24px; padding: 20px 22px; }
+.workbench-header h2 { margin-bottom: 7px; font-size: 23px; }
+.workbench-header p:not(.panel-label) { margin: 0; color: #647773; }
+.workbench-header label { display: grid; align-content: center; gap: 7px; min-width: 480px; color: #647773; font-size: 11px; }
+.workbench-header select { padding: 10px 12px; border: 1px solid #b9cbc4; border-radius: 8px; color: #173b3a; background: #fff; }
+.decision-strip { display: grid; grid-template-columns: 1.65fr repeat(3, 1fr); gap: 12px; }
+.decision-strip article { display: grid; align-content: start; gap: 7px; min-height: 122px; padding: 17px; }
+.decision-strip span, .decision-strip small { color: #72827e; font-size: 11px; }
+.decision-strip strong { font: 600 23px Georgia, "Noto Serif SC", serif; }
+.decision-card { border-left: 4px solid #d97706; background: #fffaf0; }
+.decision-card strong { font-family: Inter, "Microsoft YaHei", sans-serif; font-size: 18px; }
+.context-grid { display: grid; grid-template-columns: 1fr 1.08fr; gap: 18px; }
+.context-metrics, .context-rules, .explanation-graph-panel, .supporting-analysis { padding: 20px; }
+.observation-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+.observation-grid button { display: grid; gap: 5px; min-width: 0; padding: 12px; border: 1px solid #dce5e1; border-radius: 8px; color: #173b3a; background: #f9fbfa; text-align: left; cursor: pointer; }
+.observation-grid button:hover { border-color: #0f766e; background: #ecfdf5; }
+.observation-grid span { overflow: hidden; color: #647773; font: 10px ui-monospace, monospace; text-overflow: ellipsis; }
+.observation-grid strong { font: 600 19px Georgia, serif; }
+.observation-grid small { color: #72827e; }
+.rule-list { display: grid; max-height: 310px; overflow: auto; }
+.rule-list button { display: grid; grid-template-columns: 54px 90px 1fr; gap: 9px; align-items: center; padding: 10px 7px; border: 0; border-top: 1px solid #e7ecea; color: #294d49; background: transparent; text-align: left; cursor: pointer; }
+.rule-list button:hover { background: #f6faf8; }
+.rule-list button > span { padding: 4px 6px; border-radius: 4px; color: #08775f; background: #e9f8f3; font-size: 10px; text-align: center; }
+.rule-list button.failed > span { color: #a63b21; background: #fff0eb; }
+.rule-list strong { font: 11px ui-monospace, monospace; }
+.rule-list small { color: #647773; }
+.explanation-layout { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(280px, .7fr); gap: 14px; }
+.explanation-graph-panel .graph-canvas { height: 470px; }
+.node-inspector { max-height: 470px; padding: 16px; overflow: auto; border: 1px solid #e1e8e5; border-radius: 8px; background: #f8faf9; }
+.node-inspector h3 { overflow-wrap: anywhere; }
+.node-inspector p, .node-inspector small { color: #647773; line-height: 1.7; }
+.node-inspector dl { display: grid; grid-template-columns: 110px 1fr; margin: 0; font-size: 11px; }
+.node-inspector dt, .node-inspector dd { margin: 0; padding: 7px 0; border-bottom: 1px solid #e4ebe7; overflow-wrap: anywhere; }
+.node-inspector dt { color: #72827e; }
+.view-tabs { display: flex; gap: 7px; }
+.view-tabs button { padding: 7px 10px; border: 1px solid #d5dfda; border-radius: 7px; color: #435652; background: #fff; cursor: pointer; }
+.view-tabs button.active { border-color: #0f766e; color: #0f766e; background: #ecfdf5; }
+.selected-row { color: #0f766e; background: #ecfdf5; }
+.supporting-analysis tbody tr { cursor: pointer; }
+.legacy-tools { margin-top: 18px; padding: 14px 16px; border: 1px solid #d4ded9; border-radius: 12px; background: rgba(255,255,255,.72); }
+.legacy-tools > summary { color: #436d68; font-weight: 700; cursor: pointer; }
+.legacy-tools > p { color: #72827e; font-size: 12px; }
+.legacy-tools .workspace { margin-top: 16px; }
+.agent-console { padding: 20px 22px; border-top: 4px solid #0f766e; }
+.agent-heading { display: flex; justify-content: space-between; align-items: flex-start; }
+.agent-heading h2 { margin-bottom: 12px; font-size: 21px; }
+.model-badge { padding: 7px 10px; border-radius: 999px; color: #315e57; background: #e9f8f3; font: 10px ui-monospace, monospace; }
+.agent-layout { display: grid; grid-template-columns: .8fr 1.5fr; gap: 20px; }
+.agent-intro { padding: 15px; border-radius: 9px; color: #536763; background: #f3f8f6; }
+.agent-intro > p { margin-top: 0; line-height: 1.65; }
+.agent-intro > small { display: block; margin-top: 12px; color: #72827e; line-height: 1.5; }
+.agent-examples { display: flex; flex-wrap: wrap; gap: 7px; }
+.agent-examples button { padding: 7px 9px; border: 1px solid #b9cbc4; border-radius: 999px; color: #315e57; background: #fff; cursor: pointer; }
+.agent-chat { min-width: 0; }
+.agent-messages { display: grid; gap: 8px; max-height: 250px; min-height: 105px; padding: 10px; overflow: auto; border: 1px solid #e1e8e5; border-radius: 9px; background: #fafcfb; }
+.agent-messages article { max-width: 90%; padding: 9px 11px; border-radius: 9px; background: #eef3f0; }
+.agent-messages article.user { justify-self: end; color: #fff; background: #436d68; }
+.agent-messages article p { margin: 4px 0; line-height: 1.55; }
+.agent-messages article small { color: inherit; opacity: .7; }
+.agent-placeholder { align-self: center; color: #87938f; text-align: center; }
+.agent-chat form { display: grid; grid-template-columns: 1fr 82px; gap: 8px; margin-top: 9px; }
+.agent-chat input { min-width: 0; padding: 11px 12px; border: 1px solid #b9cbc4; border-radius: 8px; }
+.agent-chat form button { border: 0; border-radius: 8px; color: #fff; background: #0f766e; cursor: pointer; }
+.agent-chat form button:disabled { opacity: .55; }
+@media (max-width: 1250px) {
+  .workbench-header { flex-direction: column; }
+  .workbench-header label { min-width: 0; }
+  .decision-strip { grid-template-columns: repeat(2, 1fr); }
+  .context-grid, .explanation-layout { grid-template-columns: 1fr; }
+  .agent-layout { grid-template-columns: 1fr; }
+}

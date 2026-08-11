@@ -6,9 +6,10 @@ from pathlib import Path
 import csv
 import json
 import re
+from time import perf_counter
 from uuid import uuid4
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -23,6 +24,7 @@ from petro_agent.llm import LlmSettings, create_provider
 from petro_agent.pipeline import analyze_csv
 
 from .serializers import serialize_result
+from .request_logging import configure_api_logger
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -32,8 +34,9 @@ UPLOAD_ROOT = ROOT / "data" / "uploads"
 OUTPUT_ROOT = ROOT / "outputs"
 EXPERIMENT_ROOT = OUTPUT_ROOT / "experiments"
 FRONTEND_DIST = ROOT / "frontend" / "dist"
+API_LOGGER = configure_api_logger(ROOT)
 
-app = FastAPI(title="PetroAgent Web Demo API", version="0.10.0")
+app = FastAPI(title="PetroAgent Web Demo API", version="0.10.1")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -41,6 +44,47 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def log_api_request(request: Request, call_next):
+    """统一记录所有 HTTP 调用；不保存请求正文、查询值和认证信息等敏感内容。"""
+    started = perf_counter()
+    supplied_request_id = request.headers.get("x-request-id", "")
+    request_id = supplied_request_id if 0 < len(supplied_request_id) <= 128 else uuid4().hex
+    common = {
+        "event": "api_request",
+        "request_id": request_id,
+        "method": request.method,
+        "path": request.url.path,
+        "client_ip": request.client.host if request.client else None,
+        "user_agent": request.headers.get("user-agent", "")[:512],
+    }
+    try:
+        response = await call_next(request)
+    except Exception as exc:
+        # 未处理异常先写日志再交回 FastAPI/uvicorn，确保 500 调用也有追踪记录。
+        API_LOGGER.exception(
+            "接口调用异常",
+            extra={
+                **common,
+                "status_code": 500,
+                "duration_ms": round((perf_counter() - started) * 1000, 3),
+                "error_type": type(exc).__name__,
+                "error_message": str(exc)[:1000],
+            },
+        )
+        raise
+    response.headers["X-Request-ID"] = request_id
+    API_LOGGER.info(
+        "接口调用完成",
+        extra={
+            **common,
+            "status_code": response.status_code,
+            "duration_ms": round((perf_counter() - started) * 1000, 3),
+        },
+    )
+    return response
 
 
 class AnalysisRequest(BaseModel):
@@ -67,6 +111,7 @@ class AssistantChatRequest(BaseModel):
     experiment_id: str = Field(min_length=1, max_length=120)
     case_id: str = Field(min_length=1, max_length=160)
     question: str = Field(min_length=1, max_length=4000)
+    history: list[dict[str, str]] = Field(default_factory=list, max_length=10)
 
 
 def _case_config(case_id: str) -> Path:
@@ -231,6 +276,12 @@ def get_scenario_explanation(experiment_id: str, case_id: str) -> dict:
     directory = _experiment_dir(experiment_id)
     if not re.fullmatch(r"[A-Za-z0-9_.-]+", case_id):
         raise HTTPException(400, "非法算例编号")
+    path = directory / "analysis" / "techno_economics" / "explanation_chains.json"
+    file_payload = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+    file_chain = next(
+        (item for item in file_payload.get("cases", []) if item.get("case_id") == case_id),
+        None,
+    )
     # 在线时优先走知识图谱关系链；连接失败时回退到同一分析阶段生成的可审计 JSON。
     try:
         settings = Neo4jSettings.from_env(ROOT / ".env")
@@ -238,14 +289,36 @@ def get_scenario_explanation(experiment_id: str, case_id: str) -> dict:
             client.verify()
             graph_chain = Neo4jQueryService(client).scenario_explanation(case_id)
         if graph_chain and graph_chain.get("recommendation"):
+            if file_chain:
+                # 图谱可能尚未执行最新一轮回写；按稳定执行 ID 补齐单位等新增证据字段。
+                local_rules = {
+                    item["rule_execution_id"]: item
+                    for item in file_chain.get("rule_executions", [])
+                }
+                graph_chain["rule_executions"] = [
+                    {
+                        **item,
+                        **{
+                            key: value
+                            for key, value in local_rules.get(item.get("rule_execution_id"), {}).items()
+                            if item.get(key) is None
+                        },
+                    }
+                    for item in graph_chain.get("rule_executions", [])
+                ]
+                local_evidence = file_chain.get("evidence") or {}
+                graph_evidence = graph_chain.get("evidence") or {}
+                graph_chain["evidence"] = {
+                    **graph_evidence,
+                    **{key: value for key, value in local_evidence.items() if graph_evidence.get(key) is None},
+                }
             return {"source": "neo4j", **graph_chain}
     except Exception:
         pass
-    path = directory / "analysis" / "techno_economics" / "explanation_chains.json"
     if not path.is_file():
         raise HTTPException(409, "实验尚未生成语义解释链")
-    payload = json.loads(path.read_text(encoding="utf-8"))
-    chain = next((item for item in payload.get("cases", []) if item.get("case_id") == case_id), None)
+    payload = file_payload
+    chain = file_chain
     if chain is None:
         raise HTTPException(404, "算例解释链不存在")
     return {"source": "file", "model_id": payload.get("model_id"), **chain}
@@ -577,7 +650,11 @@ def assistant_status() -> dict:
         "provider": settings.provider,
         "model": settings.model,
         "base_url": settings.base_url,
-        "mode": "offline-debug" if settings.provider == "mock" else "local-qwen",
+        "mode": (
+            "offline-debug" if settings.provider == "mock"
+            else "local-ollama" if settings.provider == "ollama"
+            else "openai-compatible"
+        ),
         "read_only": True,
     }
 
@@ -587,7 +664,18 @@ def assistant_chat(payload: AssistantChatRequest) -> dict:
     """让 Qwen 基于当前方案事实回答，并返回受控页面展示指令。"""
     try:
         assistant = AnalysisAssistant(create_provider(), get_scenario_context)
-        return assistant.chat(payload.experiment_id, payload.case_id, payload.question.strip())
+        # 历史消息只允许 user/assistant 文本，避免客户端覆盖系统提示或无限扩大上下文。
+        history = [
+            {"role": item.get("role", ""), "content": str(item.get("content", ""))[:4000]}
+            for item in payload.history
+            if item.get("role") in {"user", "assistant"} and str(item.get("content", "")).strip()
+        ]
+        return assistant.chat(
+            payload.experiment_id,
+            payload.case_id,
+            payload.question.strip(),
+            history=history,
+        )
     except (RuntimeError, ValueError) as exc:
         raise HTTPException(503, str(exc)) from exc
 

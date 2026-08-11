@@ -12,24 +12,24 @@ from urllib.request import Request, urlopen
 
 @dataclass(frozen=True)
 class LlmSettings:
-    """本地 Qwen/vLLM 服务配置；真实密钥只从环境变量读取。"""
+    """本地模型服务配置；当前默认运行时为 Ollama，密钥只从环境变量读取。"""
 
     provider: str = "mock"
-    base_url: str = "http://127.0.0.1:8001/v1"
-    api_key: str = "EMPTY"
-    model: str = "Qwen/Qwen3-8B"
+    base_url: str = "http://127.0.0.1:11434"
+    api_key: str = "ollama"
+    model: str = "qwen3:8b"
     timeout_seconds: int = 120
-    temperature: float = 0.2
+    temperature: float = 0.4
 
     @classmethod
     def from_env(cls) -> "LlmSettings":
         return cls(
             provider=os.getenv("PETRO_AGENT_LLM_PROVIDER", "mock").strip().lower(),
-            base_url=os.getenv("PETRO_AGENT_LLM_BASE_URL", "http://127.0.0.1:8001/v1").rstrip("/"),
-            api_key=os.getenv("PETRO_AGENT_LLM_API_KEY", "EMPTY"),
-            model=os.getenv("PETRO_AGENT_LLM_MODEL", "Qwen/Qwen3-8B"),
+            base_url=os.getenv("PETRO_AGENT_LLM_BASE_URL", "http://127.0.0.1:11434").rstrip("/"),
+            api_key=os.getenv("PETRO_AGENT_LLM_API_KEY", "ollama"),
+            model=os.getenv("PETRO_AGENT_LLM_MODEL", "qwen3:8b"),
             timeout_seconds=int(os.getenv("PETRO_AGENT_LLM_TIMEOUT_SECONDS", "120")),
-            temperature=float(os.getenv("PETRO_AGENT_LLM_TEMPERATURE", "0.2")),
+            temperature=float(os.getenv("PETRO_AGENT_LLM_TEMPERATURE", "0.4")),
         )
 
 
@@ -91,10 +91,47 @@ class OpenAICompatibleProvider:
             raise RuntimeError("Qwen 未返回约定的 JSON 对象") from exc
 
 
+class OllamaProvider:
+    """调用 Ollama 原生 Chat API，使用 JSON 模式约束页面展示指令。"""
+
+    name = "ollama"
+
+    def __init__(self, settings: LlmSettings):
+        self.settings = settings
+
+    def generate_json(self, messages: list[dict[str, str]]) -> dict[str, Any]:
+        payload = {
+            "model": self.settings.model,
+            "messages": messages,
+            "stream": False,
+            "format": "json",
+            "think": False,
+            "options": {"temperature": self.settings.temperature, "num_predict": 1200},
+        }
+        request = Request(
+            f"{self.settings.base_url}/api/chat",
+            data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        try:
+            with urlopen(request, timeout=self.settings.timeout_seconds) as response:
+                result = json.loads(response.read().decode("utf-8"))
+        except (HTTPError, URLError, TimeoutError) as exc:
+            raise RuntimeError(f"Ollama 服务不可用：{exc}") from exc
+        content = result.get("message", {}).get("content", "")
+        try:
+            return json.loads(content)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError("Ollama/Qwen 未返回约定的 JSON 对象") from exc
+
+
 def create_provider(settings: LlmSettings | None = None) -> LlmProvider:
     settings = settings or LlmSettings.from_env()
     if settings.provider == "mock":
         return MockProvider()
+    if settings.provider == "ollama":
+        return OllamaProvider(settings)
     if settings.provider in {"qwen", "vllm", "openai-compatible"}:
         return OpenAICompatibleProvider(settings)
     raise ValueError(f"不支持的大模型提供器：{settings.provider}")

@@ -53,6 +53,7 @@ Desktop.ini
 
 # 日志、锁定和临时文件
 *.log
+outputs/logs/
 *.tmp
 *.temp
 *.swp

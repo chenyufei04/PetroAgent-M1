@@ -208,6 +208,9 @@ th { position: sticky; top: 0; z-index: 1; color: #536763; background: #f4f7f5; 
 .legacy-tools .workspace { margin-top: 16px; }
 .agent-console { padding: 20px 22px; border-top: 4px solid #0f766e; }
 .agent-heading { display: flex; justify-content: space-between; align-items: flex-start; }
+.agent-actions { display: flex; align-items: center; gap: 8px; }
+.clear-chat { padding: 6px 9px; border: 1px solid #d5dfda; border-radius: 999px; color: #647773; background: #fff; cursor: pointer; }
+.clear-chat:hover { border-color: #0f766e; color: #0f766e; }
 .agent-heading h2 { margin-bottom: 12px; font-size: 21px; }
 .model-badge { padding: 7px 10px; border-radius: 999px; color: #315e57; background: #e9f8f3; font: 10px ui-monospace, monospace; }
 .agent-layout { display: grid; grid-template-columns: .8fr 1.5fr; gap: 20px; }

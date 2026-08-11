@@ -26,6 +26,10 @@ def test_build_semantic_explanations_links_rules_concepts_and_evidence():
 
     assert len(result["metric_observations"]) == 9
     assert {item["rule_id"] for item in result["rule_executions"]} >= {"PF-DESIGN-003", "PF-ECO-002", "PF-RANK-001"}
+    units = {item["rule_id"]: item["unit"] for item in result["rule_executions"]}
+    assert units["PF-OPS-001"] == "bar"
+    assert units["PF-OPS-004"] == "m3/day"
+    assert units["PF-ECO-002"] == "USD"
     chain = result["explanation_chains"][0]
     assert chain["recommendation"]["decision"] == "优先候选"
     assert chain["evidence"]["source_id"] == "petroagent_techno_economic_model_v1"

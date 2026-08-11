@@ -1,11 +1,12 @@
-provider: qwen
-model: Qwen/Qwen3-8B
-api_protocol: openai-compatible
-base_url: http://127.0.0.1:8001/v1
+provider: ollama
+runtime: ollama
+model: qwen3:8b
+base_url: http://127.0.0.1:11434
 generation:
-  temperature: 0.2
+  temperature: 0.4
   max_tokens: 1200
-  enable_thinking: false
+  think: false
+  format: json
 agent:
   mode: read_only
   allowed_tools:

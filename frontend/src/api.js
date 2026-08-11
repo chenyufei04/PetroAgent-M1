@@ -53,10 +53,10 @@ export const getScenarioExplanation = (experimentId, caseId) =>
 export const getScenarioContext = (experimentId, caseId) =>
   request(`/api/experiments/${experimentId}/cases/${caseId}/context`);
 export const getAssistantStatus = () => request("/api/assistant/status");
-export const chatWithAssistant = (experimentId, caseId, question) =>
+export const chatWithAssistant = (experimentId, caseId, question, history = []) =>
   request("/api/assistant/chat", {
     method: "POST",
-    body: JSON.stringify({ experiment_id: experimentId, case_id: caseId, question }),
+    body: JSON.stringify({ experiment_id: experimentId, case_id: caseId, question, history }),
   });
 export const outputUrl = (path) => `${API_BASE}${path}`;
 export const getOutputPreview = (path) => request(path);

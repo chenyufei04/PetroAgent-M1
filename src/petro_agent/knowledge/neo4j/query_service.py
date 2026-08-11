@@ -228,7 +228,8 @@ class Neo4jQueryService:
                 OPTIONAL MATCH (x)-[:SUPPORTED_BY]->(rule_source:Source)
                 WITH c, observations, collect(DISTINCT {rule_execution_id: x.rule_execution_id,
                      rule_id: rule.rule_id, rule_name: coalesce(rule.name_zh, rule.name_en), passed: x.passed,
-                     actual: x.actual, expected: x.expected, operator: x.operator, message: x.message,
+                     actual: x.actual, expected: x.expected, unit: x.unit,
+                     operator: x.operator, message: x.message,
                      evidence_source_id: rule_source.source_id, evidence_name: coalesce(rule_source.name_zh, rule_source.name_en)}) AS rule_executions
                 OPTIONAL MATCH (c)-[:PRODUCES_RECOMMENDATION]->(r:Recommendation)-[:SUPPORTED_BY]->(source:Source)
                 RETURN c.case_id AS case_id, observations, rule_executions,

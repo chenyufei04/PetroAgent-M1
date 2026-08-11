@@ -26,11 +26,12 @@ OBSERVATION_FIELDS: dict[str, tuple[str, str]] = {
 # 多领域适配说明：这些约束名称来自 polymer_economics.yaml，规则 ID 来自聚合物规则目录。
 # 新领域不能复用 PF-* ID 表示不同含义，应建立独立命名空间和证据来源。
 CONSTRAINT_RULES = {
-    "injector_bhp": ("PF-OPS-001", "注入井压力不超过配置上限"),
-    "water_injection_rate": ("PF-OPS-004", "注水峰值不超过设施能力"),
-    "water_production_rate": ("PF-OPS-005", "产水峰值不超过处理能力"),
-    "daily_polymer": ("PF-OPS-006", "日配聚峰值不超过配制能力"),
-    "total_polymer": ("PF-OPS-007", "聚合物总量不超过供应上限"),
+    # 单位与经济配置中的约束量纲保持一致，防止解释层或大模型自行猜测。
+    "injector_bhp": ("PF-OPS-001", "注入井压力不超过配置上限", "bar"),
+    "water_injection_rate": ("PF-OPS-004", "注水峰值不超过设施能力", "m3/day"),
+    "water_production_rate": ("PF-OPS-005", "产水峰值不超过处理能力", "m3/day"),
+    "daily_polymer": ("PF-OPS-006", "日配聚峰值不超过配制能力", "kg/day"),
+    "total_polymer": ("PF-OPS-007", "聚合物总量不超过供应上限", "kg"),
 }
 
 
@@ -70,7 +71,15 @@ def build_semantic_explanations(
 
         case_executions: list[dict] = []
 
-        def add_execution(rule_id: str, passed: bool, actual: Any, expected: Any, operator: str, message: str) -> None:
+        def add_execution(
+            rule_id: str,
+            passed: bool,
+            actual: Any,
+            expected: Any,
+            operator: str,
+            message: str,
+            unit: str | None = None,
+        ) -> None:
             item = {
                 "rule_execution_id": f"rule-execution:{case_id}:{rule_id}",
                 "case_id": case_id,
@@ -80,6 +89,7 @@ def build_semantic_explanations(
                 "expected": _native(expected),
                 "operator": operator,
                 "message": message,
+                "unit": unit,
                 "evidence_source_id": source_id,
                 "model_id": model_id,
             }
@@ -88,20 +98,20 @@ def build_semantic_explanations(
 
         # 质量由同一段塞水量与浓度确定；生成成功即代表公式完成且结果有限。
         mass_ok = np.isfinite(float(row["polymer_mass_kg"])) and float(row["polymer_mass_kg"]) >= 0
-        add_execution("PF-DESIGN-003", mass_ok, row["polymer_mass_kg"], "C_p × integral(FWIR dt)", "formula", "聚合物质量按段塞窗口积分得到")
-        add_execution("PF-PERF-001", bool(row.get("waterflood_case_id")), row.get("incremental_oil_m3"), row.get("waterflood_case_id"), "paired_baseline", "增量油采用同注入速率水驱基线")
-        add_execution("PF-PERF-002", pd.notna(row.get("incremental_oil_m3_per_tonne_polymer")), row.get("incremental_oil_m3_per_tonne_polymer"), "reported", "is_not_null", "已报告单位聚合物增量油")
+        add_execution("PF-DESIGN-003", mass_ok, row["polymer_mass_kg"], "C_p × integral(FWIR dt)", "formula", "聚合物质量按段塞窗口积分得到", "kg")
+        add_execution("PF-PERF-001", bool(row.get("waterflood_case_id")), row.get("incremental_oil_m3"), row.get("waterflood_case_id"), "paired_baseline", "增量油采用同注入速率水驱基线", "m3")
+        add_execution("PF-PERF-002", pd.notna(row.get("incremental_oil_m3_per_tonne_polymer")), row.get("incremental_oil_m3_per_tonne_polymer"), "reported", "is_not_null", "已报告单位聚合物增量油", "m3/t")
 
         case_constraints = constraints.loc[constraints["polymer_case_id"] == case_id]
         for constraint in case_constraints.to_dict(orient="records"):
-            rule_id, message = CONSTRAINT_RULES[str(constraint["constraint"])]
-            add_execution(rule_id, constraint["passed"], constraint["actual"], constraint["limit"], "less_than_or_equal", message)
+            rule_id, message, unit = CONSTRAINT_RULES[str(constraint["constraint"])]
+            add_execution(rule_id, constraint["passed"], constraint["actual"], constraint["limit"], "less_than_or_equal", message, unit)
 
         calculated_net = float(row["incremental_oil_revenue"]) - float(row["total_incremental_cost"])
         net_ok = abs(calculated_net - float(row["net_incremental_value"])) <= 1e-6
-        add_execution("PF-ECO-001", net_ok, row["net_incremental_value"], calculated_net, "formula", "净增量价值采用收入减带符号增量成本")
-        add_execution("PF-ECO-002", row["economically_positive"], row["net_incremental_value"], 0, "greater_than", "净增量价值大于零才通过经济筛选")
-        add_execution("PF-RANK-001", True, row["scenario_rank"], row["ranking_tier"], "deterministic_ranking", "排名按技术可行性、经济正值和净值生成")
+        add_execution("PF-ECO-001", net_ok, row["net_incremental_value"], calculated_net, "formula", "净增量价值采用收入减带符号增量成本", "USD")
+        add_execution("PF-ECO-002", row["economically_positive"], row["net_incremental_value"], 0, "greater_than", "净增量价值大于零才通过经济筛选", "USD")
+        add_execution("PF-RANK-001", True, row["scenario_rank"], row["ranking_tier"], "deterministic_ranking", "排名按技术可行性、经济正值和净值生成", "rank")
 
         failed = [item for item in case_executions if not item["passed"]]
         recommendation = {

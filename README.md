@@ -1,6 +1,6 @@
 # PetroAgent M1
 
-> 当前版本：`v0.10.0`（Qwen + RAG 交互式分析助手）
+> 当前版本：`v0.10.1`（交互质量与接口审计日志）
 
 > README 维护约定：正文只描述功能、数据、公式和设计；所有可执行命令只维护在文末
 > “执行命令手册”。后续修改 README 时不得在正文新增 PowerShell、bash 或 Docker 命令块。
@@ -677,7 +677,7 @@ outputs/reports/polymer_simple2d.md
 `PetroleumEngineeringCoreOntology v0.2`（石油工程核心本体 v0.2），并提供
 YAML 到 Neo4j 的可重复导入与查询适配层。
 
-> 当前版本：`PetroAgent v0.10.0（Qwen + RAG 交互式分析助手） / Knowledge Foundation v0.3.0`
+> 当前版本：`PetroAgent v0.10.1（交互质量与接口审计日志） / Knowledge Foundation v0.3.0`
 > Python：`3.10+`  
 > 当前边界：确定性分析内核＋YAML知识源＋Neo4j存储/查询＋Web 演示展示；
 > 已支持从 Windows 调用 WSL2 Ubuntu 中的 OPM Flow、ESMRY 解析和参数化批量实验；
@@ -757,6 +757,7 @@ PetroAgent 程序版本与 Knowledge Foundation 知识库版本分别管理：�
 | `v0.9.6` | 知识—实验语义桥 | 规则实体化、执行实例化、指标绑定概念、推荐绑定规则和证据，并在 API/Vue 展开完整解释链 | 外部标准条款、现场证据审批、LLM 编排与概率推理 |
 | `v0.9.7` | 统一方案上下文工作台 | 当前方案统一驱动参数、指标、规则、推荐、证据和精简解释子图；完整图谱转为维护入口 | 领域 UI Schema、动态图表按方案过滤、LLM 解释编排 |
 | `v0.10.0` | Qwen + RAG 交互助手 | Qwen3-8B/Mock 可切换提供器、Neo4j/实验文件混合检索、只读 Agent、对话驱动页面展示及 QLoRA 配置 | 现场语料审核、向量文档索引、写操作审批与模型评测 |
+| `v0.10.1` | 交互质量与接口审计 | 多轮主题聚焦、重复回答重写、结构化证据降级、规则单位链路和 FastAPI JSONL 轮转日志 | 日志集中采集、指标告警和模型效果评测 |
 
 ### v0.1.0：确定性分析内核
 
@@ -2437,18 +2438,20 @@ sheet_name  可选，仅 XLSX 使用
 ### 版本备注（2026-08-07）
 
 本版在 `scenario-context/v1` 之上增加只读大模型编排层。基础模型按既定方案采用
-`Qwen/Qwen3-8B`，推理服务采用 vLLM 的 OpenAI-compatible API；页面和后端默认使用
-Mock 提供器，因此未安装模型或没有 GPU 时也可以完成全部接口与交互调试。
+Ollama 模型库中的 `qwen3:8b`，当前本地推理运行时采用 Ollama 原生 Chat API；页面和
+后端仍保留 Mock 提供器，因此未安装模型或没有 GPU 时也可以完成全部接口与交互调试。
+OpenAI-compatible/vLLM 适配器仅作为后期高并发部署扩展保留，不是当前启动链路。
 
 交互链路为：用户问题 → 当前实验/方案上下文 → Neo4j 优先、实验文件回退的混合检索
 → Qwen 组织有依据的回答 → 受控展示指令 → Vue 显示相应指标、规则、图谱、图表、
 排名或证据。模型不直接生成工程数值，也不能通过展示指令注入组件、执行命令或启动
 OPM Flow。
 
-新增 QLoRA 配置采用 4-bit NF4、双重量化及 `all-linear` LoRA 目标。微调范围限定为
+预留的 QLoRA 配置采用 4-bit NF4、双重量化及 `all-linear` LoRA 目标。微调范围限定为
 术语和意图识别、工具选择、结构化展示指令、证据引用与不确定性表达；模拟结果、价格
 和约束阈值不得作为模型事实固化。训练脚本只在数据集存在且训练依赖已安装时运行，
-不会自动下载模型，也不会自动使用未审核工程数据。
+不会自动下载模型，也不会自动使用未审核工程数据。当前 Ollama 运行链只加载官方
+`qwen3:8b`，尚未加载该 QLoRA 适配器；适配器兼容性与转换流程需单独验证后再启用。
 
 跨领域扩展时，通用 LLM 提供器、Agent 和 Vue 交互组件保持不变；新领域需要提供相同
 结构的方案上下文、领域规则与证据。领域术语样本可进入经审核的 QLoRA 训练集，但具体
@@ -2491,10 +2494,10 @@ OPM Flow。
 规则和证据”会同时保留概览、指标、规则以及证据图谱。若问题中没有识别到明确关键词，
 系统默认展示概览、指标、规则和图谱。
 
-Mock 与真实 Qwen 模式存在以下区别：
+Mock 与 Ollama/Qwen 模式存在以下区别：
 
 - Mock 模式用于无 GPU 联调，回答由检索到的方案排名、净增量价值和失败规则组成；
-- Qwen 模式会读取同一组受控事实，以更自然的语言回答并返回页面展示指令；
+- Ollama/Qwen 模式会读取同一组受控事实，以更自然的语言回答并返回页面展示指令；
 - 两种模式都不能修改工程结果，页面中的数值仍来自 OPM、确定性算法和规则执行记录；
 - 当前自然语言指令只能控制展示和解释，不能切换到任意指定方案、修改参数、启动模拟、
   回写 Neo4j 或执行系统命令；方案切换仍通过页面“当前方案”下拉框完成；
@@ -2502,6 +2505,22 @@ Mock 与真实 Qwen 模式存在以下区别：
 
 当前边界：已实现图谱/实验产物的混合上下文检索，但尚未建立文献 PDF 的向量索引；
 QLoRA 为可运行训练入口，尚未在本仓库中实际下载模型、训练适配器或完成模型效果评测。
+
+## v0.10.1：接口审计日志
+
+FastAPI 现已为所有 HTTP 调用生成结构化访问日志，默认保存在
+`outputs/logs/api_calls.log`。每行是一条独立 JSON，包含时间、请求 ID、方法、路径、
+状态码、耗时、客户端地址和 User-Agent；未处理异常还会记录异常类型与截断后的错误信息。
+响应头 `X-Request-ID` 可用于把浏览器报错与日志记录对应起来。
+
+每个日志文件默认最多保存 1000 条记录；写入下一条记录前会自动轮转为
+`api_calls.log.1`，新记录继续写入 `api_calls.log`。10 MiB 文件大小限制同时作为保护，
+默认保留 5 个历史文件。目录、文件名、日志级别、记录上限、轮转大小和保留数量均可通过
+`.env` 中的 `PETRO_AGENT_LOG_*` 配置调整。为避免泄露上传内容、模型
+问题、查询值、密码和令牌，日志不会保存请求正文、查询参数内容或认证请求头。
+
+运行日志属于本地可再生数据，已由 `.gitignore` 排除，不应提交到 GitHub。查看日志的
+命令统一保留在文档末尾的执行命令手册中。
 
 ## 执行命令手册（固定置于 README 末尾）
 
@@ -2695,6 +2714,12 @@ docker compose ps
 docker compose logs -f neo4j
 ```
 
+持续查看 FastAPI 接口调用日志：
+
+```powershell
+Get-Content .\outputs\logs\api_calls.log -Wait -Tail 50
+```
+
 日志跟踪窗口中按 `Ctrl+C` 只会退出查看，不会停止容器。
 
 ### L. 日常停止与数据保留
@@ -2718,7 +2743,7 @@ docker compose down
 docker compose down -v
 ```
 
-### M. Qwen、RAG 交互页面与 QLoRA
+### M. Ollama、Qwen、RAG 交互页面与 QLoRA 预留
 
 默认 Mock 模式不需要启动大模型，按常规方式启动 FastAPI 后即可调试交互页面：
 
@@ -2728,22 +2753,36 @@ $env:PETRO_AGENT_LLM_PROVIDER="mock"
 .\.venv\Scripts\python.exe scripts\run_web.py
 ```
 
-在独立 WSL/GPU 环境启动 Qwen3-8B vLLM 服务。端口使用 `8001`，避免与 FastAPI 的
-`8000` 冲突：
+首次使用时，在 Windows 安装并启动 Ollama，然后下载约 5.2 GB 的 Qwen3-8B Q4 模型：
 
-```bash
-source .venv-llm/bin/activate
-vllm serve Qwen/Qwen3-8B --host 0.0.0.0 --port 8001 --enable-auto-tool-choice --tool-call-parser hermes
+```powershell
+ollama --version
+ollama pull qwen3:8b
+ollama list
 ```
 
-回到 Windows PowerShell，切换 PetroAgent 到本地 Qwen 服务并启动页面：
+Ollama Windows 应用通常会自动启动本地服务。如未运行，在单独 PowerShell 终端启动并
+保持该窗口开启：
+
+```powershell
+ollama serve
+```
+
+检查 Ollama 服务和模型；默认地址为 `127.0.0.1:11434`：
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:11434/api/tags
+ollama ps
+```
+
+在另一个 Windows PowerShell 中，切换 PetroAgent 到 Ollama/Qwen 并启动页面：
 
 ```powershell
 cd F:\Projects\petro-agent
-$env:PETRO_AGENT_LLM_PROVIDER="qwen"
-$env:PETRO_AGENT_LLM_MODEL="Qwen/Qwen3-8B"
-$env:PETRO_AGENT_LLM_BASE_URL="http://127.0.0.1:8001/v1"
-$env:PETRO_AGENT_LLM_API_KEY="EMPTY"
+$env:PETRO_AGENT_LLM_PROVIDER="ollama"
+$env:PETRO_AGENT_LLM_MODEL="qwen3:8b"
+$env:PETRO_AGENT_LLM_BASE_URL="http://127.0.0.1:11434"
+$env:PETRO_AGENT_LLM_API_KEY="ollama"
 .\.venv\Scripts\python.exe scripts\run_web.py
 ```
 
@@ -2753,7 +2792,8 @@ $env:PETRO_AGENT_LLM_API_KEY="EMPTY"
 Invoke-RestMethod http://127.0.0.1:8000/api/assistant/status
 ```
 
-QLoRA 必须在独立 GPU 环境安装训练依赖，并在训练语料完成人工审核后执行：
+以下 QLoRA 入口仅作为后期研究预留，不属于当前 Ollama 日常启动流程。必须在独立 GPU
+环境安装训练依赖，并在训练语料完成人工审核后执行：
 
 ```bash
 source .venv-llm/bin/activate
@@ -2762,15 +2802,7 @@ cd /mnt/f/Projects/petro-agent
 PYTHONPATH=src python scripts/train_qwen_qlora.py --config config/llm/qwen3_8b_qlora.yaml
 ```
 
-训练完成后，以 LoRA 名称 `petro-agent` 启动服务，并让 PetroAgent 请求该适配器：
-
-```bash
-vllm serve Qwen/Qwen3-8B --host 0.0.0.0 --port 8001 --enable-lora --lora-modules petro-agent=/mnt/f/Projects/petro-agent/models/adapters/petro-agent-qwen3-8b-qlora --enable-auto-tool-choice --tool-call-parser hermes
-```
-
-```powershell
-$env:PETRO_AGENT_LLM_PROVIDER="qwen"
-$env:PETRO_AGENT_LLM_MODEL="petro-agent"
-$env:PETRO_AGENT_LLM_BASE_URL="http://127.0.0.1:8001/v1"
-.\.venv\Scripts\python.exe scripts\run_web.py
-```
+当前不要把该 QLoRA 输出直接配置给 Ollama。先验证 Qwen 架构、基础权重、量化方法和
+适配器格式兼容性；后期可以研究合并权重或转换为 GGUF，再通过 Ollama Modelfile 导入。
+日常关闭时先在 FastAPI 终端按 `Ctrl+C`；Ollama Windows 应用可保持后台运行。如使用
+命令行服务，则在 `ollama serve` 终端按 `Ctrl+C`。

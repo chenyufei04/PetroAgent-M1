@@ -8,6 +8,11 @@ def _context(_experiment_id: str, case_id: str) -> dict:
     return {
         "case_id": case_id,
         "scenario": {"scenario_rank": 1, "net_incremental_value": -100.0, "currency": "USD"},
+        "rankings": [
+            {"scenario_rank": 1, "case_id": "case-1", "net_incremental_value": -100.0, "incremental_oil_m3": 20.0, "polymer_cost": 50.0, "technically_feasible": True, "currency": "USD"},
+            {"scenario_rank": 2, "case_id": "case-2", "net_incremental_value": -150.0, "incremental_oil_m3": 25.0, "polymer_cost": 120.0, "technically_feasible": True, "currency": "USD"},
+        ],
+        "ranking_metadata": {"ranking_policy": "技术可行性优先，其次按净值降序"},
         "parameters": [{"concept_id": "injection_rate", "source_field": "injection_rate", "value": 100}],
         "metrics": [
             {"concept_id": "net_incremental_value", "source_field": "net_incremental_value", "value": -100},
@@ -109,3 +114,81 @@ def test_assistant_falls_back_to_structured_evidence_after_bad_rewrite() -> None
 
     assert result["answer"] == "压力不超过上限：实际值为 290 bar，阈值为 380 bar，因此通过当前演示性配置规则。"
     assert "经济" not in result["answer"]
+
+
+def test_assistant_uses_deterministic_summary_for_ranking_display() -> None:
+    class MustNotRunProvider:
+        name = "ollama"
+
+        def generate_json(self, _messages):
+            raise AssertionError("纯展示排名指令不应调用模型")
+
+    result = AnalysisAssistant(MustNotRunProvider(), _context).chat(
+        "experiment-1", "case-1", "查看全部方案排名"
+    )
+
+    assert "全部 2 个方案" in result["answer"]
+    assert "当前选中方案排名第 1" in result["answer"]
+    assert "#1 case-1" in result["answer"]
+    assert "#2 case-2" in result["answer"]
+    assert result["display"]["sections"] == ["overview", "ranking"]
+    assert result["model"]["bypassed"] is True
+
+
+def test_assistant_compares_both_ranked_scenarios() -> None:
+    class MustNotRunProvider:
+        name = "ollama"
+
+        def generate_json(self, _messages):
+            raise AssertionError("有确定性排名表时不应让模型自行计算差值")
+
+    result = AnalysisAssistant(MustNotRunProvider(), _context).chat(
+        "experiment-1", "case-1", "为什么第一名优于第二名？"
+    )
+
+    assert "case-1" in result["answer"] and "case-2" in result["answer"]
+    assert "高出 50.00 USD" in result["answer"]
+    assert "第二名增量油更高" in result["answer"]
+    assert "并非所有指标都更高" in result["answer"]
+
+
+def test_recommendation_shortcut_returns_clickable_all_scenarios() -> None:
+    result = AnalysisAssistant(MockProvider(), _context).chat(
+        "experiment-1", "case-1", "为什么推荐当前方案？"
+    )
+
+    assert "共有 2 个可选方案" in result["answer"]
+    assert [item["id"] for item in result["choices"]] == ["case-1", "case-2"]
+    assert result["choices"][1]["question"] == "解释候选方案 case-2 的推荐原因"
+
+
+def test_clicking_scenario_choice_explains_that_scenario() -> None:
+    result = AnalysisAssistant(MockProvider(), _context).chat(
+        "experiment-1", "case-1", "解释候选方案 case-2 的推荐原因"
+    )
+
+    assert "方案 case-2 排名第 2" in result["answer"]
+    assert "净增量价值为 -150.00 USD" in result["answer"]
+    assert "聚合物成本为 120.00 USD" in result["answer"]
+    assert "不代表已经通过经济评价" in result["answer"]
+
+
+def test_failed_rule_shortcut_returns_only_failed_evidence() -> None:
+    result = AnalysisAssistant(MockProvider(), _context).chat(
+        "experiment-1", "case-1", "只看未通过规则和证据"
+    )
+
+    assert "共有 1 条未通过规则" in result["answer"]
+    assert "PF-ECO-1" in result["answer"]
+    assert "PF-OPS-1" not in result["answer"]
+    assert result["display"]["sections"] == ["overview", "rules", "evidence", "graph"]
+
+
+def test_metrics_graph_shortcut_lists_metrics_and_controls_page() -> None:
+    result = AnalysisAssistant(MockProvider(), _context).chat(
+        "experiment-1", "case-1", "展示关键指标和图谱"
+    )
+
+    assert "方案排名 1.00" in result["answer"]
+    assert "净增量价值 -100.00 USD" in result["answer"]
+    assert result["display"]["sections"] == ["overview", "metrics", "rules", "graph"]

@@ -12,6 +12,8 @@ const error = ref("");
 const selectedNode = ref(null);
 const activeView = ref("evidence");
 const visibleSections = ref(["overview", "metrics", "rules", "graph", "charts", "ranking", "evidence"]);
+// 首次进入只呈现助手；收到展示指令后再展开实验工作台，减少首屏信息负担。
+const workbenchVisible = ref(false);
 
 // 多领域适配说明：候选方案来自后端排名契约，组件不依赖某个领域的参数名称。
 const scenarios = computed(() => props.experiment.techno_economics?.cases || []);
@@ -60,27 +62,41 @@ function applyAssistantDisplay(display) {
     selectScenario(display.selected_case_id);
   }
   if (Array.isArray(display?.sections) && display.sections.length) {
+    workbenchVisible.value = true;
     visibleSections.value = [...new Set(["overview", ...display.sections])];
     if (display.sections.includes("ranking") && !display.sections.includes("charts")) activeView.value = "ranking";
     if (display.sections.includes("charts")) activeView.value = "evidence";
   }
 }
 
+function resetAssistantWorkspace() {
+  // 恢复首次进入状态：保留当前方案上下文缓存，但隐藏所有实验分析区域。
+  workbenchVisible.value = false;
+  selectedNode.value = null;
+  visibleSections.value = ["overview", "metrics", "rules", "graph", "charts", "ranking", "evidence"];
+  activeView.value = "evidence";
+}
+
 watch(
   () => props.experiment.experiment_id,
-  () => selectScenario(scenarioId(scenarios.value[0] || {})),
+  () => {
+    workbenchVisible.value = false;
+    selectScenario(scenarioId(scenarios.value[0] || {}));
+  },
   { immediate: true },
 );
 </script>
 
 <template>
-  <section class="scenario-workbench">
+  <section class="scenario-workbench" :class="{ 'assistant-first': !workbenchVisible }">
     <AgentInteraction
       v-if="selectedCaseId"
       :experiment-id="experiment.experiment_id"
       :case-id="selectedCaseId"
       @display="applyAssistantDisplay"
+      @reset="resetAssistantWorkspace"
     />
+    <template v-if="workbenchVisible">
     <div class="workbench-header panel">
       <div>
         <p class="panel-label">SCENARIO DECISION WORKBENCH</p>
@@ -95,6 +111,7 @@ watch(
           </option>
         </select>
       </label>
+      <button type="button" class="collapse-workbench" @click="workbenchVisible = false">收起分析区</button>
     </div>
 
     <p v-if="error" class="alert">{{ error }}</p>
@@ -212,6 +229,7 @@ watch(
           </table>
         </div>
       </section>
+    </template>
     </template>
   </section>
 </template>

@@ -391,10 +391,20 @@ def get_scenario_context(experiment_id: str, case_id: str) -> dict:
     chain = get_scenario_explanation(experiment_id, case_id)
     rankings_path = directory / "analysis" / "techno_economics" / "scenario_rankings.csv"
     scenario: dict = {"case_id": case_id}
+    ranking_rows: list[dict] = []
+    ranking_metadata: dict = {}
     if rankings_path.is_file():
-        rows = json.loads(pd.read_csv(rankings_path).to_json(orient="records"))
+        ranking_rows = json.loads(pd.read_csv(rankings_path).to_json(orient="records"))
         # 不假设主键列名；只要一行中有字段值等于 case_id，就认为它是当前方案。
-        scenario = next((row for row in rows if case_id in row.values()), scenario)
+        scenario = next((row for row in ranking_rows if case_id in row.values()), scenario)
+        summary_path = rankings_path.parent / "summary.json"
+        if summary_path.is_file():
+            summary = json.loads(summary_path.read_text(encoding="utf-8"))
+            ranking_metadata = {
+                key: summary.get(key)
+                for key in ("ranking_policy", "assumption_status", "case_count")
+                if summary.get(key) is not None
+            }
 
     observations = chain.get("observations", [])
     parameters = [
@@ -409,6 +419,10 @@ def get_scenario_context(experiment_id: str, case_id: str) -> dict:
         "experiment_id": experiment_id,
         "case_id": case_id,
         "scenario": scenario,
+        # 完整排名仍限定在当前实验内，供“全部方案”和跨方案比较问题使用。
+        # 新领域只需在自己的分析产物中提供 scenario_rank 与方案标识，无需修改 Agent。
+        "rankings": ranking_rows,
+        "ranking_metadata": ranking_metadata,
         "parameters": parameters,
         "metrics": metrics,
         "rules": rules,

@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { getCases, getExperiment, getExperiments, getGraphView, getSubgraph, runAnalysis, uploadDataset } from "./api";
+import { getAssistantStatus, getCases, getExperiment, getExperiments, getGraphView, getSubgraph, runAnalysis, uploadDataset } from "./api";
 import KnowledgeGraph from "./components/KnowledgeGraph.vue";
 import GraphInventory from "./components/GraphInventory.vue";
 import OutputViewer from "./components/OutputViewer.vue";
@@ -20,6 +20,10 @@ const importedDataset = ref(null);
 const uploadLoading = ref(false);
 const sheetName = ref("");
 const experiment = ref(null);
+const assistantStatus = ref(null);
+const selectedModel = ref("qwen3:8b");
+// 当前只有一个模型；保留下拉数据结构，后续接入其他 Ollama 模型时直接追加即可。
+const availableModels = [{ id: "qwen3:8b", label: "Qwen3 8B" }];
 
 const graphViews = [
   { id: "all", label: "全部图谱" },
@@ -94,7 +98,13 @@ async function loadGraph(view = graphView.value) {
 
 onMounted(async () => {
   try {
-    const [, , experiments] = await Promise.all([loadCases(), loadGraph("all"), getExperiments()]);
+    const [, , experiments, modelStatus] = await Promise.all([
+      loadCases(), loadGraph("all"), getExperiments(), getAssistantStatus().catch(() => null),
+    ]);
+    assistantStatus.value = modelStatus;
+    if (modelStatus?.model && availableModels.some((item) => item.id === modelStatus.model)) {
+      selectedModel.value = modelStatus.model;
+    }
     const latest = experiments.find((item) => item.analyzed);
     if (latest) experiment.value = await getExperiment(latest.experiment_id);
   } catch (err) {
@@ -111,10 +121,22 @@ onMounted(async () => {
         <h1>PetroAgent 科研分析工作台</h1>
         <p class="subtitle">把确定性分析输出、规则证据和 Neo4j 知识路径放在同一视图中。</p>
       </div>
-      <span class="status" :class="graph.status">
-        Neo4j {{ graph.status === "online" ? "在线" : graph.status === "offline" ? "离线" : "待检测" }}
-      </span>
     </header>
+
+    <aside class="system-status-dock" aria-label="平台运行状态">
+      <p>运行状态</p>
+      <label>
+        <span>模型</span>
+        <select v-model="selectedModel" aria-label="选择模型">
+          <option v-for="model in availableModels" :key="model.id" :value="model.id">{{ model.label }}</option>
+        </select>
+        <small>{{ assistantStatus?.mode || "状态检测中" }}</small>
+      </label>
+      <div class="service-state" :class="graph.status">
+        <span class="state-dot"></span>
+        <div><strong>Neo4j</strong><small>{{ graph.status === "online" ? "在线" : graph.status === "offline" ? "离线" : "待检测" }}</small></div>
+      </div>
+    </aside>
 
     <p v-if="error" class="alert">{{ error }}</p>
 

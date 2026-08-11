@@ -14,7 +14,8 @@ TOPIC_WORDS = (
     "经济", "成本", "价值", "收入", "价格", "盈亏", "利润",
     "压力", "井底", "注入", "设施", "能力", "配聚", "供应", "约束",
     "产油", "增油", "含水", "产水", "采收", "效果",
-    "排名", "最优", "推荐", "方案", "指标", "规则", "图谱", "证据", "曲线", "对比",
+    "排名", "最优", "推荐", "方案", "第一名", "第二名", "优于",
+    "指标", "规则", "图谱", "证据", "曲线", "对比",
 )
 
 
@@ -34,7 +35,7 @@ class AnalysisAssistant:
             "rules": ("规则", "约束", "通过", "失败", "为什么", "原因"),
             "graph": ("图谱", "关系", "解释链", "知识"),
             "charts": ("图", "曲线", "趋势", "敏感性", "对比"),
-            "ranking": ("排名", "最优", "方案", "推荐"),
+            "ranking": ("排名", "最优", "方案", "推荐", "第一名", "第二名", "优于"),
             "evidence": ("证据", "来源", "依据", "可信"),
         }
         for section, keywords in mapping.items():
@@ -160,6 +161,171 @@ class AnalysisAssistant:
             )
         return "当前结构化证据不足，无法可靠回答这一问题。"
 
+    @staticmethod
+    def _ranking_display_answer(context: dict[str, Any], case_id: str) -> str:
+        """对纯排名展示指令返回与页面同源的摘要，不让模型误答成单方案解释。"""
+        rankings = sorted(
+            context.get("rankings") or [],
+            key=lambda item: item.get("scenario_rank") if item.get("scenario_rank") is not None else float("inf"),
+        )
+        if not rankings:
+            return "当前实验尚未生成方案排名，无法展示全部方案。"
+
+        def row_case_id(row: dict[str, Any]) -> str:
+            # 优先使用通用 case_id；兼容当前聚合物分析产物中的 polymer_case_id。
+            return str(row.get("case_id") or row.get("polymer_case_id") or "未知方案")
+
+        current = next((row for row in rankings if row_case_id(row) == case_id), None)
+        current_text = (
+            f"当前选中方案排名第 {current.get('scenario_rank')}。" if current else "当前方案不在排名表中。"
+        )
+        top_items = []
+        for row in rankings[:3]:
+            details = []
+            if row.get("net_incremental_value") is not None:
+                details.append(f"净增量价值 {row['net_incremental_value']:,.2f} {row.get('currency') or ''}".strip())
+            if row.get("incremental_oil_m3") is not None:
+                details.append(f"增量油 {row['incremental_oil_m3']:,.2f} m3")
+            suffix = f"（{'，'.join(details)}）" if details else ""
+            top_items.append(f"#{row.get('scenario_rank')} {row_case_id(row)}{suffix}")
+        return (
+            f"已展示当前实验的全部 {len(rankings)} 个方案排名。{current_text}"
+            f"前三名为：{'；'.join(top_items)}。排名表中的数值来自确定性技术经济分析。"
+        )
+
+    @staticmethod
+    def _ranking_comparison_answer(context: dict[str, Any]) -> str:
+        """用同一排名表直接比较前两名，避免模型遗漏被比较方案或混淆排序目标。"""
+        rankings = sorted(
+            context.get("rankings") or [],
+            key=lambda item: item.get("scenario_rank") if item.get("scenario_rank") is not None else float("inf"),
+        )
+        if len(rankings) < 2:
+            return "当前排名表不足两个方案，无法进行第一名与第二名比较。"
+        first, second = rankings[:2]
+
+        def case_id(row: dict[str, Any]) -> str:
+            return str(row.get("case_id") or row.get("polymer_case_id") or "未知方案")
+
+        currency = first.get("currency") or second.get("currency") or ""
+        first_net = first.get("net_incremental_value")
+        second_net = second.get("net_incremental_value")
+        parts = [f"第 1 名 {case_id(first)} 与第 2 名 {case_id(second)} 的排序依据如下。"]
+        if isinstance(first_net, (int, float)) and isinstance(second_net, (int, float)):
+            difference = first_net - second_net
+            parts.append(
+                f"第一名净增量价值为 {first_net:,.2f} {currency}，第二名为 {second_net:,.2f} {currency}；"
+                f"第一名高出 {difference:,.2f} {currency}。"
+            )
+        first_oil, second_oil = first.get("incremental_oil_m3"), second.get("incremental_oil_m3")
+        first_cost, second_cost = first.get("polymer_cost"), second.get("polymer_cost")
+        if all(isinstance(value, (int, float)) for value in (first_oil, second_oil, first_cost, second_cost)):
+            parts.append(
+                f"第二名增量油更高（{second_oil:,.2f} 对 {first_oil:,.2f} m3），但聚合物成本也更高"
+                f"（{second_cost:,.2f} 对 {first_cost:,.2f} {currency}），新增产量未抵消新增成本。"
+            )
+        if first.get("technically_feasible") == second.get("technically_feasible"):
+            status = "均通过" if first.get("technically_feasible") else "均未通过"
+            parts.append(f"两者技术可行性状态相同（{status}当前配置约束），因此这一项没有拉开排序。")
+        policy = (context.get("ranking_metadata") or {}).get("ranking_policy")
+        if policy:
+            parts.append(f"当前排序政策是“{policy}”，所以第一名是在当前评价口径下经济损失较小，并非所有指标都更高。")
+        else:
+            parts.append("因此第一名是在当前排名口径下经济表现更好，并非所有工程指标都优于第二名。")
+        return "".join(parts)
+
+    @staticmethod
+    def _row_case_id(row: dict[str, Any]) -> str:
+        """从不同领域的排名行中读取稳定方案标识。"""
+        return str(row.get("case_id") or row.get("polymer_case_id") or row.get("scenario_id") or "未知方案")
+
+    @classmethod
+    def _scenario_choices(cls, context: dict[str, Any]) -> list[dict[str, str]]:
+        """把当前实验全部排名行转换成聊天区可点击的安全选项。"""
+        rankings = sorted(
+            context.get("rankings") or [],
+            key=lambda item: item.get("scenario_rank") if item.get("scenario_rank") is not None else float("inf"),
+        )
+        choices = []
+        for row in rankings:
+            case_id = cls._row_case_id(row)
+            label = f"#{row.get('scenario_rank')} · {case_id}"
+            # 当前领域存在参数字段时补充人类可读摘要；新领域缺少这些字段时仍可使用通用方案 ID。
+            if row.get("polymer_concentration_kg_m3") is not None and row.get("injection_rate_m3_day") is not None:
+                label = (
+                    f"#{row.get('scenario_rank')} · 浓度 {row['polymer_concentration_kg_m3']:g} kg/m3"
+                    f" · 注入 {row['injection_rate_m3_day']:g} m3/day"
+                )
+            choices.append({
+                "id": case_id,
+                "label": label,
+                "question": f"解释候选方案 {case_id} 的推荐原因",
+            })
+        return choices
+
+    @classmethod
+    def _scenario_reason_answer(cls, context: dict[str, Any], target_case_id: str) -> str:
+        """依据排名宽表解释任意候选方案，不把“排序候选”误写成“已批准推荐”。"""
+        row = next(
+            (item for item in context.get("rankings") or [] if cls._row_case_id(item) == target_case_id),
+            None,
+        )
+        if row is None:
+            return f"当前实验排名表中不存在方案 {target_case_id}。"
+        rank = row.get("scenario_rank")
+        decision = row.get("recommendation") or "暂无推荐结论"
+        technical = "通过当前配置约束" if row.get("technically_feasible") else "未通过当前配置约束"
+        economic = "经济为正" if row.get("economically_positive") else "经济未通过"
+        currency = row.get("currency") or ""
+        parts = [f"方案 {target_case_id} 排名第 {rank}，结论为“{decision}”：{technical}，{economic}。"]
+        if row.get("net_incremental_value") is not None:
+            parts.append(f"净增量价值为 {row['net_incremental_value']:,.2f} {currency}。")
+        if row.get("incremental_oil_m3") is not None:
+            parts.append(f"相对水驱增量油为 {row['incremental_oil_m3']:,.2f} m3。")
+        if row.get("polymer_cost") is not None:
+            parts.append(f"聚合物成本为 {row['polymer_cost']:,.2f} {currency}。")
+        if row.get("polymer_concentration_kg_m3") is not None and row.get("injection_rate_m3_day") is not None:
+            parts.append(
+                f"对应参数为聚合物浓度 {row['polymer_concentration_kg_m3']:g} kg/m3、"
+                f"注入速率 {row['injection_rate_m3_day']:g} m3/day。"
+            )
+        if not row.get("economically_positive"):
+            parts.append("因此它只是当前排序政策下的相对候选，不代表已经通过经济评价或现场审批。")
+        return "".join(parts)
+
+    @staticmethod
+    def _failed_rules_answer(context: dict[str, Any]) -> str:
+        """直接汇总当前方案失败规则及证据值。"""
+        failed = [item for item in context.get("rules") or [] if not item.get("passed")]
+        if not failed:
+            return "当前方案没有未通过规则；页面已切换到规则与证据区域，可检查全部通过项及来源。"
+        details = []
+        for item in failed:
+            unit = item.get("unit") or ""
+            details.append(
+                f"{item.get('rule_id')}：{item.get('message')}，实际值 {item.get('actual')} {unit}，"
+                f"阈值 {item.get('expected')} {unit}"
+            )
+        return f"当前方案共有 {len(failed)} 条未通过规则：" + "；".join(details) + "。页面已聚焦规则和证据链。"
+
+    @staticmethod
+    def _key_metrics_answer(context: dict[str, Any]) -> str:
+        """列出当前方案最关键的可审计指标，并提示图谱已同步展示。"""
+        scenario = context.get("scenario") or {}
+        fields = (
+            ("scenario_rank", "方案排名", ""),
+            ("incremental_oil_m3", "增量油", "m3"),
+            ("net_incremental_value", "净增量价值", scenario.get("currency") or ""),
+            ("polymer_cost", "聚合物成本", scenario.get("currency") or ""),
+            ("polymer_concentration_kg_m3", "聚合物浓度", "kg/m3"),
+            ("injection_rate_m3_day", "注入速率", "m3/day"),
+        )
+        values = [
+            f"{label} {scenario[key]:,.2f} {unit}".strip()
+            for key, label, unit in fields if isinstance(scenario.get(key), (int, float))
+        ]
+        return "当前方案关键指标为：" + "；".join(values) + "。页面已同步展示指标卡、相关规则和方案解释图谱。"
+
     def chat(
         self,
         experiment_id: str,
@@ -187,9 +353,79 @@ class AnalysisAssistant:
             "assumption_status": (context.get("evidence") or {}).get("assumption_status")
             or (context.get("recommendation") or {}).get("assumption_status"),
         }
+        requested_case_id = next(
+            (self._row_case_id(row) for row in context.get("rankings") or [] if self._row_case_id(row) in question),
+            None,
+        )
+        if requested_case_id and any(word in question for word in ("解释", "原因", "推荐")):
+            return {
+                "answer": self._scenario_reason_answer(context, requested_case_id),
+                "display": {"sections": ["overview", "metrics", "rules", "ranking"], "selected_case_id": case_id},
+                "sources": [{"type": "experiment_rankings", "id": experiment_id}],
+                "model": {"provider": self.provider.name, "bypassed": True},
+                "guardrails": {"read_only": True, "deterministic_values_preserved": True},
+            }
+        if "为什么推荐当前方案" in question:
+            choices = self._scenario_choices(context)
+            return {
+                "answer": (
+                    f"当前实验共有 {len(choices)} 个可选方案。请选择下面任意方案，我会说明它的排名、"
+                    "技术与经济状态以及推荐或不推荐原因。这里的“推荐”表示相对排序候选，不等同于现场批准。"
+                ),
+                "choices": choices,
+                "display": {"sections": ["overview", "ranking"], "selected_case_id": case_id},
+                "sources": [{"type": "experiment_rankings", "id": experiment_id}],
+                "model": {"provider": self.provider.name, "bypassed": True},
+                "guardrails": {"read_only": True, "deterministic_values_preserved": True},
+            }
+        if "只看未通过规则和证据" in question:
+            return {
+                "answer": self._failed_rules_answer(context),
+                "display": {"sections": ["overview", "rules", "evidence", "graph"], "selected_case_id": case_id},
+                "sources": [{"type": "scenario_context", "id": case_id}],
+                "model": {"provider": self.provider.name, "bypassed": True},
+                "guardrails": {"read_only": True, "deterministic_values_preserved": True},
+            }
+        if "展示关键指标和图谱" in question:
+            return {
+                "answer": self._key_metrics_answer(context),
+                "display": {"sections": ["overview", "metrics", "rules", "graph"], "selected_case_id": case_id},
+                "sources": [{"type": "scenario_context", "id": case_id}],
+                "model": {"provider": self.provider.name, "bypassed": True},
+                "guardrails": {"read_only": True, "deterministic_values_preserved": True},
+            }
+        ranking_intent = any(
+            word in retrieval_query
+            for word in ("排名", "最优", "全部方案", "方案对比", "第一名", "第二名", "优于")
+        )
+        if ranking_intent:
+            # 只有排名问题才附带全实验排名，避免普通单方案问答上下文膨胀。
+            compact["experiment_rankings"] = context.get("rankings") or []
+        ranking_display = ranking_intent and any(
+            word in question for word in ("查看", "展示", "打开", "列出", "全部")
+        )
+        ranking_comparison = ranking_intent and any(
+            word in question for word in ("优于", "第一名", "第二名", "前两名", "差异")
+        )
+        if ranking_display or ranking_comparison:
+            return {
+                "answer": (
+                    self._ranking_comparison_answer(context)
+                    if ranking_comparison
+                    else self._ranking_display_answer(context, case_id)
+                ),
+                "display": {"sections": suggested_sections, "selected_case_id": case_id},
+                "sources": [
+                    {"type": "experiment_rankings", "id": experiment_id},
+                    {"type": "scenario_context", "id": case_id},
+                ],
+                "model": {"provider": self.provider.name, "bypassed": True},
+                "guardrails": {"read_only": True, "deterministic_values_preserved": True},
+            }
         system = (
             "你是 PetroAgent 的石油工程分析助手。回答当前问题，不要机械复述完整方案摘要。"
             "优先给出直接结论，再引用最相关的实际值、阈值和规则解释原因；只讨论与问题相关的事实。"
+            "回答排名原因时必须比较 experiment_rankings 中至少两个方案，不得只复述当前方案结论。"
             "要承接最近对话，用户说‘再详细一点’或‘那压力呢’时必须理解上一轮主题。"
             "不要重复上一轮已经说过的整段内容；如需引用，只简短承接并补充新信息。"
             "只能使用最后一条用户消息中提供的结构化工程事实，不得重算模拟值、虚构因果、"

@@ -9,6 +9,17 @@ body { margin: 0; min-width: 1180px; }
 button, select, input { font: inherit; }
 main { max-width: 1680px; margin: 0 auto; padding: 30px 36px 48px; }
 header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 26px; }
+.system-status-dock { position: fixed; top: 92px; right: 22px; z-index: 20; display: grid; gap: 12px; width: 168px; padding: 14px; border: 1px solid #cbd8d3; border-radius: 12px; background: rgba(255,255,255,.95); box-shadow: 0 12px 30px rgba(31,64,58,.12); backdrop-filter: blur(10px); }
+.system-status-dock > p { margin: 0; color: #0f766e; font-size: 10px; font-weight: 800; letter-spacing: .12em; }
+.system-status-dock label { display: grid; gap: 5px; color: #72827e; font-size: 10px; }
+.system-status-dock select { width: 100%; padding: 8px 9px; border: 1px solid #b9cbc4; border-radius: 7px; color: #173b3a; background: #fff; cursor: pointer; }
+.system-status-dock small { color: #87938f; font-size: 9px; overflow-wrap: anywhere; }
+.service-state { display: flex; align-items: center; gap: 9px; padding-top: 10px; border-top: 1px solid #e4ebe7; }
+.service-state .state-dot { width: 9px; height: 9px; border-radius: 50%; background: #d49a24; box-shadow: 0 0 0 3px #fff4d6; }
+.service-state.online .state-dot { background: #0f9b73; box-shadow: 0 0 0 3px #dff7ee; }
+.service-state.offline .state-dot { background: #c94b3c; box-shadow: 0 0 0 3px #fde7e4; }
+.service-state div { display: grid; gap: 2px; }
+.service-state strong { color: #294d49; font-size: 11px; }
 h1 { margin: 5px 0 7px; font-family: Georgia, "Noto Serif SC", serif; font-size: 34px; font-weight: 600; }
 h2 { margin: 3px 0 18px; font-size: 17px; }
 .eyebrow, .panel-label { margin: 0; color: #0f766e; font-size: 11px; font-weight: 800; letter-spacing: .13em; }
@@ -163,7 +174,12 @@ th { position: sticky; top: 0; z-index: 1; color: #536763; background: #f4f7f5; 
 
 /* 方案工作台：所有区域均由 selectedCaseId 驱动，完整知识库退居维护入口。 */
 .scenario-workbench { display: grid; gap: 18px; margin-bottom: 20px; }
+.scenario-workbench.assistant-first { min-height: calc(100vh - 230px); align-content: start; padding-top: 18px; }
+.scenario-workbench.assistant-first .agent-console { min-height: 500px; }
+.scenario-workbench.assistant-first .agent-layout { min-height: 390px; }
 .workbench-header { display: flex; justify-content: space-between; gap: 24px; padding: 20px 22px; }
+.collapse-workbench { align-self: center; padding: 9px 12px; border: 1px solid #b9cbc4; border-radius: 8px; color: #436d68; background: #fff; cursor: pointer; white-space: nowrap; }
+.collapse-workbench:hover { border-color: #0f766e; color: #0f766e; }
 .workbench-header h2 { margin-bottom: 7px; font-size: 23px; }
 .workbench-header p:not(.panel-label) { margin: 0; color: #647773; }
 .workbench-header label { display: grid; align-content: center; gap: 7px; min-width: 480px; color: #647773; font-size: 11px; }
@@ -206,21 +222,24 @@ th { position: sticky; top: 0; z-index: 1; color: #536763; background: #f4f7f5; 
 .legacy-tools > summary { color: #436d68; font-weight: 700; cursor: pointer; }
 .legacy-tools > p { color: #72827e; font-size: 12px; }
 .legacy-tools .workspace { margin-top: 16px; }
-.agent-console { padding: 20px 22px; border-top: 4px solid #0f766e; }
+.agent-console { width: 100%; max-width: 1440px; margin: 0 auto; padding: 26px 28px; border-top: 4px solid #0f766e; }
 .agent-heading { display: flex; justify-content: space-between; align-items: flex-start; }
 .agent-actions { display: flex; align-items: center; gap: 8px; }
 .clear-chat { padding: 6px 9px; border: 1px solid #d5dfda; border-radius: 999px; color: #647773; background: #fff; cursor: pointer; }
 .clear-chat:hover { border-color: #0f766e; color: #0f766e; }
+.agent-choice-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; margin: 10px 0; }
+.agent-choice-list button { padding: 8px 9px; border: 1px solid #9fb9b1; border-radius: 7px; color: #245e57; background: #fff; text-align: left; cursor: pointer; }
+.agent-choice-list button:hover { border-color: #0f766e; background: #ecfdf5; }
 .agent-heading h2 { margin-bottom: 12px; font-size: 21px; }
 .model-badge { padding: 7px 10px; border-radius: 999px; color: #315e57; background: #e9f8f3; font: 10px ui-monospace, monospace; }
-.agent-layout { display: grid; grid-template-columns: .8fr 1.5fr; gap: 20px; }
+.agent-layout { display: grid; grid-template-columns: minmax(280px, .65fr) minmax(600px, 1.7fr); gap: 24px; }
 .agent-intro { padding: 15px; border-radius: 9px; color: #536763; background: #f3f8f6; }
 .agent-intro > p { margin-top: 0; line-height: 1.65; }
 .agent-intro > small { display: block; margin-top: 12px; color: #72827e; line-height: 1.5; }
 .agent-examples { display: flex; flex-wrap: wrap; gap: 7px; }
 .agent-examples button { padding: 7px 9px; border: 1px solid #b9cbc4; border-radius: 999px; color: #315e57; background: #fff; cursor: pointer; }
 .agent-chat { min-width: 0; }
-.agent-messages { display: grid; gap: 8px; max-height: 250px; min-height: 105px; padding: 10px; overflow: auto; border: 1px solid #e1e8e5; border-radius: 9px; background: #fafcfb; }
+.agent-messages { display: grid; align-content: start; gap: 8px; max-height: 420px; min-height: 250px; padding: 14px; overflow: auto; border: 1px solid #e1e8e5; border-radius: 9px; background: #fafcfb; }
 .agent-messages article { max-width: 90%; padding: 9px 11px; border-radius: 9px; background: #eef3f0; }
 .agent-messages article.user { justify-self: end; color: #fff; background: #436d68; }
 .agent-messages article p { margin: 4px 0; line-height: 1.55; }
@@ -230,7 +249,11 @@ th { position: sticky; top: 0; z-index: 1; color: #536763; background: #f4f7f5; 
 .agent-chat input { min-width: 0; padding: 11px 12px; border: 1px solid #b9cbc4; border-radius: 8px; }
 .agent-chat form button { border: 0; border-radius: 8px; color: #fff; background: #0f766e; cursor: pointer; }
 .agent-chat form button:disabled { opacity: .55; }
+@media (max-width: 1500px) {
+  main { padding-right: 220px; }
+}
 @media (max-width: 1250px) {
+  .system-status-dock { top: 24px; right: 24px; }
   .workbench-header { flex-direction: column; }
   .workbench-header label { min-width: 0; }
   .decision-strip { grid-template-columns: repeat(2, 1fr); }

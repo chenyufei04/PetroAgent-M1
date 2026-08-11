@@ -157,6 +157,8 @@ def test_scenario_context_joins_metrics_rules_recommendation_and_graph(tmp_path:
 
     assert payload["contract_version"] == "scenario-context/v1"
     assert payload["scenario"]["net_value"] == 12.5
+    assert payload["rankings"] == [{"scenario_rank": 1, "case_id": "case-1", "net_value": 12.5, "recommendation": "候选"}]
+    assert payload["ranking_metadata"] == {"case_count": 1}
     assert payload["parameters"][0]["concept_id"] == "injection_rate"
     assert payload["rule_summary"] == {"total": 1, "passed": 0, "failed": 1}
     assert {node["type"] for node in payload["graph"]["nodes"]} == {

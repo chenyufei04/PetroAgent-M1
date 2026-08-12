@@ -9,17 +9,21 @@ body { margin: 0; min-width: 1180px; }
 button, select, input { font: inherit; }
 main { max-width: 1680px; margin: 0 auto; padding: 30px 36px 48px; }
 header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 26px; }
-.system-status-dock { position: fixed; top: 92px; right: 22px; z-index: 20; display: grid; gap: 12px; width: 168px; padding: 14px; border: 1px solid #cbd8d3; border-radius: 12px; background: rgba(255,255,255,.95); box-shadow: 0 12px 30px rgba(31,64,58,.12); backdrop-filter: blur(10px); }
-.system-status-dock > p { margin: 0; color: #0f766e; font-size: 10px; font-weight: 800; letter-spacing: .12em; }
-.system-status-dock label { display: grid; gap: 5px; color: #72827e; font-size: 10px; }
-.system-status-dock select { width: 100%; padding: 8px 9px; border: 1px solid #b9cbc4; border-radius: 7px; color: #173b3a; background: #fff; cursor: pointer; }
-.system-status-dock small { color: #87938f; font-size: 9px; overflow-wrap: anywhere; }
-.service-state { display: flex; align-items: center; gap: 9px; padding-top: 10px; border-top: 1px solid #e4ebe7; }
-.service-state .state-dot { width: 9px; height: 9px; border-radius: 50%; background: #d49a24; box-shadow: 0 0 0 3px #fff4d6; }
+.client-ip-badge { position: fixed; top: 24px; right: 30px; z-index: 21; display: grid; gap: 4px; width: 230px; padding: 14px 18px; border: 1px solid #cbd8d3; border-radius: 12px; background: rgba(255,255,255,.95); box-shadow: 0 10px 26px rgba(31,64,58,.11); backdrop-filter: blur(10px); }
+.client-ip-badge span { color: #72827e; font-size: 11px; }
+.client-ip-badge strong { overflow: hidden; color: #294d49; font: 600 15px ui-monospace, monospace; text-overflow: ellipsis; }
+.client-ip-badge small { color: #0f766e; font-size: 10px; }
+.system-status-dock { position: fixed; top: 122px; right: 30px; z-index: 20; display: grid; gap: 16px; width: 230px; padding: 18px; border: 1px solid #cbd8d3; border-radius: 14px; background: rgba(255,255,255,.95); box-shadow: 0 14px 34px rgba(31,64,58,.13); backdrop-filter: blur(10px); }
+.system-status-dock > p { margin: 0; color: #0f766e; font-size: 12px; font-weight: 800; letter-spacing: .12em; }
+.system-status-dock label { display: grid; gap: 7px; color: #72827e; font-size: 11px; }
+.system-status-dock select { width: 100%; padding: 10px 11px; border: 1px solid #b9cbc4; border-radius: 8px; color: #173b3a; background: #fff; cursor: pointer; }
+.system-status-dock small { color: #87938f; font-size: 10px; overflow-wrap: anywhere; }
+.service-state { display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid #e4ebe7; }
+.service-state .state-dot { width: 11px; height: 11px; border-radius: 50%; background: #d49a24; box-shadow: 0 0 0 4px #fff4d6; }
 .service-state.online .state-dot { background: #0f9b73; box-shadow: 0 0 0 3px #dff7ee; }
 .service-state.offline .state-dot { background: #c94b3c; box-shadow: 0 0 0 3px #fde7e4; }
-.service-state div { display: grid; gap: 2px; }
-.service-state strong { color: #294d49; font-size: 11px; }
+.service-state div { display: grid; gap: 3px; }
+.service-state strong { color: #294d49; font-size: 13px; }
 h1 { margin: 5px 0 7px; font-family: Georgia, "Noto Serif SC", serif; font-size: 34px; font-weight: 600; }
 h2 { margin: 3px 0 18px; font-size: 17px; }
 .eyebrow, .panel-label { margin: 0; color: #0f766e; font-size: 11px; font-weight: 800; letter-spacing: .13em; }
@@ -250,10 +254,11 @@ th { position: sticky; top: 0; z-index: 1; color: #536763; background: #f4f7f5; 
 .agent-chat form button { border: 0; border-radius: 8px; color: #fff; background: #0f766e; cursor: pointer; }
 .agent-chat form button:disabled { opacity: .55; }
 @media (max-width: 1500px) {
-  main { padding-right: 220px; }
+  main { padding-right: 285px; }
 }
 @media (max-width: 1250px) {
-  .system-status-dock { top: 24px; right: 24px; }
+  .client-ip-badge { right: 24px; width: 210px; }
+  .system-status-dock { top: 122px; right: 24px; width: 210px; }
   .workbench-header { flex-direction: column; }
   .workbench-header label { min-width: 0; }
   .decision-strip { grid-template-columns: repeat(2, 1fr); }

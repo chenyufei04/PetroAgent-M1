@@ -167,6 +167,16 @@ def health() -> dict:
     return {"status": "ok", "version": app.version}
 
 
+@app.get("/api/client-info")
+def client_info(request: Request) -> dict:
+    """返回服务端实际观察到的访问端地址，不接受客户端自行声明的 IP。"""
+    client_ip = request.client.host if request.client else "unknown"
+    return {
+        "ip_address": client_ip,
+        "is_loopback": client_ip in {"127.0.0.1", "::1"},
+    }
+
+
 @app.get("/api/cases")
 def list_cases() -> list[dict]:
     experiment_links: dict[str, list[str]] = {}

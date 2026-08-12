@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { getAssistantStatus, getCases, getExperiment, getExperiments, getGraphView, getSubgraph, runAnalysis, uploadDataset } from "./api";
+import { getAssistantStatus, getCases, getClientInfo, getExperiment, getExperiments, getGraphView, getSubgraph, runAnalysis, uploadDataset } from "./api";
 import KnowledgeGraph from "./components/KnowledgeGraph.vue";
 import GraphInventory from "./components/GraphInventory.vue";
 import OutputViewer from "./components/OutputViewer.vue";
@@ -22,6 +22,7 @@ const sheetName = ref("");
 const experiment = ref(null);
 const assistantStatus = ref(null);
 const selectedModel = ref("qwen3:8b");
+const clientInfo = ref(null);
 // 当前只有一个模型；保留下拉数据结构，后续接入其他 Ollama 模型时直接追加即可。
 const availableModels = [{ id: "qwen3:8b", label: "Qwen3 8B" }];
 
@@ -98,10 +99,12 @@ async function loadGraph(view = graphView.value) {
 
 onMounted(async () => {
   try {
-    const [, , experiments, modelStatus] = await Promise.all([
+    const [, , experiments, modelStatus, detectedClient] = await Promise.all([
       loadCases(), loadGraph("all"), getExperiments(), getAssistantStatus().catch(() => null),
+      getClientInfo().catch(() => null),
     ]);
     assistantStatus.value = modelStatus;
+    clientInfo.value = detectedClient;
     if (modelStatus?.model && availableModels.some((item) => item.id === modelStatus.model)) {
       selectedModel.value = modelStatus.model;
     }
@@ -122,6 +125,12 @@ onMounted(async () => {
         <p class="subtitle">把确定性分析输出、规则证据和 Neo4j 知识路径放在同一视图中。</p>
       </div>
     </header>
+
+    <aside class="client-ip-badge" aria-label="当前访问 IP">
+      <span>当前使用 IP</span>
+      <strong>{{ clientInfo?.ip_address || "检测中…" }}</strong>
+      <small v-if="clientInfo?.is_loopback">本机访问</small>
+    </aside>
 
     <aside class="system-status-dock" aria-label="平台运行状态">
       <p>运行状态</p>

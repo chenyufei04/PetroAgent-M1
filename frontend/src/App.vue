@@ -130,6 +130,7 @@ onMounted(async () => {
       <span>当前使用 IP</span>
       <strong>{{ clientInfo?.ip_address || "检测中…" }}</strong>
       <small v-if="clientInfo?.is_loopback">本机访问</small>
+      <small class="audit-notice">进入页面时记录一次 IP，并启用 API 频率保护</small>
     </aside>
 
     <aside class="system-status-dock" aria-label="平台运行状态">

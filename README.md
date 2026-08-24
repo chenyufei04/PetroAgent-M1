@@ -2533,6 +2533,23 @@ FastAPI 现已为所有 HTTP 调用生成结构化访问日志，默认保存在
 运行日志属于本地可再生数据，已由 `.gitignore` 排除，不应提交到 GitHub。查看日志的
 命令统一保留在文档末尾的执行命令手册中。
 
+### 透明访问 IP 审计与频率保护
+
+公网演示入口启用了透明访问安全审计，页面右上角会明确提示。后端仅在浏览器进入或刷新
+首页时解析并记录一次来源 IP；页面内部操作、静态资源和 API 请求不会重复写入。IP 单独写入
+`outputs/logs/access_ip.log`。该专用文件严格保持一行一个 IP，不包含时间、路径、
+请求正文、Cookie、查询参数或 User-Agent；每 1000 条自动轮转，默认保留 10 个历史文件。
+
+Cloudflare Tunnel 场景优先使用 `CF-Connecting-IP`，直接本机访问则采用 ASGI 连接地址。
+后端不采信通用 `X-Forwarded-For`，避免客户端随意伪造来源。API 默认采用单 IP、60 秒
+最多 120 次请求的滑动窗口限制，超过限制返回 HTTP `429` 和 `Retry-After`。限流统计与
+首页 IP 审计彼此独立，页面和静态资源不计入限流额度。
+
+审计开关、独立文件名、轮转规则、时间窗口、请求上限和最多跟踪 IP 数量均可通过
+`.env.example` 中的 `PETRO_AGENT_IP_AUDIT_*` 与 `PETRO_AGENT_RATE_LIMIT_*` 配置。
+IP 地址属于可能关联个人的网络标识，真实科研部署时仍需在隐私说明中告知用途、留存周期
+和联系人，并按所在单位制度定期删除过期日志。
+
 ## 执行命令手册（固定置于 README 末尾）
 
 > 维护规则：本节必须始终是 README 的最后一节。新增或修改运行命令时，只更新本节；
@@ -2729,6 +2746,12 @@ docker compose logs -f neo4j
 
 ```powershell
 Get-Content .\outputs\logs\api_calls.log -Wait -Tail 50
+```
+
+持续查看只包含访问 IP 的透明安全审计日志：
+
+```powershell
+Get-Content .\outputs\logs\access_ip.log -Wait -Tail 50
 ```
 
 日志跟踪窗口中按 `Ctrl+C` 只会退出查看，不会停止容器。

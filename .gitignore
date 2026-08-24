@@ -36,6 +36,7 @@ MANIFEST
 .DS_Store
 Thumbs.db
 Desktop.ini
+.tools/
 .idea/
 .vscode/
 .fleet/

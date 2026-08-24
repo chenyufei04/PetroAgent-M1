@@ -1,4 +1,6 @@
-const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000";
+// 默认使用同源相对地址：本地由 Vite 代理，生产环境由 FastAPI/Cloudflare 同域转发。
+// 仅在前后端确实部署到不同域名时，才通过 VITE_API_BASE 显式指定后端地址。
+const API_BASE = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
 
 async function request(path, options = {}) {
   const response = await fetch(`${API_BASE}${path}`, {

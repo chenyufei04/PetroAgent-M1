@@ -11,9 +11,10 @@ from uuid import uuid4
 
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+from dotenv import load_dotenv
 import yaml
 import pandas as pd
 
@@ -24,10 +25,13 @@ from petro_agent.llm import LlmSettings, create_provider
 from petro_agent.pipeline import analyze_csv
 
 from .serializers import serialize_result
+from .access_audit import configure_access_audit, is_page_entry_request, resolve_client_ip
 from .request_logging import configure_api_logger
 
 
 ROOT = Path(__file__).resolve().parents[3]
+# 统一加载项目根目录配置；系统或当前终端显式设置的环境变量保持更高优先级。
+load_dotenv(ROOT / ".env")
 CONFIG_ROOT = ROOT / "config" / "cases"
 DATA_ROOT = ROOT / "data" / "demo"
 UPLOAD_ROOT = ROOT / "data" / "uploads"
@@ -35,6 +39,7 @@ OUTPUT_ROOT = ROOT / "outputs"
 EXPERIMENT_ROOT = OUTPUT_ROOT / "experiments"
 FRONTEND_DIST = ROOT / "frontend" / "dist"
 API_LOGGER = configure_api_logger(ROOT)
+ACCESS_AUDIT = configure_access_audit(ROOT)
 
 app = FastAPI(title="PetroAgent Web Demo API", version="0.10.1")
 app.add_middleware(
@@ -50,6 +55,10 @@ app.add_middleware(
 async def log_api_request(request: Request, call_next):
     """统一记录所有 HTTP 调用；不保存请求正文、查询值和认证信息等敏感内容。"""
     started = perf_counter()
+    client_ip = resolve_client_ip(request)
+    # 仅在浏览器进入或刷新首页时写一次 IP；静态资源和 API 请求不重复记录。
+    if is_page_entry_request(request):
+        ACCESS_AUDIT.record(client_ip)
     supplied_request_id = request.headers.get("x-request-id", "")
     request_id = supplied_request_id if 0 < len(supplied_request_id) <= 128 else uuid4().hex
     common = {
@@ -57,24 +66,33 @@ async def log_api_request(request: Request, call_next):
         "request_id": request_id,
         "method": request.method,
         "path": request.url.path,
-        "client_ip": request.client.host if request.client else None,
+        "client_ip": client_ip,
         "user_agent": request.headers.get("user-agent", "")[:512],
     }
-    try:
-        response = await call_next(request)
-    except Exception as exc:
-        # 未处理异常先写日志再交回 FastAPI/uvicorn，确保 500 调用也有追踪记录。
-        API_LOGGER.exception(
-            "接口调用异常",
-            extra={
-                **common,
-                "status_code": 500,
-                "duration_ms": round((perf_counter() - started) * 1000, 3),
-                "error_type": type(exc).__name__,
-                "error_message": str(exc)[:1000],
-            },
+    # 只限制 API，避免首次加载页面的多个静态资源请求误触发访问保护。
+    decision = ACCESS_AUDIT.check_rate_limit(client_ip) if request.url.path.startswith("/api/") else None
+    if decision is not None and not decision.allowed:
+        response = JSONResponse(
+            status_code=429,
+            content={"detail": "请求过于频繁，请稍后重试"},
+            headers={"Retry-After": str(decision.retry_after)},
         )
-        raise
+    else:
+        try:
+            response = await call_next(request)
+        except Exception as exc:
+            # 未处理异常先写日志再交回 FastAPI/uvicorn，确保 500 调用也有追踪记录。
+            API_LOGGER.exception(
+                "接口调用异常",
+                extra={
+                    **common,
+                    "status_code": 500,
+                    "duration_ms": round((perf_counter() - started) * 1000, 3),
+                    "error_type": type(exc).__name__,
+                    "error_message": str(exc)[:1000],
+                },
+            )
+            raise
     response.headers["X-Request-ID"] = request_id
     API_LOGGER.info(
         "接口调用完成",
@@ -169,8 +187,8 @@ def health() -> dict:
 
 @app.get("/api/client-info")
 def client_info(request: Request) -> dict:
-    """返回服务端实际观察到的访问端地址，不接受客户端自行声明的 IP。"""
-    client_ip = request.client.host if request.client else "unknown"
+    """返回审计系统解析的访问地址；Cloudflare 模式优先采用其专用来源头。"""
+    client_ip = resolve_client_ip(request)
     return {
         "ip_address": client_ip,
         "is_loopback": client_ip in {"127.0.0.1", "::1"},

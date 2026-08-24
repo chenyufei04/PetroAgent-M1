@@ -1,0 +1,53 @@
+# Node.js dependencies and package-manager caches
+node_modules/
+.npm/
+.pnpm-store/
+
+# Frontend build and Vite caches
+dist/
+.vite/
+node_modules/.vite-temp/
+
+# Python virtual environments and caches
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Uploaded user files (keep the directory)
+uploads/*
+!uploads/.gitkeep
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+~$*
+
+# TypeScript incremental build files
+*.tsbuildinfo
+
+# IDE and editor settings
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
